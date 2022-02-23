@@ -1,23 +1,42 @@
 ---
 title: "Project proposal"
-author: "Team name"
+author: "Chrissy & Ricky"
 output: github_document
 ---
 
 ```{r load-packages, message = FALSE}
 library(tidyverse)
 library(broom)
+library(fivethirtyeight)
+library(WDI)
 ```
 
 ## 1. Introduction
 
+```{r}
+data <- readr::read_csv(file = "../data/xx.csv")
+```
 
 
 ## 2. Data
 
 
-
 ## 3. Data analysis plan
 
+
+## 4. Appendix
+
+Here are some potential datasets we can use!
+1. library(fivethirtyeight): https://fivethirtyeight-r.netlify.app/articles/fivethirtyeight.html
+```{r fivethirtyeight}
+view(US_births_2000_2014)
+view(US_births_1994_2003)
+```
+2. https://www.icpsr.umich.edu/web/NACJD/search/studies?q=&FORMAT_FACET=R
+3. World Bank WDI
+```{r WDI}
+example <- WDI(indicator = c("SP.RUR.TOTL.ZS", "EN.ATM.CO2E.PC", "SP.POP.GROW", extra = TRUE))
+view(example)
+```
 
 
