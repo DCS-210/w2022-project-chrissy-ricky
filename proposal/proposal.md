@@ -48,8 +48,12 @@ Section 1 - Introduction: The introduction should introduce your general
 research question and your data (where it came from, how it was
 collected, what are the cases, what are the variables, etc.).
 
-1.  
+1.  We intend on using covid and world indicator to examine what cause
+    differences in how different countries experienced the pandemic/
+    what caused different pandemic outcomes across the world.
+
 2.  
+
 3.  
 
 ## 2. Data
@@ -216,18 +220,19 @@ Section 3 - Data analysis plan:
     you will use to answer your question. The comparison groups you will
     use, if applicable.
 
--   
--   
--   
+-   our outcome/ y variables would be deaths and other covid related
+    markers like ICU occupation and overall cases.
+-   the explanatory variables would be taken from the world bank data
+    and covid data and could include medical resources like ICU beds or
+    number of doctors. We could also subset the data and examine the
+    effect of vaccination rate on these covid indicators.
 
 2.  Very preliminary exploratory data analysis, including some summary
     statistics and visualizations, along with some explanation on how
     they help you learn more about your data. (You can add to these
     later as you work on your project.)
 
--   
--   
--   
+sapply(covid_data, mean, na.rm=TRUE) summary(covid_data) - -
 
 3.  The statistical method(s) that you believe will be useful in
     answering your question(s). (You can update these later as you work
