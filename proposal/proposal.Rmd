@@ -34,7 +34,7 @@ Finally, each section should be no more than 1 page (excluding figures). You can
 
 Section 1 - Introduction: The introduction should introduce your general research question and your data (where it came from, how it was collected, what are the cases, what are the variables, etc.).
 
-1. We intend on using covid and world indicator to examine what cause differences in how different countries experienced the pandemic/ what caused different pandemic outcomes across the world. 
+1. We intend on using covid and world indicators to examine what cause differences in how different countries experienced the pandemic/ what might have caused different pandemic outcomes across the world. 
 
 We will use data from two sources: (1) Covid-19 related data (owid-covid data), (2) World Bank World Development Indicator. Covid-related data is coming from this repo: https://github.com/owid/covid-19-data.git; WDI is coming from the WDI package in R. The owid-covid-data should be sufficient for our analysis, but we may need additional data from WDI, so we include WDI here in case we may need it in the future.
 
@@ -78,17 +78,34 @@ Section 3 - Data analysis plan:
 
 2. Very preliminary exploratory data analysis, including some summary statistics and visualizations, along with some explanation on how they help you learn more about your data. (You can add to these later as you work on your project.)
 
-sapply(covid_data, mean, na.rm=TRUE)
+It seems that the histogram of human development index skew to the left. Although there are many countries that have above average HDI index, there are still some countries that suffer, and HDI could potentially be a good indicator for the development of a country as compared to GDP per capita (but we will also include GDP per capita in our analyses). We are wondering if HDI could be a good predicor for covid cases and death.
+
+```{r prelinminary_exploration_general}
+sapply(covid_data, mean, na.rm = TRUE)
 summary(covid_data)
--
--
+```
+```{r preliminary_exploration_HDI}
+ggplot(data = covid_data, 
+       mapping = aes(x = human_development_index)) +
+  geom_histogram()
+```
+
+It seems that the histogram of human development index skew to the right. That might explain why many counrtries are suffering dealing with Covid-19 in earlier stages.
+```{r preliminary_exploration_beds}
+ggplot(data = covid_data, 
+       mapping = aes(x = hospital_beds_per_thousand)) +
+  geom_histogram(binwidth = 1)
+```
 
 3. The statistical method(s) that you believe will be useful in answering your question(s). (You can update these later as you work on your project.)
 What results from these specific statistical methods are needed to support your hypothesized answer?
 
-- 
--
--
+- Correlations
+- Multiple linear regressions to conduct our study
+- Some machine learning algorithnms (like KNN and random forest)
+- Difference in Difference regression
+
+We would expect that hospital beds, smoking behaviors, population density, and proportion of over 65-year-old (and other variables we may add in the future) will positively predict covid cases and deaths, while the HDI and some other variables will negatively predict covid cases and deaths. We may also use some machine learning algorithms to see what are some good predictors.
 
 
 

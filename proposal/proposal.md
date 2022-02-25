@@ -48,9 +48,9 @@ Section 1 - Introduction: The introduction should introduce your general
 research question and your data (where it came from, how it was
 collected, what are the cases, what are the variables, etc.).
 
-1.  We intend on using covid and world indicator to examine what cause
+1.  We intend on using covid and world indicators to examine what cause
     differences in how different countries experienced the pandemic/
-    what caused different pandemic outcomes across the world.
+    what might have caused different pandemic outcomes across the world.
 
 We will use data from two sources: (1) Covid-19 related data (owid-covid
 data), (2) World Bank World Development Indicator. Covid-related data is
@@ -232,13 +232,400 @@ Section 3 - Data analysis plan:
     they help you learn more about your data. (You can add to these
     later as you work on your project.)
 
-sapply(covid_data, mean, na.rm=TRUE) summary(covid_data) - -
+It seems that the histogram of human development index skew to the left.
+Although there are many countries that have above average HDI index,
+there are still some countries that suffer, and HDI could potentially be
+a good indicator for the development of a country as compared to GDP per
+capita (but we will also include GDP per capita in our analyses). We are
+wondering if HDI could be a good predicor for covid cases and death.
+
+``` r
+sapply(covid_data, mean, na.rm = TRUE)
+```
+
+    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
+    ## returning NA
+
+    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
+    ## returning NA
+
+    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
+    ## returning NA
+
+    ## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
+    ## returning NA
+
+    ##                                   iso_code 
+    ##                                         NA 
+    ##                                  continent 
+    ##                                         NA 
+    ##                                   location 
+    ##                                         NA 
+    ##                                       date 
+    ##                               1.869055e+04 
+    ##                                total_cases 
+    ##                               2.463972e+06 
+    ##                                  new_cases 
+    ##                               1.133472e+04 
+    ##                         new_cases_smoothed 
+    ##                               1.127880e+04 
+    ##                               total_deaths 
+    ##                               5.688736e+04 
+    ##                                 new_deaths 
+    ##                               1.713319e+02 
+    ##                        new_deaths_smoothed 
+    ##                               1.705970e+02 
+    ##                    total_cases_per_million 
+    ##                               2.833072e+04 
+    ##                      new_cases_per_million 
+    ##                               1.617723e+02 
+    ##             new_cases_smoothed_per_million 
+    ##                               1.602111e+02 
+    ##                   total_deaths_per_million 
+    ##                               5.009919e+02 
+    ##                     new_deaths_per_million 
+    ##                               1.683123e+00 
+    ##            new_deaths_smoothed_per_million 
+    ##                               1.674407e+00 
+    ##                          reproduction_rate 
+    ##                               1.006674e+00 
+    ##                               icu_patients 
+    ##                               9.140276e+02 
+    ##                   icu_patients_per_million 
+    ##                               2.392352e+01 
+    ##                              hosp_patients 
+    ##                               4.145411e+03 
+    ##                  hosp_patients_per_million 
+    ##                               1.625020e+02 
+    ##                      weekly_icu_admissions 
+    ##                               4.747614e+02 
+    ##          weekly_icu_admissions_per_million 
+    ##                               1.556968e+01 
+    ##                     weekly_hosp_admissions 
+    ##                               6.133192e+03 
+    ##         weekly_hosp_admissions_per_million 
+    ##                               1.024361e+02 
+    ##                                  new_tests 
+    ##                               6.777668e+04 
+    ##                                total_tests 
+    ##                               1.680843e+07 
+    ##                   total_tests_per_thousand 
+    ##                               7.169435e+02 
+    ##                     new_tests_per_thousand 
+    ##                               3.184843e+00 
+    ##                         new_tests_smoothed 
+    ##                               6.053128e+04 
+    ##            new_tests_smoothed_per_thousand 
+    ##                               2.985696e+00 
+    ##                              positive_rate 
+    ##                               9.614233e-02 
+    ##                             tests_per_case 
+    ##                               2.036352e+02 
+    ##                                tests_units 
+    ##                                         NA 
+    ##                         total_vaccinations 
+    ##                               1.666363e+08 
+    ##                          people_vaccinated 
+    ##                               8.589838e+07 
+    ##                    people_fully_vaccinated 
+    ##                               6.692350e+07 
+    ##                             total_boosters 
+    ##                               1.692314e+07 
+    ##                           new_vaccinations 
+    ##                               1.143243e+06 
+    ##                  new_vaccinations_smoothed 
+    ##                               5.209376e+05 
+    ##             total_vaccinations_per_hundred 
+    ##                               7.108283e+01 
+    ##              people_vaccinated_per_hundred 
+    ##                               3.729996e+01 
+    ##        people_fully_vaccinated_per_hundred 
+    ##                               3.171740e+01 
+    ##                 total_boosters_per_hundred 
+    ##                               1.116355e+01 
+    ##      new_vaccinations_smoothed_per_million 
+    ##                               3.346854e+03 
+    ##             new_people_vaccinated_smoothed 
+    ##                               2.383678e+05 
+    ## new_people_vaccinated_smoothed_per_hundred 
+    ##                               1.524981e-01 
+    ##                           stringency_index 
+    ##                               5.465611e+01 
+    ##                                 population 
+    ##                               1.475547e+08 
+    ##                         population_density 
+    ##                               4.645179e+02 
+    ##                                 median_age 
+    ##                               3.057063e+01 
+    ##                              aged_65_older 
+    ##                               8.764174e+00 
+    ##                              aged_70_older 
+    ##                               5.535366e+00 
+    ##                             gdp_per_capita 
+    ##                               1.964941e+04 
+    ##                            extreme_poverty 
+    ##                               1.357579e+01 
+    ##                      cardiovasc_death_rate 
+    ##                               2.601788e+02 
+    ##                        diabetes_prevalence 
+    ##                               8.209643e+00 
+    ##                             female_smokers 
+    ##                               1.062791e+01 
+    ##                               male_smokers 
+    ##                               3.277739e+01 
+    ##                     handwashing_facilities 
+    ##                               5.079525e+01 
+    ##                 hospital_beds_per_thousand 
+    ##                               3.028164e+00 
+    ##                            life_expectancy 
+    ##                               7.357700e+01 
+    ##                    human_development_index 
+    ##                               7.256208e-01 
+    ##       excess_mortality_cumulative_absolute 
+    ##                               3.742413e+04 
+    ##                excess_mortality_cumulative 
+    ##                               9.375304e+00 
+    ##                           excess_mortality 
+    ##                               1.597003e+01 
+    ##    excess_mortality_cumulative_per_million 
+    ##                               9.651915e+02
+
+``` r
+summary(covid_data)
+```
+
+    ##    iso_code          continent           location              date           
+    ##  Length:164243      Length:164243      Length:164243      Min.   :2020-01-01  
+    ##  Class :character   Class :character   Class :character   1st Qu.:2020-09-06  
+    ##  Mode  :character   Mode  :character   Mode  :character   Median :2021-03-10  
+    ##                                                           Mean   :2021-03-04  
+    ##                                                           3rd Qu.:2021-09-01  
+    ##                                                           Max.   :2022-02-24  
+    ##                                                                               
+    ##   total_cases          new_cases       new_cases_smoothed  total_deaths    
+    ##  Min.   :        1   Min.   : -74347   Min.   :  -6223    Min.   :      1  
+    ##  1st Qu.:     1937   1st Qu.:      1   1st Qu.:      7    1st Qu.:     77  
+    ##  Median :    25363   Median :     79   Median :    105    Median :    768  
+    ##  Mean   :  2463972   Mean   :  11335   Mean   :  11279    Mean   :  56887  
+    ##  3rd Qu.:   289722   3rd Qu.:   1050   3rd Qu.:   1122    3rd Qu.:   7190  
+    ##  Max.   :431403784   Max.   :4235024   Max.   :3437210    Max.   :5928106  
+    ##  NA's   :3005        NA's   :3030      NA's   :4181       NA's   :20764    
+    ##    new_deaths      new_deaths_smoothed total_cases_per_million
+    ##  Min.   :-3933.0   Min.   : -361.000   Min.   :     0.0       
+    ##  1st Qu.:    0.0   1st Qu.:    0.143   1st Qu.:   606.9       
+    ##  Median :    2.0   Median :    2.429   Median :  4606.9       
+    ##  Mean   :  171.3   Mean   :  170.597   Mean   : 28330.7       
+    ##  3rd Qu.:   20.0   3rd Qu.:   20.714   3rd Qu.: 36486.1       
+    ##  Max.   :18057.0   Max.   :14705.714   Max.   :676472.4       
+    ##  NA's   :20594     NA's   :20724       NA's   :3754           
+    ##  new_cases_per_million new_cases_smoothed_per_million total_deaths_per_million
+    ##  Min.   :-13876.28     Min.   :-1936.106              Min.   :   0.00         
+    ##  1st Qu.:     0.04     1st Qu.:    1.589              1st Qu.:  18.16         
+    ##  Median :    11.32     Median :   18.344              Median : 123.46         
+    ##  Mean   :   161.77     Mean   :  160.211              Mean   : 500.99         
+    ##  3rd Qu.:    99.71     3rd Qu.:  117.951              3rd Qu.: 694.57         
+    ##  Max.   : 51427.49     Max.   :16052.608              Max.   :6298.55         
+    ##  NA's   :3779          NA's   :4925                   NA's   :21500           
+    ##  new_deaths_per_million new_deaths_smoothed_per_million reproduction_rate
+    ##  Min.   :-75.911        Min.   :-10.844                 Min.   :-0.04    
+    ##  1st Qu.:  0.000        1st Qu.:  0.017                 1st Qu.: 0.82    
+    ##  Median :  0.127        Median :  0.284                 Median : 1.00    
+    ##  Mean   :  1.683        Mean   :  1.674                 Mean   : 1.01    
+    ##  3rd Qu.:  1.364        3rd Qu.:  1.738                 3rd Qu.: 1.18    
+    ##  Max.   :453.772        Max.   :144.167                 Max.   : 6.09    
+    ##  NA's   :21330          NA's   :21460                   NA's   :40680    
+    ##   icu_patients    icu_patients_per_million hosp_patients   
+    ##  Min.   :    0    Min.   :  0.00           Min.   :     0  
+    ##  1st Qu.:   28    1st Qu.:  3.97           1st Qu.:   124  
+    ##  Median :  152    Median : 13.50           Median :   669  
+    ##  Mean   :  914    Mean   : 23.92           Mean   :  4145  
+    ##  3rd Qu.:  608    3rd Qu.: 34.98           3rd Qu.:  2638  
+    ##  Max.   :28891    Max.   :177.28           Max.   :154536  
+    ##  NA's   :141166   NA's   :141166           NA's   :140411  
+    ##  hosp_patients_per_million weekly_icu_admissions
+    ##  Min.   :   0.00           Min.   :   0.0       
+    ##  1st Qu.:  25.49           1st Qu.:  47.0       
+    ##  Median :  81.00           Median : 222.0       
+    ##  Mean   : 162.50           Mean   : 474.8       
+    ##  3rd Qu.: 219.52           3rd Qu.: 683.2       
+    ##  Max.   :1544.08           Max.   :4838.0       
+    ##  NA's   :140411            NA's   :158959       
+    ##  weekly_icu_admissions_per_million weekly_hosp_admissions
+    ##  Min.   :  0.00                    Min.   :     0        
+    ##  1st Qu.:  3.87                    1st Qu.:   314        
+    ##  Median : 11.13                    Median :  1320        
+    ##  Mean   : 15.57                    Mean   :  6133        
+    ##  3rd Qu.: 20.57                    3rd Qu.:  5183        
+    ##  Max.   :221.21                    Max.   :154692        
+    ##  NA's   :158959                    NA's   :153535        
+    ##  weekly_hosp_admissions_per_million   new_tests        total_tests       
+    ##  Min.   :  0.00                     Min.   :      1   Min.   :        0  
+    ##  1st Qu.: 23.03                     1st Qu.:   2460   1st Qu.:   364636  
+    ##  Median : 71.44                     Median :   9583   Median :  1883048  
+    ##  Mean   :102.44                     Mean   :  67777   Mean   : 16808427  
+    ##  3rd Qu.:140.77                     3rd Qu.:  38526   3rd Qu.:  8859484  
+    ##  Max.   :839.13                     Max.   :3740296   Max.   :806751537  
+    ##  NA's   :153535                     NA's   :97808     NA's   :95912      
+    ##  total_tests_per_thousand new_tests_per_thousand new_tests_smoothed
+    ##  Min.   :    0.00         Min.   :  0.00         Min.   :      0   
+    ##  1st Qu.:   33.78         1st Qu.:  0.25         1st Qu.:   2139   
+    ##  Median :  174.37         Median :  0.93         Median :   8485   
+    ##  Mean   :  716.94         Mean   :  3.18         Mean   :  60531   
+    ##  3rd Qu.:  682.45         3rd Qu.:  2.87         3rd Qu.:  35794   
+    ##  Max.   :27701.09         Max.   :534.01         Max.   :3080396   
+    ##  NA's   :95912            NA's   :97808          NA's   :81326     
+    ##  new_tests_smoothed_per_thousand positive_rate   tests_per_case    
+    ##  Min.   :   0.00                 Min.   :0.00    Min.   :     1.0  
+    ##  1st Qu.:   0.23                 1st Qu.:0.02    1st Qu.:     7.3  
+    ##  Median :   0.90                 Median :0.06    Median :    17.5  
+    ##  Mean   :   2.99                 Mean   :0.10    Mean   :   203.6  
+    ##  3rd Qu.:   2.68                 3rd Qu.:0.14    3rd Qu.:    52.9  
+    ##  Max.   :1592.26                 Max.   :0.99    Max.   :422065.6  
+    ##  NA's   :81326                   NA's   :86383   NA's   :86970     
+    ##  tests_units        total_vaccinations  people_vaccinated  
+    ##  Length:164243      Min.   :0.000e+00   Min.   :0.000e+00  
+    ##  Class :character   1st Qu.:5.798e+05   1st Qu.:3.872e+05  
+    ##  Mode  :character   Median :4.618e+06   Median :2.850e+06  
+    ##                     Mean   :1.666e+08   Mean   :8.590e+07  
+    ##                     3rd Qu.:2.866e+07   3rd Qu.:1.677e+07  
+    ##                     Max.   :1.065e+10   Max.   :4.928e+09  
+    ##                     NA's   :120098      NA's   :122229     
+    ##  people_fully_vaccinated total_boosters      new_vaccinations  
+    ##  Min.   :1.000e+00       Min.   :1.000e+00   Min.   :       0  
+    ##  1st Qu.:2.669e+05       1st Qu.:1.377e+03   1st Qu.:    6558  
+    ##  Median :2.152e+06       Median :3.674e+05   Median :   41128  
+    ##  Mean   :6.692e+07       Mean   :1.692e+07   Mean   : 1143243  
+    ##  3rd Qu.:1.331e+07       3rd Qu.:3.636e+06   3rd Qu.:  271082  
+    ##  Max.   :4.359e+09       Max.   :1.286e+09   Max.   :80548868  
+    ##  NA's   :124850          NA's   :147522      NA's   :127709    
+    ##  new_vaccinations_smoothed total_vaccinations_per_hundred
+    ##  Min.   :       0          Min.   :  0.00                
+    ##  1st Qu.:    1069          1st Qu.: 11.64                
+    ##  Median :    9398          Median : 56.60                
+    ##  Mean   :  520938          Mean   : 71.08                
+    ##  3rd Qu.:   65870          3rd Qu.:121.08                
+    ##  Max.   :43022924          Max.   :334.12                
+    ##  NA's   :81701             NA's   :120098                
+    ##  people_vaccinated_per_hundred people_fully_vaccinated_per_hundred
+    ##  Min.   :  0.00                Min.   :  0.00                     
+    ##  1st Qu.:  8.31                1st Qu.:  4.76                     
+    ##  Median : 35.32                Median : 25.82                     
+    ##  Mean   : 37.30                Mean   : 31.72                     
+    ##  3rd Qu.: 63.93                3rd Qu.: 56.82                     
+    ##  Max.   :123.79                Max.   :121.22                     
+    ##  NA's   :122229                NA's   :124850                     
+    ##  total_boosters_per_hundred new_vaccinations_smoothed_per_million
+    ##  Min.   : 0.00              Min.   :     0                       
+    ##  1st Qu.: 0.01              1st Qu.:   690                       
+    ##  Median : 2.32              Median :  2241                       
+    ##  Mean   :11.16              Mean   :  3347                       
+    ##  3rd Qu.:17.13              3rd Qu.:  4797                       
+    ##  Max.   :89.11              Max.   :117497                       
+    ##  NA's   :147522             NA's   :81701                        
+    ##  new_people_vaccinated_smoothed new_people_vaccinated_smoothed_per_hundred
+    ##  Min.   :        0              Min.   : 0.00                             
+    ##  1st Qu.:      437              1st Qu.: 0.03                             
+    ##  Median :     4055              Median : 0.07                             
+    ##  Mean   :   238368              Mean   : 0.15                             
+    ##  3rd Qu.:    27640              3rd Qu.: 0.19                             
+    ##  Max.   :100594079              Max.   :11.75                             
+    ##  NA's   :83011                  NA's   :83011                             
+    ##  stringency_index   population        population_density    median_age   
+    ##  Min.   :  0.00   Min.   :4.700e+01   Min.   :    0.137   Min.   :15.10  
+    ##  1st Qu.: 40.74   1st Qu.:1.172e+06   1st Qu.:   36.253   1st Qu.:22.20  
+    ##  Median : 54.63   Median :8.478e+06   Median :   85.129   Median :29.90  
+    ##  Mean   : 54.66   Mean   :1.476e+08   Mean   :  464.518   Mean   :30.57  
+    ##  3rd Qu.: 70.83   3rd Qu.:3.393e+07   3rd Qu.:  212.865   3rd Qu.:39.10  
+    ##  Max.   :100.00   Max.   :7.875e+09   Max.   :20546.766   Max.   :48.20  
+    ##  NA's   :35445    NA's   :1066        NA's   :18161       NA's   :28125  
+    ##  aged_65_older    aged_70_older    gdp_per_capita     extreme_poverty
+    ##  Min.   : 1.144   Min.   : 0.526   Min.   :   661.2   Min.   : 0.10  
+    ##  1st Qu.: 3.507   1st Qu.: 2.063   1st Qu.:  4449.9   1st Qu.: 0.60  
+    ##  Median : 6.614   Median : 3.915   Median : 12951.8   Median : 2.20  
+    ##  Mean   : 8.764   Mean   : 5.535   Mean   : 19649.4   Mean   :13.58  
+    ##  3rd Qu.:14.178   3rd Qu.: 8.678   3rd Qu.: 27936.9   3rd Qu.:21.20  
+    ##  Max.   :27.049   Max.   :18.493   Max.   :116935.6   Max.   :77.60  
+    ##  NA's   :29601    NA's   :28855    NA's   :27468      NA's   :74156  
+    ##  cardiovasc_death_rate diabetes_prevalence female_smokers   male_smokers  
+    ##  Min.   : 79.37        Min.   : 0.99       Min.   : 0.10   Min.   : 7.70  
+    ##  1st Qu.:168.71        1st Qu.: 5.31       1st Qu.: 1.90   1st Qu.:21.60  
+    ##  Median :243.81        Median : 7.17       Median : 6.30   Median :31.40  
+    ##  Mean   :260.18        Mean   : 8.21       Mean   :10.63   Mean   :32.78  
+    ##  3rd Qu.:329.94        3rd Qu.:10.43       3rd Qu.:19.30   3rd Qu.:41.30  
+    ##  Max.   :724.42        Max.   :30.53       Max.   :44.00   Max.   :78.10  
+    ##  NA's   :29169         NA's   :22088       NA's   :59510   NA's   :60947  
+    ##  handwashing_facilities hospital_beds_per_thousand life_expectancy
+    ##  Min.   :  1.19         Min.   : 0.10              Min.   :53.28  
+    ##  1st Qu.: 19.35         1st Qu.: 1.30              1st Qu.:69.50  
+    ##  Median : 49.84         Median : 2.40              Median :75.05  
+    ##  Mean   : 50.80         Mean   : 3.03              Mean   :73.58  
+    ##  3rd Qu.: 83.24         3rd Qu.: 4.00              3rd Qu.:78.93  
+    ##  Max.   :100.00         Max.   :13.80              Max.   :86.75  
+    ##  NA's   :96529          NA's   :42112              NA's   :10920  
+    ##  human_development_index excess_mortality_cumulative_absolute
+    ##  Min.   :0.394           Min.   : -37726.1                   
+    ##  1st Qu.:0.602           1st Qu.:    -75.8                   
+    ##  Median :0.743           Median :   3400.1                   
+    ##  Mean   :0.726           Mean   :  37424.1                   
+    ##  3rd Qu.:0.845           3rd Qu.:  24510.7                   
+    ##  Max.   :0.957           Max.   :1080748.1                   
+    ##  NA's   :29694           NA's   :158581                      
+    ##  excess_mortality_cumulative excess_mortality
+    ##  Min.   :-28.45              Min.   :-95.92  
+    ##  1st Qu.: -0.73              1st Qu.: -0.75  
+    ##  Median :  6.04              Median :  7.20  
+    ##  Mean   :  9.38              Mean   : 15.97  
+    ##  3rd Qu.: 14.50              3rd Qu.: 22.88  
+    ##  Max.   :111.01              Max.   :374.73  
+    ##  NA's   :158581              NA's   :158581  
+    ##  excess_mortality_cumulative_per_million
+    ##  Min.   :-1826.60                       
+    ##  1st Qu.:  -29.87                       
+    ##  Median :  469.75                       
+    ##  Mean   :  965.19                       
+    ##  3rd Qu.: 1650.52                       
+    ##  Max.   : 8951.02                       
+    ##  NA's   :158581
+
+``` r
+ggplot(data = covid_data, 
+       mapping = aes(x = human_development_index)) +
+  geom_histogram()
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+    ## Warning: Removed 29694 rows containing non-finite values (stat_bin).
+
+![](proposal_files/figure-gfm/preliminary_exploration_HDI-1.png)<!-- -->
+
+It seems that the histogram of human development index skew to the
+right. That might explain why many counrtries are suffering dealing with
+Covid-19 in earlier stages.
+
+``` r
+ggplot(data = covid_data, 
+       mapping = aes(x = hospital_beds_per_thousand)) +
+  geom_histogram(binwidth = 1)
+```
+
+    ## Warning: Removed 42112 rows containing non-finite values (stat_bin).
+
+![](proposal_files/figure-gfm/preliminary_exploration_beds-1.png)<!-- -->
 
 3.  The statistical method(s) that you believe will be useful in
     answering your question(s). (You can update these later as you work
     on your project.) What results from these specific statistical
     methods are needed to support your hypothesized answer?
 
--   
--   
--   
+-   Correlations
+-   Multiple linear regressions to conduct our study
+-   Some machine learning algorithnms (like KNN and random forest)
+-   Difference in Difference regression
+
+We would expect that hospital beds, smoking behaviors, population
+density, and proportion of over 65-year-old (and other variables we may
+add in the future) will positively predict covid cases and deaths, while
+the HDI and some other variables will negatively predict covid cases and
+deaths. We may also use some machine learning algorithms to see what are
+some good predictors.
