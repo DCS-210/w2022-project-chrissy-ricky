@@ -6,12 +6,13 @@ output: github_document
 
 ```{r load-packages, message = FALSE}
 library(tidyverse)
+library(readr)
 library(broom)
 library(fivethirtyeight)
 library(WDI)
 ```
 
-## 0. Requirement
+## 0. Requirements
 You will write your proposal in the proposal.Rmd file in your Github project.
 
 Section 1 - Introduction: The introduction should introduce your general research question and your data (where it came from, how it was collected, what are the cases, what are the variables, etc.).
@@ -20,40 +21,77 @@ Section 2 - Data: Place your data in the /data folder, and add dimensions and co
 
 Section 3 - Data analysis plan:
 
-The outcome (response, Y) and predictor (explanatory, X) variables you will use to answer your question.
-The comparison groups you will use, if applicable.
-Very preliminary exploratory data analysis, including some summary statistics and visualizations, along with some explanation on how they help you learn more about your data. (You can add to these later as you work on your project.)
-The statistical method(s) that you believe will be useful in answering your question(s). (You can update these later as you work on your project.)
+1. The outcome (response, Y) and predictor (explanatory, X) variables you will use to answer your question. The comparison groups you will use, if applicable.
+
+2. Very preliminary exploratory data analysis, including some summary statistics and visualizations, along with some explanation on how they help you learn more about your data. (You can add to these later as you work on your project.)
+
+3. The statistical method(s) that you believe will be useful in answering your question(s). (You can update these later as you work on your project.)
 What results from these specific statistical methods are needed to support your hypothesized answer?
-Each section should be no more than 1 page (excluding figures). You can check a print preview to confirm length.
+
+Finally, each section should be no more than 1 page (excluding figures). You can check a print preview to confirm length.
 
 ## 1. Introduction
 
-```{r}
-data <- readr::read_csv(file = "../data/xx.csv")
-```
+Section 1 - Introduction: The introduction should introduce your general research question and your data (where it came from, how it was collected, what are the cases, what are the variables, etc.).
+
+1. 
+
+2.
+
+3.
+
 
 
 ## 2. Data
 
-We will use data from two sources: (1) Covid-19 related data (owid-covid data), (2) World Bank World Development Indicator. Covid-related data is coming from this repo: https://github.com/owid/covid-19-data.git; WDI is coming from the WDI package in R.
+Section 2 - Data: Place your data in the /data folder, and add dimensions and codebook to the README in that folder. Then print out the output of glimpse() or skim() of your data frame.
 
-## 3. Data analysis plan
+We will use data from two sources: (1) Covid-19 related data (owid-covid data), (2) World Bank World Development Indicator. Covid-related data is coming from this repo: https://github.com/owid/covid-19-data.git; WDI is coming from the WDI package in R. The owid-covid-data should be sufficient for our analysis, but we may need additional data from WDI, so we include WDI here in case we may need it in the future.
 
+```{r import_data}
+covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
+covid_data_code <- readr::read_csv(file = "../data/owid-covid-codebook.csv")
+```
 
-## 4. Appendix
+```{r view_data}
+glimpse(covid_data)
+view(covid_data_code)
+```
 
-Here are some other potential datasets we can use!
-1. library(fivethirtyeight): https://fivethirtyeight-r.netlify.app/articles/fivethirtyeight.html
+As mentioned eariler, we may not use the following data, but I just include them in case we may use if as we move on for our project:
+```{r WDI}
+example <- WDI(indicator = c("SP.RUR.TOTL.ZS", "EN.ATM.CO2E.PC", "SP.POP.GROW", extra = TRUE))
+glimpse(example)
+```
+
 ```{r fivethirtyeight}
 view(US_births_2000_2014)
 view(US_births_1994_2003)
 ```
-2. https://www.icpsr.umich.edu/web/NACJD/search/studies?q=&FORMAT_FACET=R
-3. World Bank WDI
-```{r WDI}
-example <- WDI(indicator = c("SP.RUR.TOTL.ZS", "EN.ATM.CO2E.PC", "SP.POP.GROW", extra = TRUE))
-view(example)
-```
+
+## 3. Data analysis plan
+
+Section 3 - Data analysis plan:
+
+1. The outcome (response, Y) and predictor (explanatory, X) variables you will use to answer your question. The comparison groups you will use, if applicable.
+
+-
+-
+-
+
+2. Very preliminary exploratory data analysis, including some summary statistics and visualizations, along with some explanation on how they help you learn more about your data. (You can add to these later as you work on your project.)
+
+-
+-
+-
+
+3. The statistical method(s) that you believe will be useful in answering your question(s). (You can update these later as you work on your project.)
+What results from these specific statistical methods are needed to support your hypothesized answer?
+
+- 
+-
+-
+
+
 
 
