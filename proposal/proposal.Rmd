@@ -36,13 +36,14 @@ data <- readr::read_csv(file = "../data/xx.csv")
 
 ## 2. Data
 
+We will use data from two sources: (1) Covid-19 related data (owid-covid data), (2) World Bank World Development Indicator. Covid-related data is coming from this repo: https://github.com/owid/covid-19-data.git; WDI is coming from the WDI package in R.
 
 ## 3. Data analysis plan
 
 
 ## 4. Appendix
 
-Here are some potential datasets we can use!
+Here are some other potential datasets we can use!
 1. library(fivethirtyeight): https://fivethirtyeight-r.netlify.app/articles/fivethirtyeight.html
 ```{r fivethirtyeight}
 view(US_births_2000_2014)
