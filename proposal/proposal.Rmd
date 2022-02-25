@@ -36,17 +36,13 @@ Section 1 - Introduction: The introduction should introduce your general researc
 
 1. We intend on using covid and world indicator to examine what cause differences in how different countries experienced the pandemic/ what caused different pandemic outcomes across the world. 
 
-2.
-
-3.
-
+We will use data from two sources: (1) Covid-19 related data (owid-covid data), (2) World Bank World Development Indicator. Covid-related data is coming from this repo: https://github.com/owid/covid-19-data.git; WDI is coming from the WDI package in R. The owid-covid-data should be sufficient for our analysis, but we may need additional data from WDI, so we include WDI here in case we may need it in the future.
 
 
 ## 2. Data
 
 Section 2 - Data: Place your data in the /data folder, and add dimensions and codebook to the README in that folder. Then print out the output of glimpse() or skim() of your data frame.
 
-We will use data from two sources: (1) Covid-19 related data (owid-covid data), (2) World Bank World Development Indicator. Covid-related data is coming from this repo: https://github.com/owid/covid-19-data.git; WDI is coming from the WDI package in R. The owid-covid-data should be sufficient for our analysis, but we may need additional data from WDI, so we include WDI here in case we may need it in the future.
 
 ```{r import_data}
 covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
@@ -62,6 +58,7 @@ As mentioned eariler, we may not use the following data, but I just include them
 ```{r WDI}
 example <- WDI(indicator = c("SP.RUR.TOTL.ZS", "EN.ATM.CO2E.PC", "SP.POP.GROW", extra = TRUE))
 glimpse(example)
+view(example)
 ```
 
 ```{r fivethirtyeight}

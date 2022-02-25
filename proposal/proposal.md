@@ -52,22 +52,18 @@ collected, what are the cases, what are the variables, etc.).
     differences in how different countries experienced the pandemic/
     what caused different pandemic outcomes across the world.
 
-2.  
-
-3.  
-
-## 2. Data
-
-Section 2 - Data: Place your data in the /data folder, and add
-dimensions and codebook to the README in that folder. Then print out the
-output of glimpse() or skim() of your data frame.
-
 We will use data from two sources: (1) Covid-19 related data (owid-covid
 data), (2) World Bank World Development Indicator. Covid-related data is
 coming from this repo: <https://github.com/owid/covid-19-data.git>; WDI
 is coming from the WDI package in R. The owid-covid-data should be
 sufficient for our analysis, but we may need additional data from WDI,
 so we include WDI here in case we may need it in the future.
+
+## 2. Data
+
+Section 2 - Data: Place your data in the /data folder, and add
+dimensions and codebook to the README in that folder. Then print out the
+output of glimpse() or skim() of your data frame.
 
 ``` r
 covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
@@ -206,6 +202,10 @@ glimpse(example)
     ## $ ``      <dbl> 68.76586, 68.02007, 67.27088, 66.49840, 65.69640, 64.85230, 64…
     ## $ ``      <dbl> 0.6092683, 0.6626177, 0.7271170, 0.8531159, 0.9723814, 1.13867…
     ## $ ``      <dbl> NA, 2.740659, 2.755250, 2.773687, 2.797644, 2.823648, 2.858245…
+
+``` r
+view(example)
+```
 
 ``` r
 view(US_births_2000_2014)
