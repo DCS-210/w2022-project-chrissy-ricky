@@ -100,6 +100,7 @@ ggplot(data = covid_data,
 3. The statistical method(s) that you believe will be useful in answering your question(s). (You can update these later as you work on your project.)
 What results from these specific statistical methods are needed to support your hypothesized answer?
 
+- (potentially) some interactive maps or just maps
 - Correlations
 - Multiple linear regressions to conduct our study
 - Some machine learning algorithnms (like KNN and random forest)
