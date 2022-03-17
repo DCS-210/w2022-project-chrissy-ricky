@@ -22,10 +22,10 @@ library(tidymodels)
 library(palmerpenguins)
 library(knitr)
 library(xaringanthemer)
-#library(readr)
-#library(broom)
-#library(fivethirtyeight)
-#library(WDI)
+library(readr)
+library(broom)
+library(fivethirtyeight)
+library(WDI)
 ```
 
 ```{r setup, include=FALSE}
