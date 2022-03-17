@@ -1,6 +1,6 @@
 ---
-title: Project title
-author: by Team name
+title: Covid-19 & Trends
+author: Chrissy & Ricky
 output: github_document
 ---
 
