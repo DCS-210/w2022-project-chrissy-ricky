@@ -1,0 +1,33 @@
+DCS210 Project
+When editing presentation use this command: xaringan::inf_mr(), so that we don’t need to knit every time
+
+Part 1 
+Introducing to the topic
+Why we are working on the topic
+
+Part 2 
+Literature review
+	-Covid-19 and weather data
+	-Covid-19 prediction models
+	-Covid-19 risks (machine learning)
+
+Part 3
+Data Analyses - Descriptive stats
+	-leaflet mapping!!
+	-summary tables
+	-histogram
+	-and so on
+
+Part 4
+Data Analyses - more advanced
+	-simple (multiple) linear regression
+	-Difference in difference
+	-regression Discontinuity
+	-machine learning
+
+Part 5
+Limitation of our study
+Potential future research
+
+Part 6
+Conlusion
