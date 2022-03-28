@@ -1,15 +1,15 @@
 ---
 title: "data analysis"
 author: "Chrissy & Ricky"
-date: '2022-03-17'
+date: '`r Sys.Date()`'
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+## Data Cleaning
+
+```{r data-cleaning, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-## R Markdown
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
@@ -19,7 +19,7 @@ When you click the **Knit** button a document will be generated that includes bo
 summary(cars)
 ```
 
-## Including Plots
+## Create subsets of data
 
 You can also embed plots, for example:
 
@@ -28,3 +28,33 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Preliminary data analysis
+
+```{r}
+
+```
+
+
+
+
+
+## Statistical analyses and regressions
+
+```{r}
+
+```
+
+
+
+
+
+## More advanced models and machine learning
+
+```{r}
+
+```
+
+
+
+
