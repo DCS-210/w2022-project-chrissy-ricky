@@ -5,27 +5,41 @@ date: '`r Sys.Date()`'
 output: html_document
 ---
 
-## Data Cleaning
-
-```{r data-cleaning, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r load-packages, message = FALSE}
+library(tidyverse)
+library(readr)
+library(broom)
+library(fivethirtyeight)
+library(WDI)
 ```
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r import_data}
+covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
+covid_data_codebook <- readr::read_csv(file = "../data/owid-covid-codebook.csv")
+```
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## Data Cleaning and Manipulation
 
-```{r cars}
-summary(cars)
+The data is from 2020-02-24 to 2022-02-24
+```{r data-cleaning, include=FALSE}
+covid_total <- covid_data %>%
+  filter(date == "2022-02-24")
+
+covid_country <- covid_total %>%
+  filter(is.na(continent) == FALSE)
+
+covid_other <- covid_total %>%
+  filter(is.na(continent) == TRUE)
+```
+
+```{r create-variables}
+covid_country <- covid_country %>%
+  mutate(percentage_cases = total_cases/population) %>%
+  mutate(percentage_deaths = total_deaths/population)
+covid_country     
 ```
 
 ## Create subsets of data
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
