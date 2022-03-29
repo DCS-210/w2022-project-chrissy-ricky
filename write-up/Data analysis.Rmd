@@ -6,11 +6,17 @@ output: html_document
 ---
 
 ```{r load-packages, message = FALSE}
-library(tidyverse)
+library(tidyverse) ## For plotting and data wrangling.
 library(readr)
 library(broom)
 library(fivethirtyeight)
 library(WDI)
+library(leaflet) ## For leaflet interactive maps
+library(sf) ## For spatial data
+library(RColorBrewer) ## For colour palettes
+library(htmltools) ## For html
+library(leafsync) ## For placing plots side by side
+library(kableExtra) ## Table  output (in slides)
 ```
 
 ```{r import_data}
@@ -34,8 +40,8 @@ covid_other <- covid_total %>%
 
 ```{r create-variables}
 covid_country <- covid_country %>%
-  mutate(percentage_cases = total_cases/population) %>%
-  mutate(percentage_deaths = total_deaths/population)
+  mutate(percentage_cases = total_cases/population,
+         percentage_deaths = total_deaths/population)
 covid_country     
 ```
 
@@ -49,19 +55,11 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 ```
 
-
-
-
-
 ## Statistical analyses and regressions
 
 ```{r}
 
 ```
-
-
-
-
 
 ## More advanced models and machine learning
 
