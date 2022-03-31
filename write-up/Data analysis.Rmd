@@ -6,11 +6,18 @@ output: html_document
 ---
 
 ```{r load-packages, message = FALSE}
-library(tidyverse)
+library(tidyverse) ## For plotting and data wrangling.
 library(readr)
 library(broom)
 library(fivethirtyeight)
 library(WDI)
+library(rgdal)
+library(leaflet) ## For leaflet interactive maps
+library(sf) ## For spatial data
+library(RColorBrewer) ## For colour palettes
+library(htmltools) ## For html
+library(leafsync) ## For placing plots side by side
+library(kableExtra) ## Table  output (in slides)
 ```
 
 ```{r import_data}
@@ -34,8 +41,10 @@ covid_other <- covid_total %>%
 
 ```{r create-variables}
 covid_country <- covid_country %>%
-  mutate(percentage_cases = total_cases/population) %>%
-  mutate(percentage_deaths = total_deaths/population)
+  mutate(percentage_cases = total_cases/population,
+         percentage_deaths = total_deaths/population,
+         percentage_vaccination = people_fully_vaccinated/population,
+         percentage_booster = total_boosters/population)
 covid_country     
 ```
 
@@ -46,22 +55,30 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 ## Preliminary data analysis
 
 ```{r}
-
+library(rgdal)
+my_spdf <- readOGR( 
+  dsn= paste0(getwd(),"/DATA/world_shape_file/") , 
+  layer="TM_WORLD_BORDERS-0.3",
+  verbose=FALSE
+)
 ```
 
-
-
-
-
-## Statistical analyses and regressions
+```{r maps}
+world_df <- st_read(system.file("data/world_shape_file/TM_WORLD_BORDERS-0.3.shp", package="sf"))
+```
 
 ```{r}
 
 ```
 
+## Statistical analyses and regressions
 
-
-
+```{r linear-models}
+linear_reg() %>%
+  set_engine("lm") %>%
+  fit(total_cases_per_million ~ population_density + hospital_beds_per_thousand, data = covid_country) %>%
+  tidy()
+```
 
 ## More advanced models and machine learning
 
