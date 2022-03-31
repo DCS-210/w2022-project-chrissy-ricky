@@ -4,6 +4,8 @@ Chrissy & Ricky
 
 ``` r
 library(tidyverse)
+library(gganimate)
+library(foreign)
 library(readr)
 library(broom)
 library(fivethirtyeight)
@@ -50,14 +52,19 @@ collected, what are the cases, what are the variables, etc.).
 
 1.  We intend on using covid and world indicators to examine what cause
     differences in how different countries experienced the pandemic/
-    what might have caused different pandemic outcomes across the world.
+    what might have caused different pandemic outcomes across the world
+    (in terms of covid cases and deaths).
 
 We will use data from two sources: (1) Covid-19 related data (owid-covid
-data), (2) World Bank World Development Indicator. Covid-related data is
-coming from this repo: <https://github.com/owid/covid-19-data.git>; WDI
-is coming from the WDI package in R. The owid-covid-data should be
-sufficient for our analysis, but we may need additional data from WDI,
-so we include WDI here in case we may need it in the future.
+data), which includes general covid cases and deaths information from
+JHU, some variables from World Bank Development Indicators (such as
+population density, GDP per capita), and some variables from CDC (such
+as ICU beds), (2) World Bank World Development Indicator. Covid-related
+data is coming from this repo:
+<https://github.com/owid/covid-19-data.git>; WDI is coming from the WDI
+package in R. The owid-covid-data should be sufficient for our analysis,
+but we may need additional data from WDI, so we include WDI here in case
+we may need it in the future.
 
 ## 2. Data
 
@@ -618,6 +625,7 @@ ggplot(data = covid_data,
     on your project.) What results from these specific statistical
     methods are needed to support your hypothesized answer?
 
+-   (potentially) some interactive maps or just maps
 -   Correlations
 -   Multiple linear regressions to conduct our study
 -   Some machine learning algorithnms (like KNN and random forest)
@@ -629,3 +637,163 @@ add in the future) will positively predict covid cases and deaths, while
 the HDI and some other variables will negatively predict covid cases and
 deaths. We may also use some machine learning algorithms to see what are
 some good predictors.
+
+``` r
+covid_data1 <- covid_data %>%
+  mutate(vaccine_introduced = ifelse(is.na(total_vaccinations), 0, 1)) %>%
+    mutate(first_vaccination = ifelse(as.Date(date) >= as.Date("2021-02-28"), 1, 0)) %>%
+             mutate(interaction_term = interaction(vaccine_introduced * first_vaccination))
+```
+
+``` r
+covid_data2 <- covid_data1 %>%
+  select(vaccine_introduced, total_vaccinations, date, first_vaccination, interaction_term, location, new_cases_per_million, weekly_hosp_admissions_per_million)
+```
+
+``` r
+didreg = lm(new_cases_per_million ~ vaccine_introduced + first_vaccination + interaction_term, data = covid_data2)
+summary(didreg)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = new_cases_per_million ~ vaccine_introduced + first_vaccination + 
+    ##     interaction_term, data = covid_data2)
+    ## 
+    ## Residuals:
+    ##    Min     1Q Median     3Q    Max 
+    ## -14190   -200    -56    -29  51227 
+    ## 
+    ## Coefficients:
+    ##                    Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)          55.937      2.417   23.14  < 2e-16 ***
+    ## vaccine_introduced  178.629     11.202   15.95  < 2e-16 ***
+    ## first_vaccination   144.604      4.057   35.65  < 2e-16 ***
+    ## interaction_term1   -65.847     12.126   -5.43 5.63e-08 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 662.9 on 160460 degrees of freedom
+    ##   (3779 observations deleted due to missingness)
+    ## Multiple R-squared:  0.02552,    Adjusted R-squared:  0.02551 
+    ## F-statistic:  1401 on 3 and 160460 DF,  p-value: < 2.2e-16
+
+``` r
+didreg2 = lm(weekly_hosp_admissions_per_million ~ vaccine_introduced + first_vaccination + interaction_term, data = covid_data2)
+summary(didreg2)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = weekly_hosp_admissions_per_million ~ vaccine_introduced + 
+    ##     first_vaccination + interaction_term, data = covid_data2)
+    ## 
+    ## Residuals:
+    ##     Min      1Q  Median      3Q     Max 
+    ## -170.08  -72.84  -32.57   34.65  732.99 
+    ## 
+    ## Coefficients:
+    ##                    Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)          79.890      1.677  47.637   <2e-16 ***
+    ## vaccine_introduced   96.715      4.084  23.681   <2e-16 ***
+    ## first_vaccination     8.358      4.688   1.783   0.0746 .  
+    ## interaction_term1   -74.924      6.170 -12.142   <2e-16 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 107.4 on 10704 degrees of freedom
+    ##   (153535 observations deleted due to missingness)
+    ## Multiple R-squared:  0.05424,    Adjusted R-squared:  0.05397 
+    ## F-statistic: 204.6 on 3 and 10704 DF,  p-value: < 2.2e-16
+
+``` r
+covid_data2 %>%
+  group_by(date, interaction_term) %>%
+  summarize(y = mean(weekly_hosp_admissions_per_million)) -> sumdata
+```
+
+    ## `summarise()` has grouped output by 'date'. You can override using the `.groups` argument.
+
+``` r
+ggplot() + geom_line(data = covid_data2, aes(x = date, y = weekly_hosp_admissions_per_million, group = location, color = interaction_term),
+                     size = 1,alpha = 0.25) + 
+  geom_vline(xintercept = as.Date(0, origin = "2021-02-28")) + # intervention point
+  scale_x_date(breaks = unique(covid_data2$date))
+```
+
+    ## Warning: Removed 146616 row(s) containing missing values (geom_path).
+
+![](proposal_files/figure-gfm/make-visual1-1.png)<!-- -->
+
+``` r
+covid_data3 <- covid_data1 %>%
+  select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred)
+```
+
+``` r
+covid_data3 <- covid_data3 %>%
+  mutate(vaccine_introduced = ifelse(people_fully_vaccinated_per_hundred >= 50, 0, 1)) %>%
+    mutate(time = ifelse(as.Date(date) >= as.Date("2021-06-21"), 1, 0)) %>%
+             mutate(treated = interaction(vaccine_introduced * time))
+```
+
+``` r
+didreg3 = lm(weekly_hosp_admissions_per_million ~ vaccine_introduced + time + treated, data = covid_data3)
+summary(didreg3)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = weekly_hosp_admissions_per_million ~ vaccine_introduced + 
+    ##     time + treated, data = covid_data3)
+    ## 
+    ## Residuals:
+    ##     Min      1Q  Median      3Q     Max 
+    ## -132.22  -82.71  -30.94   34.72  734.68 
+    ## 
+    ## Coefficients:
+    ##                    Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)           11.76      12.25   0.961    0.337    
+    ## vaccine_introduced   122.40      12.49   9.798  < 2e-16 ***
+    ## time                 101.83      12.43   8.193  3.1e-16 ***
+    ## treated1            -131.54      13.66  -9.632  < 2e-16 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 116.8 on 5882 degrees of freedom
+    ## Multiple R-squared:  0.02147,    Adjusted R-squared:  0.02097 
+    ## F-statistic: 43.02 on 3 and 5882 DF,  p-value: < 2.2e-16
+
+``` r
+covid_data3 %>%
+  group_by(date, treated) %>%
+  summarize(y = mean(weekly_hosp_admissions_per_million)) -> sumdata
+```
+
+    ## `summarise()` has grouped output by 'date'. You can override using the `.groups` argument.
+
+``` r
+ggplot() + geom_line(data = covid_data3, aes(x = date, y = weekly_hosp_admissions_per_million, group = location, color = treated),
+                     size = 1,alpha = 0.25) + 
+  geom_vline(xintercept = as.Date(0, origin = "2021-06-21")) + # intervention point
+  scale_x_date(breaks = unique(covid_data3$date))
+```
+
+![](proposal_files/figure-gfm/make-visual-1.png)<!-- -->
+
+``` r
+covid_data3 %>%
+  group_by(date, treated) %>%
+  summarize(y = mean(new_deaths_per_million)) -> sumdata
+```
+
+    ## `summarise()` has grouped output by 'date'. You can override using the `.groups` argument.
+
+``` r
+ggplot() + geom_line(data = covid_data3, aes(x = date, y = new_deaths_per_million, group = location, color = treated),
+                     size = 1,alpha = 0.25) + 
+  geom_vline(xintercept = as.Date(0, origin = "2021-06-21")) + # intervention point
+  scale_x_date(breaks = unique(covid_data3$date))
+```
+
+![](proposal_files/figure-gfm/make-visual2-1.png)<!-- -->

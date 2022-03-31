@@ -6,6 +6,8 @@ output: github_document
 
 ```{r load-packages, message = FALSE}
 library(tidyverse)
+library(gganimate)
+library(foreign)
 library(readr)
 library(broom)
 library(fivethirtyeight)
@@ -108,6 +110,78 @@ What results from these specific statistical methods are needed to support your 
 
 We would expect that hospital beds, smoking behaviors, population density, and proportion of over 65-year-old (and other variables we may add in the future) will positively predict covid cases and deaths, while the HDI and some other variables will negatively predict covid cases and deaths. We may also use some machine learning algorithms to see what are some good predictors.
 
+```{r make-dummy}
+covid_data1 <- covid_data %>%
+  mutate(vaccine_introduced = ifelse(is.na(total_vaccinations), 0, 1)) %>%
+    mutate(first_vaccination = ifelse(as.Date(date) >= as.Date("2021-02-28"), 1, 0)) %>%
+             mutate(interaction_term = interaction(vaccine_introduced * first_vaccination))
+  
+```
+
+```{r make-dummy2}
+covid_data2 <- covid_data1 %>%
+  select(vaccine_introduced, total_vaccinations, date, first_vaccination, interaction_term, location, new_cases_per_million, weekly_hosp_admissions_per_million)
+```
+
+
+```{r make-regression1}
+didreg = lm(new_cases_per_million ~ vaccine_introduced + first_vaccination + interaction_term, data = covid_data2)
+summary(didreg)
+```
+
+```{r make-regression2}
+didreg2 = lm(weekly_hosp_admissions_per_million ~ vaccine_introduced + first_vaccination + interaction_term, data = covid_data2)
+summary(didreg2)
+```
+
+
+```{r make-visual1}
+covid_data2 %>%
+  group_by(date, interaction_term) %>%
+  summarize(y = mean(weekly_hosp_admissions_per_million)) -> sumdata
+ggplot() + geom_line(data = covid_data2, aes(x = date, y = weekly_hosp_admissions_per_million, group = location, color = interaction_term),
+                     size = 1,alpha = 0.25) + 
+  geom_vline(xintercept = as.Date(0, origin = "2021-02-28")) + # intervention point
+  scale_x_date(breaks = unique(covid_data2$date))
+```
 
 
 
+```{r make-dataset2}
+covid_data3 <- covid_data1 %>%
+  select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred)
+```
+
+
+
+```{r make-dummy-50%}
+covid_data3 <- covid_data3 %>%
+  mutate(vaccine_introduced = ifelse(people_fully_vaccinated_per_hundred >= 50, 0, 1)) %>%
+    mutate(time = ifelse(as.Date(date) >= as.Date("2021-06-21"), 1, 0)) %>%
+             mutate(treated = interaction(vaccine_introduced * time))
+```
+
+```{r make-regression3}
+didreg3 = lm(weekly_hosp_admissions_per_million ~ vaccine_introduced + time + treated, data = covid_data3)
+summary(didreg3)
+```
+
+```{r make-visual}
+covid_data3 %>%
+  group_by(date, treated) %>%
+  summarize(y = mean(weekly_hosp_admissions_per_million)) -> sumdata
+ggplot() + geom_line(data = covid_data3, aes(x = date, y = weekly_hosp_admissions_per_million, group = location, color = treated),
+                     size = 1,alpha = 0.25) + 
+  geom_vline(xintercept = as.Date(0, origin = "2021-06-21")) + # intervention point
+  scale_x_date(breaks = unique(covid_data3$date))
+```
+
+```{r make-visual2}
+covid_data3 %>%
+  group_by(date, treated) %>%
+  summarize(y = mean(new_deaths_per_million)) -> sumdata
+ggplot() + geom_line(data = covid_data3, aes(x = date, y = new_deaths_per_million, group = location, color = treated),
+                     size = 1,alpha = 0.25) + 
+  geom_vline(xintercept = as.Date(0, origin = "2021-06-21")) + # intervention point
+  scale_x_date(breaks = unique(covid_data3$date))
+```
