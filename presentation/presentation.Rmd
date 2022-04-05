@@ -41,7 +41,7 @@ style_xaringan(
 )
 ```
 
-## Outline
+## Outline 
 
 - Introduction
 
@@ -57,11 +57,16 @@ style_xaringan(
 
 ---
 
-## A statement of the overall goal / research question
+## Research Question
 
-- Our research studies...
+- In our research, we are trying to use Covid-19 related data, together with other relevant
+data to find potential predictors for Covid-19 cases, deaths, or vaccination rates. 
 
-- Our goal is to...
+? how to add a navigation bar below 
+
+? how to change font size
+
+? how to adjust positioning of texts
 
 ---
 
@@ -77,11 +82,13 @@ style_xaringan(
 
 ---
 
-# Introduction - details
+# Introduction 
 
-- Click the `Knit` button to compile your presentation
+COVID-19, also known as Coronavirus disease 2019 is a contagious disease caused by a virus, the severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)
 
-- Make sure to commit and push all resulting files to your GitHub repo
+Up until yesterday, there are over xxx infections and xxx deaths since the beginning of 2020
+
+Although no one can predict a pandemic like this, with the help of data, we might be able to use available data to, for example, evaluate risks, so that the virus can be better managed or even contained in earlier stages. 
 
 ---
 
@@ -89,68 +96,39 @@ class: inverse, middle, center
 
 # Literature Review
 
----
-
-# Literature Review - details
-
-- The presentation is created using the `xaringan` package
-
-- Use `---` to separate slides and `--` for incremental builds
-
---
-
-- Like this
-
----
-
-# Literature Review - details
-
-You can use plain text
-
-- or bullet points
-
-.pull-left[
-or text in two columns $^*$
-]
-.pull-right[
-- like
-- this
-]
-
-.footnote[
-[*] And add footnotes
-]
-
----
-
-# Literature Review - details
-
-```{r boring-regression}
-# a boring regression
-model <- lm(dist ~ speed, data = cars)
-tidy(model)
-glance(model)
+```{r section-title-pic, include=FALSE}
+style_xaringan(
+  title_slide_background_image = "img/covid.jpg"
+)
 ```
 
 ---
 
-# Literature Review - details
+# Literature Review - [1]
 
-```{r recode-species, echo = FALSE}
-# In this chunk I'm doing a bunch of analysis that I don't want to present 
-# in my slides. But I need the resulting data frame for a plot I want to present.
-iris_modified <- iris %>%
-  mutate(Species = fct_other(Species, keep = "setosa"))
-```
 
-```{r plot-iris, echo = FALSE}
-# Code hidden with echo = FALSE
-# Uses modified iris dataset from previous chunk
-# Play around with height and width until you're happy with the look
-ggplot(data = iris_modified, mapping = aes(x = Sepal.Width, y = Sepal.Length, color = Species)) +
-  geom_point() + 
-  theme_minimal() # theme options: https://ggplot2.tidyverse.org/reference/ggtheme.html
-```
+---
+
+# Literature Review - [2]
+
+
+---
+# Literature Review - [3: Covid-19 and weather]
+
+Rising temperature levels during spring and summer are often argued to enable lifting of strict containment measures even in the absence of herd immunity. Despite broad scholarly interest in the relationship between weather and coronavirus spread, previous studies come to very mixed results. To contribute to this puzzle, the paper examines the impact of weather on the COVID-19 pandemic using a unique granular dataset of over 1.2 million daily observations covering over 3700 counties in nine countries for all seasons of 2020. Our results show that temperature and wind speed have a robust negative effect on virus spread after controlling for a range of potential confounding factors. These effects, however, are substantially larger during mealtimes, as well as in periods of high mobility and low containment, suggesting an important role for social behaviour.
+
+---
+
+# Literature Review - [4]
+
+
+---
+
+# Literature Review - [5]
+
+---
+
+# Literature Review - [6]
 
 ---
 
