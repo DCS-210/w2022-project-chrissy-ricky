@@ -55,6 +55,10 @@ style_xaringan(
 
 - Limitations and Potential Future Studies
 
+```{r castle, echo = FALSE, out.width = "60%", fig.align = "center", fig.cap = "Image credit: Photo by Jörg Angeli on Unsplash."}
+include_graphics("https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80")
+```
+
 ---
 
 ## Research Question
@@ -74,6 +78,8 @@ class: inverse, center, middle
 
 # Introduction
 ? How to add background pic 
+
+background-image: url(https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80)
 ---
 
 # Introduction 
@@ -188,7 +194,25 @@ how to adjust transparency of background pic
 
 ---
 
-# Results & Implications - [2: regression analyses]
+# Results & Implications - [2a: regression analyses - simple linear regression]
+
+```{r linear-model-1}
+linear_reg() %>%
+  set_engine("lm") %>%
+  fit(total_cases_per_million ~ population_density + hospital_beds_per_thousand, data = covid_country) %>%
+  tidy()
+```
+
+```{r linear-model-2}
+linear_reg() %>%
+  set_engine("lm") %>%
+  fit(total_cases_per_million ~ population_density + hospital_beds_per_thousand, data = covid_country) %>%
+  tidy()
+```
+
+---
+
+# Results & Implications - [2b: regression analyses - other]
 
 
 ---

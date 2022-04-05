@@ -57,9 +57,9 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 ```{r}
 library(rgdal)
 my_spdf <- readOGR( 
-  dsn= paste0(getwd(),"/DATA/world_shape_file/") , 
-  layer="TM_WORLD_BORDERS-0.3",
-  verbose=FALSE
+  dsn = paste0(getwd(),"/DATA/world_shape_file/") , 
+  layer = "TM_WORLD_BORDERS-0.3",
+  verbose = FALSE
 )
 ```
 

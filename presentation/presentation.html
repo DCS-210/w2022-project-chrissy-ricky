@@ -84,12 +84,11 @@ class: inverse, middle, center
 # Literature Review - [1]
 
 
-
-
 ---
 
-# Literature Review - [2]
+# Literature Review - [2 Covid-19 and meta-analyses of research]
 
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7607482/
 
 ---
 # Literature Review - [3: Covid-19 and weather]
@@ -109,10 +108,13 @@ https://www.sciencedirect.com/science/article/pii/S0929664621002357
 
 This paper empirically examines the economic effects of COVID-19 vaccine rollouts using a cross-country daily database of vaccinations and high-frequency indicators of economic activity—nitrogen dioxide (NO2) emissions, carbon monoxide (CO) emissions, and Google mobility indices—for a sample of 46 countries over the period December 16, 2020 to June 20, 2021. Using surprises in vaccines administered, we find that an unexpected increase in vaccination per capita is associated with a significant increase in economic activity. We also find evidence for nonlinear effects of vaccines, with the marginal economic benefits being larger when vaccination rates are higher. Country-specific conditions play an important role, with lower economic gains if strict containment measures are in place or if the country is experiencing a severe outbreak. Finally, the results provide evidence of spillovers across borders, highlighting the importance of equitable access to vaccines across nations.
 
-
 ---
 
-# Literature Review - [5]
+# Literature Review - [5: Covid-19 and social media]
+
+The COVID-19 risk perception: A survey on socioeconomics and media attention
+
+This brief communication examines the role of socioeconomic factors and use of social media on the risk perception about COVID-19 in Vietnam, which shares a common border with China. Moreover, Vietnam was the first country to succeed in containment of severe acute respiratory syndrome (SARS) in 2003. From a sample of 391 Vietnamese respondents aged from 15 to 47 years, the present study found that geographical regions and behaviors in using social media have a positive impact on the risk perception of COVID-19 epidemic in Vietnam. It also adds to the significance of understanding the risk perception among people to communicate the public health response to COVID-19 to curb the spread of this deadly virus.
 
 ---
 
@@ -147,8 +149,6 @@ We have three major parts of analyses:
 
 3. Advanced models and machine learning algorithnms
 
-
-
 ---
 
 # Methods &amp; Data Analyses - details
@@ -172,7 +172,34 @@ how to adjust transparency of background pic
 
 ---
 
-# Results &amp; Implications - [1: preliminary analyses]
+# Results &amp; Implications - [2a: regression analyses - simple linear regression]
+
+
+```r
+linear_reg() %&gt;%
+  set_engine("lm") %&gt;%
+  fit(total_cases_per_million ~ population_density + hospital_beds_per_thousand, data = covid_country) %&gt;%
+  tidy()
+```
+
+```
+## # A tibble: 3 × 5
+##   term                       estimate std.error statistic     p.value
+##   &lt;chr&gt;                         &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
+## 1 (Intercept)                56408.    13530.       4.17  0.0000493  
+## 2 population_density            -3.02      5.53    -0.545 0.587      
+## 3 hospital_beds_per_thousand 20061.     3651.       5.49  0.000000146
+```
+
+
+---
+
+# Results &amp; Implications - [2b: regression analyses - other]
+
+
+---
+
+# Results &amp; Implications - [3: machine learnng]
 
 
 ---
@@ -183,16 +210,12 @@ class: inverse, middle, center
 
 ---
 
-# Limitations and Potential Future Studies - details
+# Limitations - details
 
-- Want to find out more about `xaringan`? See https://slides.yihui.name/xaringan/#1.
 
-- You are welcomed to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
+---
 
-- But some of you might want to play around with slide styling. The 
-`xaringanthemer` provides some solutions for this that: https://pkg.garrickadenbuie.com/xaringanthemer.
-
-- And if you want more bells and whistles, there is also `xaringanExtra`: https://pkg.garrickadenbuie.com/xaringanExtra.
+# Future Studies
 
 ---
 
@@ -201,6 +224,10 @@ class: inverse, middle, center
 [1] Want to find out more about `xaringan`? See https://slides.yihui.name/xaringan/#1.
 
 [2] You are welcomed to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
+
+[3]
+
+[4]
 
 ---
     </textarea>
