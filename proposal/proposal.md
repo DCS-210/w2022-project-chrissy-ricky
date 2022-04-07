@@ -10,6 +10,10 @@ library(readr)
 library(broom)
 library(fivethirtyeight)
 library(WDI)
+library("sf")
+library("rnaturalearth")
+library("rnaturalearthdata")
+library(rgeos)
 ```
 
 ## 0. Requirements
@@ -727,7 +731,7 @@ ggplot() + geom_line(data = covid_data2, aes(x = date, y = weekly_hosp_admission
 
 ``` r
 covid_data3 <- covid_data1 %>%
-  select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred)
+  select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred, population_density, total_cases_per_million)
 ```
 
 ``` r
@@ -779,7 +783,7 @@ ggplot() + geom_line(data = covid_data3, aes(x = date, y = weekly_hosp_admission
   scale_x_date(breaks = unique(covid_data3$date))
 ```
 
-![](proposal_files/figure-gfm/make-visual-1.png)<!-- -->
+![](proposal_files/figure-gfm/make-visual-regression-1.png)<!-- -->
 
 ``` r
 covid_data3 %>%
@@ -796,4 +800,149 @@ ggplot() + geom_line(data = covid_data3, aes(x = date, y = new_deaths_per_millio
   scale_x_date(breaks = unique(covid_data3$date))
 ```
 
-![](proposal_files/figure-gfm/make-visual2-1.png)<!-- -->
+![](proposal_files/figure-gfm/make-visual-hospilizations-1.png)<!-- -->
+
+``` r
+covid_data4 <- covid_data3 %>%
+  filter( location == "United States" | location == "Israel" | location == "Italy")
+```
+
+``` r
+covid_data3 %>%
+  group_by(date, treated) %>%
+  summarize(y = mean(new_deaths_per_million)) -> sumdata
+```
+
+    ## `summarise()` has grouped output by 'date'. You can override using the `.groups` argument.
+
+``` r
+ggplot() + geom_line(data = covid_data3, aes(x = date, y = new_deaths_per_million, group = location, color = treated),
+                     size = 1,alpha = 0.25) + 
+  geom_vline(xintercept = as.Date(0, origin = "2021-06-21")) + # intervention point
+  scale_x_date(breaks = unique(covid_data3$date))
+```
+
+![](proposal_files/figure-gfm/make-vis-1.png)<!-- -->
+
+``` r
+covid_data4 <- covid_data3 %>%
+  filter( date == "2020-08-04" )
+```
+
+``` r
+covid_data5 <- covid_data3 %>%
+  filter(location == "United States" )
+```
+
+``` r
+ggplot(covid_data5, aes(x = people_fully_vaccinated_per_hundred, y = new_deaths_per_million)) + geom_point()
+```
+
+![](proposal_files/figure-gfm/make-map-1.png)<!-- -->
+
+``` r
+ggplot(covid_data5, aes(x = people_fully_vaccinated_per_hundred, y = weekly_hosp_admissions_per_million)) + geom_point()
+```
+
+![](proposal_files/figure-gfm/make-map2-1.png)<!-- -->
+
+``` r
+covid_data7 <- covid_data3 %>%
+  filter(location == "United States" | location == "United Kingdom" | location == "Canada" | location == "Belgium" | location == "Israel")
+```
+
+``` r
+library(plm)       # Panel data analysis library
+```
+
+    ## 
+    ## Attaching package: 'plm'
+
+    ## The following objects are masked from 'package:dplyr':
+    ## 
+    ##     between, lag, lead
+
+``` r
+library(car)       # Companion to applied regression 
+```
+
+    ## Loading required package: carData
+
+    ## 
+    ## Attaching package: 'car'
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     recode
+
+    ## The following object is masked from 'package:purrr':
+    ## 
+    ##     some
+
+``` r
+library(gplots)    # Various programing tools for plotting data
+```
+
+    ## 
+    ## Attaching package: 'gplots'
+
+    ## The following object is masked from 'package:stats':
+    ## 
+    ##     lowess
+
+``` r
+library(tseries)   # For timeseries analysis
+```
+
+    ## Registered S3 method overwritten by 'quantmod':
+    ##   method            from
+    ##   as.zoo.data.frame zoo
+
+``` r
+library(lmtest)    # For hetoroskedasticity analysis
+```
+
+    ## Loading required package: zoo
+
+    ## 
+    ## Attaching package: 'zoo'
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     as.Date, as.Date.numeric
+
+``` r
+fixed.dum <-lm(weekly_hosp_admissions_per_million ~ people_fully_vaccinated_per_hundred + factor(location) - 1, data = covid_data7)
+summary(fixed.dum)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = weekly_hosp_admissions_per_million ~ people_fully_vaccinated_per_hundred + 
+    ##     factor(location) - 1, data = covid_data7)
+    ## 
+    ## Residuals:
+    ##     Min      1Q  Median      3Q     Max 
+    ## -137.87  -68.84  -17.38   45.26  319.00 
+    ## 
+    ## Coefficients:
+    ##                                      Estimate Std. Error t value Pr(>|t|)    
+    ## people_fully_vaccinated_per_hundred  -0.26733    0.08496  -3.147  0.00168 ** 
+    ## factor(location)Belgium              99.47288    5.65814  17.580  < 2e-16 ***
+    ## factor(location)Israel              104.38377    6.07108  17.194  < 2e-16 ***
+    ## factor(location)United Kingdom      115.84856    5.77922  20.046  < 2e-16 ***
+    ## factor(location)United States       190.11423    5.45854  34.829  < 2e-16 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 88.38 on 1690 degrees of freedom
+    ## Multiple R-squared:  0.6572, Adjusted R-squared:  0.6562 
+    ## F-statistic: 648.1 on 5 and 1690 DF,  p-value: < 2.2e-16
+
+``` r
+yhat <- fixed.dum$fitted
+scatterplot(yhat ~ covid_data7$people_fully_vaccinated_per_hundred | covid_data7$location,  xlab ="people fully vaccinated per hundred", ylab ="covid cases", boxplots = FALSE, smooth = FALSE)
+abline(lm(covid_data7$weekly_hosp_admissions_per_million~covid_data7$people_fully_vaccinated_per_hundred),lwd=5, col="red")
+```
+
+![](proposal_files/figure-gfm/make-feregression-1.png)<!-- -->

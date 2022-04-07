@@ -12,6 +12,10 @@ library(readr)
 library(broom)
 library(fivethirtyeight)
 library(WDI)
+library("sf")
+library("rnaturalearth")
+library("rnaturalearthdata")
+library(rgeos)
 ```
 
 ## 0. Requirements
@@ -149,7 +153,7 @@ ggplot() + geom_line(data = covid_data2, aes(x = date, y = weekly_hosp_admission
 
 ```{r make-dataset2}
 covid_data3 <- covid_data1 %>%
-  select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred)
+  select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred, population_density, total_cases_per_million)
 ```
 
 
@@ -166,7 +170,7 @@ didreg3 = lm(weekly_hosp_admissions_per_million ~ vaccine_introduced + time + tr
 summary(didreg3)
 ```
 
-```{r make-visual}
+```{r make-visual-regression}
 covid_data3 %>%
   group_by(date, treated) %>%
   summarize(y = mean(weekly_hosp_admissions_per_million)) -> sumdata
@@ -176,7 +180,7 @@ ggplot() + geom_line(data = covid_data3, aes(x = date, y = weekly_hosp_admission
   scale_x_date(breaks = unique(covid_data3$date))
 ```
 
-```{r make-visual2}
+```{r make-visual-hospilizations}
 covid_data3 %>%
   group_by(date, treated) %>%
   summarize(y = mean(new_deaths_per_million)) -> sumdata
@@ -184,4 +188,67 @@ ggplot() + geom_line(data = covid_data3, aes(x = date, y = new_deaths_per_millio
                      size = 1,alpha = 0.25) + 
   geom_vline(xintercept = as.Date(0, origin = "2021-06-21")) + # intervention point
   scale_x_date(breaks = unique(covid_data3$date))
+```
+
+```{r make-covid-data-4}
+covid_data4 <- covid_data3 %>%
+  filter( location == "United States" | location == "Israel" | location == "Italy")
+``` 
+
+```{r make-vis}
+covid_data3 %>%
+  group_by(date, treated) %>%
+  summarize(y = mean(new_deaths_per_million)) -> sumdata
+ggplot() + geom_line(data = covid_data3, aes(x = date, y = new_deaths_per_million, group = location, color = treated),
+                     size = 1,alpha = 0.25) + 
+  geom_vline(xintercept = as.Date(0, origin = "2021-06-21")) + # intervention point
+  scale_x_date(breaks = unique(covid_data3$date))
+```
+
+```{r make-covid-date-5}
+covid_data4 <- covid_data3 %>%
+  filter( date == "2020-08-04" )
+``` 
+
+
+
+
+```{r make-covid-data-6}
+covid_data5 <- covid_data3 %>%
+  filter(location == "United States" )
+``` 
+
+```{r make-map}
+ggplot(covid_data5, aes(x = people_fully_vaccinated_per_hundred, y = new_deaths_per_million)) + geom_point()
+```
+
+```{r make-map2}
+ggplot(covid_data5, aes(x = people_fully_vaccinated_per_hundred, y = weekly_hosp_admissions_per_million)) + geom_point()
+```
+
+
+
+
+
+
+
+
+```{r make-covid-data-10}
+covid_data7 <- covid_data3 %>%
+  filter(location == "United States" | location == "United Kingdom" | location == "Canada" | location == "Belgium" | location == "Israel")
+``` 
+
+
+``` {r make-feregression}
+library(plm)       # Panel data analysis library
+library(car)       # Companion to applied regression 
+library(gplots)    # Various programing tools for plotting data
+library(tseries)   # For timeseries analysis
+library(lmtest)    # For hetoroskedasticity analysis
+fixed.dum <-lm(weekly_hosp_admissions_per_million ~ people_fully_vaccinated_per_hundred + factor(location) - 1, data = covid_data7)
+summary(fixed.dum)
+
+yhat <- fixed.dum$fitted
+scatterplot(yhat ~ covid_data7$people_fully_vaccinated_per_hundred | covid_data7$location,  xlab ="people fully vaccinated per hundred", ylab ="covid cases", boxplots = FALSE, smooth = FALSE)
+abline(lm(covid_data7$weekly_hosp_admissions_per_million~covid_data7$people_fully_vaccinated_per_hundred),lwd=5, col="red")
 ```
