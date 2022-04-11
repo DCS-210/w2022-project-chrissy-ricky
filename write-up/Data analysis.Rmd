@@ -36,10 +36,6 @@ covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
 covid_data_codebook <- readr::read_csv(file = "../data/owid-covid-codebook.csv")
 ```
 
-```{r}
-
-```
-
 
 ## Data Cleaning and Manipulation
 
@@ -66,17 +62,22 @@ covid_other <- covid_total %>%
   filter(is.na(continent) == TRUE)
 ```
 
-```{r}
-covid_heat <- covid_data %>%
-  select()
+
+```{r parse-date}
+dates <- as.POSIXct(covid_country, format = "%Y/%m/%d")
+format(dates, format="%Y")
 ```
 
-```{r vaccination-map, echo = FALSE}
-vaccinations <- covid_data %>%
+## Maps
+
+
+# [1a] summary statistics
+
+```{r cases-map, echo = FALSE}
+cases <- covid_data %>%
   filter(date == "2022-02-18") %>%
   filter(is.na(continent) == FALSE) %>%
-  mutate(vaccination_per_person = total_vaccinations/population) %>%
-  select(iso_code, location, date, vaccination_per_person) %>%
+  select(iso_code, location, date, total_cases_per_million) %>%
   na.omit()
 
 world_spdf <- readOGR( 
@@ -86,145 +87,145 @@ world_spdf <- readOGR(
 
 world_spdf2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
 
-vac_map <- vaccinations %>% 
+cases_map <- cases %>% 
   left_join(world_spdf2, by = c("location" = "NAME")) %>%
   st_as_sf()
 
-pal2 <- colorNumeric(palette = "RdYlGn", domain = vac_map$vaccination_per_person)
-labels <- sprintf("<strong>%s</strong><br/>%s ", vac_map$location, vac_map$vaccination_per_person) %>%
+pal2 <- colorNumeric(palette = "RdYlGn", domain = cases_map$total_cases_per_million)
+labels <- sprintf("<strong>%s</strong><br/>%s ", cases_map$location, cases_map$total_cases_per_million) %>%
   lapply(htmltools::HTML)
 
-v_map <- leaflet(data = vac_map) %>% 
+c_map <- leaflet(data = cases_map) %>% 
   addTiles()  %>% 
   setView( lat=10, lng=0 , zoom=1) %>%
-  addPolygons(fillColor = ~pal2(vac_map$vaccination_per_person),
+  addPolygons(fillColor = ~pal2(cases_map$total_cases_per_million),
+                                 fillOpacity = 1, 
+                                 color = "white",
+                                 opacity = 1,
+                                 weight = 1,
+                                 label = labels) %>%
+  addLegend("bottomleft", pal = pal2, values = ~cases_map$total_cases_per_million,
+    title = "Total Cases per Million",
+    opacity = 1)
+
+c_map
+```
+
+---
+
+Medical resources (icu_patients_per_million)
+```{r icu, echo = FALSE}
+icu_ad <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  select(location, icu_patients_per_million) %>%
+  arrange(desc(icu_patients_per_million)) %>%
+  top_n(10)
+
+icu_ad
+```
+
+---
+
+```{r ICU-map, echo = FALSE}
+ICU <- covid_data %>%
+  filter(date == "2022-01-01") %>%
+  filter(is.na(continent) == FALSE) %>%
+  select(iso_code, location, date, icu_patients_per_million) %>%
+  na.omit()
+
+world_spdf <- readOGR( 
+  dsn= ("/cloud/project/data/world_shape_file/"), 
+  layer="TM_WORLD_BORDERS-0.3",
+  verbose=FALSE)
+
+world_spdf2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
+
+icu_map <- ICU %>% 
+  left_join(world_spdf2, by = c("location" = "NAME")) %>%
+  st_as_sf()
+
+pal2 <- colorNumeric(palette = "RdYlGn", domain = icu_map$icu_patients_per_million)
+labels <- sprintf("<strong>%s</strong><br/>%s ", icu_map$location, icu_map$icu_patients_per_million) %>%
+  lapply(htmltools::HTML)
+
+i_map <- leaflet(data = icu_map) %>% 
+  addTiles()  %>% 
+  setView( lat=10, lng=0 , zoom=1) %>%
+  addPolygons(fillColor = ~pal2(icu_map$icu_patients_per_million),
                                  fillOpacity = 1, 
                                  color = "white",
                                  opacity = 0.7,
                                  weight = 1,
                                  label = labels) %>%
-  addLegend("bottomleft", pal = pal2, values = ~vac_map$vaccination_per_person,
-    title = "Vaccinations per Person",
+  addLegend("bottomleft", pal = pal2, values = ~icu_map$icu_patients_per_million,
+    title = "ICU",
     opacity = 1)
 
-v_map
+i_map
 ```
 
 
+---
 
-```{r}
+# [1a] summary statistics - diabetes
+General health information (diabetes prevalence)
+```{r diabetes, echo = FALSE}
+diab <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(diabetesp = (diabetes_prevalence)/100) %>%
+  select(location, diabetesp) %>%
+  arrange(desc(diabetesp)) %>%
+  top_n(10)
 
+diab$diabetesp <- percent(diab$diabetesp, accuracy=1)
+diab
 ```
+---
 
-```{r}
-
-```
-
-
-```{r}
-library(sf)
-world_df <- st_read(system.file(dsn = "./data/world_shape_file/TM_WORLD_BORDERS-0.3.shp", package="sf"))
-```
-
-
-
-
-```{r}
-china <- covid_data %>%
-  filter(location == "China")
-```
-
-
-```{r}
-covid_data %>%
-  mutate(vaccination_rate = people_fully_vaccinated/population) %>%
-  select(iso_code, location, date, vaccination_rate) %>%
+```{r diab-map, echo = FALSE}
+diabetes <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  select(iso_code, location, date, diabetes_prevalence) %>%
   na.omit()
-```
 
+world_spdf <- readOGR( 
+  dsn= ("/cloud/project/data/world_shape_file/"), 
+  layer="TM_WORLD_BORDERS-0.3",
+  verbose=FALSE)
 
-```{r create-variables}
-covid_country <- covid_country %>%
-  mutate(percentage_cases = total_cases/population,
-         percentage_deaths = total_deaths/population,
-         percentage_vaccination = people_fully_vaccinated/population,
-         percentage_booster = total_boosters/population)
-covid_country     
-```
+world_spdf2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
 
-## Create subsets of data
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
-## Preliminary data analysis
-
-```{r 2018-data-leaflet}
-testleaflet <- leaflettdata %>%
-  filter(year == "2018")
-```
-
-```{r filter-worldspdf-hippo}
-covid_country %>% 
-  left_join(TM_WORLD_BORDERS-0.3.shp, by = c("country" = "NAME")) %>%
+diab_map <- diabetes %>% 
+  left_join(world_spdf2, by = c("location" = "NAME")) %>%
   st_as_sf()
-```
 
-```{r leaflet-attempt}
-#attempt at making leaflet where you can switch between years (uses two data frames)
-pal3 <- colorNumeric(palette = "RdYlGn", domain = ninetyleaflet$renewables_share_energy)
-pal2 <- colorNumeric(palette = "RdYlGn", domain = testleaflet$renewables_share_energy)
+pal2 <- colorNumeric(palette = "RdYlGn", domain = diab_map$diabetes_prevalence)
+labels <- sprintf("<strong>%s</strong><br/>%s ", diab_map$location, diab_map$diabetes_prevalence) %>%
+  lapply(htmltools::HTML)
 
-#labels <- sprintf("<strong>%s</strong><br/>%s ", ninetyleaflet$country, #ninetyleaflet$renewables_share_energy) %>%
-#  lapply(htmltools::HTML)
-
-b <- leaflet(data = covid_country) %>% 
+di_map <- leaflet(data = diab_map) %>% 
   addTiles()  %>% 
-  setView( lat=10, lng=0 , zoom=2) %>%
-  addPolygons(fillColor = ~pal3(ninetyleaflet$renewables_share_energy),
+  setView( lat=10, lng=0 , zoom=1) %>%
+  addPolygons(fillColor = ~pal2(diab_map$diabetes_prevalence),
                                  fillOpacity = 1, 
                                  color = "white",
                                  opacity = 0.7,
                                  weight = 1,
-                                 #label = labels,
-                                 group = "1990") %>%
-   addPolygons(fillColor = ~pal2(testleaflet$renewables_share_energy),
-                                 fillOpacity = 1, 
-                                 color = "white",
-                                 opacity = 0.7,
-                                 weight = 1,
-                                 #label = labels,
-                                 group = "2018") %>%
-   addLayersControl(
-    baseGroups = c("2018", "1990"),
-    options = layersControlOptions(collapsed = FALSE))
+                                 label = labels) %>%
+  addLegend("bottomleft", pal = pal2, values = ~diab_map$diabetes_prevalence,
+    title = "Diabetes Prevalence (%)",
+    opacity = 1)
 
-    #addLegend("bottomright", pal = pal3, values = ~ninetyleaflet$renewables_share_energy,
-    #title = "1990 Renewable<br> Energy Share",
-    #opacity = 1)
-  
-  
-b
+di_map
 ```
 
 
-```{r}
-library(rgdal)
-my_spdf <- readOGR( 
-  dsn = paste0(getwd(),"/DATA/world_shape_file/") , 
-  layer = "TM_WORLD_BORDERS-0.3",
-  verbose = FALSE
-)
-```
 
-```{r maps}
-world_df <- st_read(system.file("data/world_shape_file/TM_WORLD_BORDERS-0.3.shp", package="sf"))
-```
 
-```{r parse-date}
-dates <- as.POSIXct(covid_country, format = "%Y/%m/%d")
-format(dates, format="%Y")
-```
-
+## Heat Map
 
 ```{r time-heat-map}
 p <-ggplot(covid_country, aes(day,hour,fill=temp))+
