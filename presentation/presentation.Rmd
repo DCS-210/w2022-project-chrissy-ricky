@@ -83,7 +83,6 @@ background-image: url("images/cool.png")
 
 # Introduction
 
-background-image: url(https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80)
 ---
 
 # Introduction 
@@ -116,29 +115,20 @@ class: inverse, middle, center
 
 # Literature Review
 
-```{r section-title-pic, include=FALSE}
-style_xaringan(
-  title_slide_background_image = "img/covid.jpg"
-)
-```
-
 ---
-
-class: my-one-page-font
 
 # [1] Covid-19 severity
 
-- .small[The unpredictability of the progression of coronavirus disease 2019 (COVID-19) may be attributed to the low precision of the tools used to predict the prognosis of this disease, especially when the virus is mutating in a fast speed from alpha, to Omicron, and there are more recent variants too.]
+- The unpredictability of the progression of coronavirus disease 2019 (COVID-19) may be attributed to the low precision of the tools used to predict the prognosis of this disease, especially when the virus is mutating in a fast speed from alpha, to Omicron, and there are more recent variants too.
 
 - With the help of models proposed (using clinical data) by those paper, we may be better at prognosis of Covid-19 cases severity. This can also be used in decision-making related to the care of patients infected with COVID-19.
 
-.my-one-page-font {
-  font-size: 20px;
-}
-
 ]
-.footnote[
-vv
+.footnote[.small[
+[1] 
+[2]
+[3]
+]
 ]
 ---
 
