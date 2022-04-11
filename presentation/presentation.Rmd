@@ -222,156 +222,6 @@ class: inverse, middle, center
 ---
 
 # [1a] summary statistics
-Cases
-```{r cases, echo = FALSE}
-library(scales)
-cases <- covid_data %>%
-  filter(date == "2022-02-20") %>%
-  filter(is.na(continent) == FALSE) %>%
-  select(location, total_cases_per_million) %>%
-  arrange(desc(total_cases_per_million)) %>%
-  top_n(10)
-
-cases
-```
-
----
-map1
-
-
----
-
-Deaths
-```{r death, echo = FALSE}
-death <- covid_data %>%
-  filter(date == "2022-02-20") %>%
-  filter(is.na(continent) == FALSE) %>%
-  select(location, total_deaths_per_million) %>%
-  arrange(desc(total_deaths_per_million)) %>%
-  top_n(10)
-
-death
-```
----
-
-Vaccinations
-```{r vaccination, echo = FALSE}
-vaccination <- covid_data %>%
-  filter(date == "2022-02-20") %>%
-  filter(is.na(continent) == FALSE) %>%
-  mutate(vaccination_rate = people_fully_vaccinated/population) %>%
-  select(location, vaccination_rate) %>%
-  arrange(desc(vaccination_rate)) %>%
-  top_n(10)
-
-vaccination$vaccination_rate <- percent(vaccination$vaccination_rate, accuracy=1)
-vaccination
-```
----
-
-```{r vaccination-map, echo = FALSE}
-vaccinations <- covid_data %>%
-  filter(date == "2022-02-18") %>%
-  filter(is.na(continent) == FALSE) %>%
-  mutate(vaccination_per_person = total_vaccinations/population) %>%
-  select(iso_code, location, date, vaccination_per_person) %>%
-  na.omit()
-
-world_spdf <- readOGR( 
-  dsn= ("/cloud/project/data/world_shape_file/"), 
-  layer="TM_WORLD_BORDERS-0.3",
-  verbose=FALSE)
-
-world_spdf2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
-
-vac_map <- vaccinations %>% 
-  left_join(world_spdf2, by = c("location" = "NAME")) %>%
-  st_as_sf()
-
-pal2 <- colorNumeric(palette = "RdYlGn", domain = vac_map$vaccination_per_person)
-labels <- sprintf("<strong>%s</strong><br/>%s ", vac_map$location, vac_map$vaccination_per_person) %>%
-  lapply(htmltools::HTML)
-
-v_map <- leaflet(data = vac_map) %>% 
-  addTiles()  %>% 
-  setView( lat=10, lng=0 , zoom=1) %>%
-  addPolygons(fillColor = ~pal2(vac_map$vaccination_per_person),
-                                 fillOpacity = 1, 
-                                 color = "white",
-                                 opacity = 0.7,
-                                 weight = 1,
-                                 label = labels) %>%
-  addLegend("bottomleft", pal = pal2, values = ~vac_map$vaccination_per_person,
-    title = "Vaccinations per Person",
-    opacity = 1)
-
-v_map
-```
-
----
-# [1a] summary statistics
-Boosters
-```{r cases-death-vaccination-2, echo = FALSE}
-boosters <- covid_data %>%
-  filter(date == "2022-02-20") %>%
-  filter(is.na(continent) == FALSE) %>%
-  mutate(booster = total_boosters/population) %>%
-  select(location, booster) %>%
-  arrange(desc(booster)) %>%
-  top_n(10)
-
-boosters$booster <- percent(boosters$booster, accuracy=1)
-boosters
-```
----
-
-# [1a] summary statistics
-
-Medical resources (icu_patients_per_million)
-```{r icu, echo = FALSE}
-icu_ad <- covid_data %>%
-  filter(date == "2022-02-20") %>%
-  filter(is.na(continent) == FALSE) %>%
-  select(location, icu_patients_per_million) %>%
-  arrange(desc(icu_patients_per_million)) %>%
-  top_n(10)
-
-icu_ad
-```
-
----
-
-# [1a] summary statistics
-General health information (aged 70 and over)
-```{r elderly, echo = FALSE}
-elder <- covid_data %>%
-  filter(date == "2022-02-20") %>%
-  filter(is.na(continent) == FALSE) %>%
-  mutate(age70 = aged_70_older/100) %>%
-  select(location, age70) %>%
-  arrange(desc(age70)) %>%
-  top_n(10)
-
-elder$age70 <- percent(elder$age70, accuracy=1)
-elder
-```
-
----
-
-# [1a] summary statistics
-General health information (diabetes prevalence)
-```{r smoker, echo = FALSE}
-diab <- covid_data %>%
-  filter(date == "2022-02-20") %>%
-  filter(is.na(continent) == FALSE) %>%
-  mutate(diabetesp = (diabetes_prevalence)/100) %>%
-  select(location, diabetesp) %>%
-  arrange(desc(diabetesp)) %>%
-  top_n(10)
-
-diab$diabetesp <- percent(diab$diabetesp, accuracy=1)
-diab
-```
 
 ---
 
@@ -387,24 +237,61 @@ development <- covid_data %>%
 
 development
 ```
+---
+
+```{r HDI-map, echo = FALSE}
+HDI <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  select(iso_code, location, date, human_development_index) %>%
+  na.omit()
+
+world_spdf <- readOGR( 
+  dsn= ("/cloud/project/data/world_shape_file/"), 
+  layer="TM_WORLD_BORDERS-0.3",
+  verbose=FALSE)
+
+world_spdf2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
+
+hdi_map <- HDI %>% 
+  left_join(world_spdf2, by = c("location" = "NAME")) %>%
+  st_as_sf()
+
+pal2 <- colorNumeric(palette = "RdYlGn", domain = hdi_map$human_development_index)
+labels <- sprintf("<strong>%s</strong><br/>%s ", hdi_map$location, hdi_map$human_development_index) %>%
+  lapply(htmltools::HTML)
+
+h_map <- leaflet(data = hdi_map) %>% 
+  addTiles()  %>% 
+  setView( lat=10, lng=0 , zoom=1) %>%
+  addPolygons(fillColor = ~pal2(hdi_map$human_development_index),
+                                 fillOpacity = 1, 
+                                 color = "white",
+                                 opacity = 0.7,
+                                 weight = 1,
+                                 label = labels) %>%
+  addLegend("bottomleft", pal = pal2, values = ~hdi_map$human_development_index,
+    title = "Human Development Index",
+    opacity = 1)
+
+h_map
+```
 
 ---
 
 # Results & Implications [1b: preliminary analyses - correlation and heat map]
 
-```{r correlation_heatmap}
+```{r correlation_heatmap, echo = FALSE}
 covid_heat <- covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
   mutate(smoker = female_smokers + male_smokers) %>%
-  select(total_vaccinations, total_cases, total_deaths, total_boosters, icu_patients_per_million, hosp_patients_per_million, population_density, extreme_poverty, aged_70_older, cardiovasc_death_rate, smoker, human_development_index) %>%
+  select(total_vaccinations, total_cases, total_deaths, total_boosters, population_density, extreme_poverty, aged_70_older, cardiovasc_death_rate, smoker, human_development_index) %>%
   na.omit()
   
 cormat <- round(cor(covid_heat),2)
-cormat
 
 melted_cormat <- melt(cormat)
-head(melted_cormat)
 
 ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
   geom_tile() +
@@ -414,7 +301,7 @@ ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
                        name="Pearson\nCorrelation") +
   theme_minimal() + 
   theme(axis.text.x = element_text(angle = 45, vjust = 1, 
-                                   size = 12, hjust = 1))+
+                                   size = 10, hjust = 1))+
   coord_fixed()
 ```
 
@@ -444,11 +331,6 @@ shape <- st_read(dsn = "../data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
 
 # Results & Implications [1d: preliminary analyses - scatter plots and other ggplots]
 
-Alt (alternative) text
-1. chart type
-2. of type data (x and y, color)
-3. reason for including chart
-
 ```{r vaccination-HDI}
 covid_data %>%
   filter(date == "2022-02-20") %>%
@@ -458,7 +340,7 @@ covid_data %>%
   mutate(booster = total_boosters/population) %>%
   ggplot(mapping = aes(x = vaccination_rate, 
                        y = human_development_index)) +
-  geom_point(size = 1, mapping = aes()) +
+  geom_point(size = 2, mapping = aes()) +
   labs(title = "vaccination rate vs. human development index", 
        subtitle = "xx",
        x = "vaccination rate",
@@ -467,15 +349,19 @@ covid_data %>%
   geom_smooth(color = "blue") 
 ```
 
+---
+
+# Results & Implications [1d: preliminary analyses - scatter plots and other ggplots]
 ```{r cases-diabetes}
 covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
   mutate(smoker = female_smokers + male_smokers) %>%
+  mutate(vaccination_rate = people_fully_vaccinated/population) %>%  
   mutate(death = total_deaths/population) %>%  
   mutate(booster = total_boosters/population) %>%
-  ggplot(mapping = aes(x = death, 
-                       y = diabetes_prevalence)) +
+  ggplot(mapping = aes(x = vaccination_rate, 
+                       y = death)) +
   geom_point(size = 1, mapping = aes()) +
   labs(title = "percentage death of population vs. diabetes prevalence", 
        subtitle = "xx",
@@ -490,23 +376,64 @@ covid_data %>%
 # Results & Implications [1e: time series analyses]
 
 ---
+```{r}
+# Libraries
+library(dygraphs)
+library(xts) # To make the convertion data-frame / xts format
 
-background-image: url(https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80)
+# Format 3: Several variables for each date
+covid_time <- covid_data %>%
+  select(location, date, total_cases) %>%
+  filter(location == c("China", "Japan", "India", "Brazil", "France", "Germany", "Italy", "Mexico", "Russia", "United Kindom", "United States"))
 
-how to adjust transparency of background pic
+```
+
+```{r}
+covid_time_wide <- reshape(data=covid_time,idvar="location",
+                          v.names = "total_cases",
+                          timevar = "date",
+                          direction="wide")
+```
+
+
+```{r}
+data <- data.frame(
+  time=seq(date), 
+  value1=
+  value2=
+)
+
+# Then you can create the xts format:
+don=xts( x=data[,-1], order.by=data$time)
+
+# Chart
+p <- dygraph(don)
+p
+
+```
+
 
 ---
 
 # Results & Implications - [2a: regression analyses - simple linear regression]
 
-```{r linear-model-1}
+```{r linear-model-1, echo = FALSE}
+covid_total <- covid_data %>%
+  filter(date == "2021-02-24")
+
+covid_country <- covid_total %>%
+  filter(is.na(continent) == FALSE)
+
+covid_other <- covid_total %>%
+  filter(is.na(continent) == TRUE)
+
 linear_reg() %>%
   set_engine("lm") %>%
   fit(total_cases_per_million ~ population_density + hospital_beds_per_thousand, data = covid_country) %>%
   tidy()
 ```
 
-```{r linear-model-2}
+```{r linear-model-2, echo = FALSE}
 linear_reg() %>%
   set_engine("lm") %>%
   fit(total_cases_per_million ~ population_density, data = covid_country) %>%
