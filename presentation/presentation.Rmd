@@ -119,22 +119,12 @@ style_xaringan(
 
 ---
 
-class: my-one-page-font
-
 # [1] Covid-19 severity
 
 - The unpredictability of the progression of coronavirus disease 2019 (COVID-19) may be attributed to the low precision of the tools used to predict the prognosis of this disease, especially when the virus is mutating in a fast speed from alpha, to Omicron, and there are more recent variants too. 
 
 - With the help of models proposed (using clinical data) by those paper, we may be better at prognosis of Covid-19 cases severity. This can also be used in decision-making related to the care of patients infected with COVID-19.
 
-.my-one-page-font {
-  font-size: 20px;
-}
-
-]
-.footnote[
-vv
-]
 ---
 
 # [2] Covid-19 and weather
@@ -168,7 +158,7 @@ vv
 
 - These aim to assist medical staff worldwide in triaging patients, especially in the context of limited healthcare resources.
 
-# [6] vitamin D and covid-19
+# Literature Review - [6: vitamin D and covi-19]
 https://www.frontiersin.org/articles/10.3389/fpubh.2021.736665/full
 
 Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD) and the likelihood of suffering severe symptoms of covid-19. The data supports a significant effect of vitamin D in preventing and mitigating respiratory tract infections have emerged. Severe deficiency, deficiency and insufficiency of vitamin D were all associated with ICU admission In this study of almost 1.5 million individuals. 
@@ -186,15 +176,7 @@ class: inverse, middle, center
 
 ## Our Data - details
 
-Our dataset is coming from "Our World in Data" Covid-19 public data, together with data from JHU, WHO, CDC and World Bank. The data covers a wide range:
-
-- Basic Covid-19 data (cases, deaths)
-- Hospital & ICU (ICU beds, ICU patients)
-- Policy responses (stringency_index)
-- Reproduction rate
-- Tests & positivity
-- Vaccinations
-- Others (populations, life_expectancy, GDP per catpita and so on)
+We used the COVID-19 dataset from "Our World in Data", where they combined multiple datasets together from CDC, John Hopkins, WDI,....
 
 ---
 
@@ -215,83 +197,81 @@ We have three major parts of analyses:
 
 ---
 
+# Methods & Data Analyses - details
+
+```{r castle, echo = FALSE, out.width = "60%", fig.align = "center", fig.cap = "Image credit: Photo by Jörg Angeli on Unsplash."}
+include_graphics("https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80")
+```
+
+---
+
 class: inverse, middle, center
 
 # Results & Implications 
 
 ---
 
-# [1a] summary statistics
+# Results & Implications [1a: preliminary analyses - summary statistics]
 
----
-
-# [1a] summary statistics
-Development (HDI)
-```{r development, echo = FALSE}
-development <- covid_data %>%
+1. covid data (cases, death, vaccinations)
+```{r cases-death-vaccination-1}
+covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
-  select(location, human_development_index) %>%
-  arrange(desc(human_development_index)) %>%
+  mutate(vaccination_rate = people_fully_vaccinated/population) %>%
+  select(location, vaccination_rate) %>%
+  arrange(desc(vaccination_rate)) %>%
   top_n(10)
-
-development
 ```
----
 
-```{r HDI-map, echo = FALSE}
-HDI <- covid_data %>%
+```{r cases-death-vaccination-2}
+covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
-  select(iso_code, location, date, human_development_index) %>%
-  na.omit()
+  mutate(booster = total_boosters/population) %>%
+  select(location, booster) %>%
+  arrange(desc(booster)) %>%
+  top_n(10)
+```
 
-world_spdf <- readOGR( 
-  dsn= ("/cloud/project/data/world_shape_file/"), 
-  layer="TM_WORLD_BORDERS-0.3",
-  verbose=FALSE)
+2. medical resources (handwashing facilities, hospital beds per thousand, ...)
+```{r}
 
-world_spdf2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
+```
 
-hdi_map <- HDI %>% 
-  left_join(world_spdf2, by = c("location" = "NAME")) %>%
-  st_as_sf()
+3. general health information (aged 70 and over, diabete prevalence, female & male smoker)
+```{r}
 
-pal2 <- colorNumeric(palette = "RdYlGn", domain = hdi_map$human_development_index)
-labels <- sprintf("<strong>%s</strong><br/>%s ", hdi_map$location, hdi_map$human_development_index) %>%
-  lapply(htmltools::HTML)
+```
 
-h_map <- leaflet(data = hdi_map) %>% 
-  addTiles()  %>% 
-  setView( lat=10, lng=0 , zoom=1) %>%
-  addPolygons(fillColor = ~pal2(hdi_map$human_development_index),
-                                 fillOpacity = 1, 
-                                 color = "white",
-                                 opacity = 0.7,
-                                 weight = 1,
-                                 label = labels) %>%
-  addLegend("bottomleft", pal = pal2, values = ~hdi_map$human_development_index,
-    title = "Human Development Index",
-    opacity = 1)
 
-h_map
+4. development (life expectancy, HDI, population density, extreme poverty)
+```{r}
+
+```
+
+5. stringency index (how strict)
+```{r}
+
 ```
 
 ---
 
 # Results & Implications [1b: preliminary analyses - correlation and heat map]
 
-```{r correlation_heatmap, echo = FALSE}
+```{r correlation_heatmap}
 covid_heat <- covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
   mutate(smoker = female_smokers + male_smokers) %>%
-  select(total_vaccinations, total_cases, total_deaths, total_boosters, population_density, extreme_poverty, aged_70_older, cardiovasc_death_rate, smoker, human_development_index) %>%
+  select(total_vaccinations, total_cases, total_deaths, total_boosters, icu_patients_per_million, hosp_patients_per_million, population_density, extreme_poverty, aged_70_older, cardiovasc_death_rate, smoker, human_development_index) %>%
   na.omit()
   
 cormat <- round(cor(covid_heat),2)
+cormat
 
 melted_cormat <- melt(cormat)
+head(melted_cormat)
 
 ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
   geom_tile() +
@@ -301,7 +281,7 @@ ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
                        name="Pearson\nCorrelation") +
   theme_minimal() + 
   theme(axis.text.x = element_text(angle = 45, vjust = 1, 
-                                   size = 10, hjust = 1))+
+                                   size = 12, hjust = 1))+
   coord_fixed()
 ```
 
@@ -331,6 +311,11 @@ shape <- st_read(dsn = "../data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
 
 # Results & Implications [1d: preliminary analyses - scatter plots and other ggplots]
 
+Alt (alternative) text
+1. chart type
+2. of type data (x and y, color)
+3. reason for including chart
+
 ```{r vaccination-HDI}
 covid_data %>%
   filter(date == "2022-02-20") %>%
@@ -340,7 +325,7 @@ covid_data %>%
   mutate(booster = total_boosters/population) %>%
   ggplot(mapping = aes(x = vaccination_rate, 
                        y = human_development_index)) +
-  geom_point(size = 2, mapping = aes()) +
+  geom_point(size = 1, mapping = aes()) +
   labs(title = "vaccination rate vs. human development index", 
        subtitle = "xx",
        x = "vaccination rate",
@@ -349,19 +334,15 @@ covid_data %>%
   geom_smooth(color = "blue") 
 ```
 
----
-
-# Results & Implications [1d: preliminary analyses - scatter plots and other ggplots]
 ```{r cases-diabetes}
 covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
   mutate(smoker = female_smokers + male_smokers) %>%
-  mutate(vaccination_rate = people_fully_vaccinated/population) %>%  
   mutate(death = total_deaths/population) %>%  
   mutate(booster = total_boosters/population) %>%
-  ggplot(mapping = aes(x = vaccination_rate, 
-                       y = death)) +
+  ggplot(mapping = aes(x = death, 
+                       y = diabetes_prevalence)) +
   geom_point(size = 1, mapping = aes()) +
   labs(title = "percentage death of population vs. diabetes prevalence", 
        subtitle = "xx",
@@ -376,64 +357,23 @@ covid_data %>%
 # Results & Implications [1e: time series analyses]
 
 ---
-```{r}
-# Libraries
-library(dygraphs)
-library(xts) # To make the convertion data-frame / xts format
 
-# Format 3: Several variables for each date
-covid_time <- covid_data %>%
-  select(location, date, total_cases) %>%
-  filter(location == c("China", "Japan", "India", "Brazil", "France", "Germany", "Italy", "Mexico", "Russia", "United Kindom", "United States"))
+background-image: url(https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80)
 
-```
-
-```{r}
-covid_time_wide <- reshape(data=covid_time,idvar="location",
-                          v.names = "total_cases",
-                          timevar = "date",
-                          direction="wide")
-```
-
-
-```{r}
-data <- data.frame(
-  time=seq(date), 
-  value1=
-  value2=
-)
-
-# Then you can create the xts format:
-don=xts( x=data[,-1], order.by=data$time)
-
-# Chart
-p <- dygraph(don)
-p
-
-```
-
+how to adjust transparency of background pic
 
 ---
 
 # Results & Implications - [2a: regression analyses - simple linear regression]
 
-```{r linear-model-1, echo = FALSE}
-covid_total <- covid_data %>%
-  filter(date == "2021-02-24")
-
-covid_country <- covid_total %>%
-  filter(is.na(continent) == FALSE)
-
-covid_other <- covid_total %>%
-  filter(is.na(continent) == TRUE)
-
+```{r linear-model-1}
 linear_reg() %>%
   set_engine("lm") %>%
   fit(total_cases_per_million ~ population_density + hospital_beds_per_thousand, data = covid_country) %>%
   tidy()
 ```
 
-```{r linear-model-2, echo = FALSE}
+```{r linear-model-2}
 linear_reg() %>%
   set_engine("lm") %>%
   fit(total_cases_per_million ~ population_density, data = covid_country) %>%
@@ -453,12 +393,9 @@ linear_reg() %>%
 
 # Results & Implications - [2b: regression analyses - other]
 
-```{r make-dummy2}
-covid_data2 <- covid_data1 %>%
-  select(vaccine_introduced, total_vaccinations, date, first_vaccination, interaction_term, location, new_cases_per_million, weekly_hosp_admissions_per_million)
-```
+
 ```{r make-dataset2}
-covid_data3 <- covid_data1 %>%
+covid_data3 <- covid_data %>%
   select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred, population_density, total_cases_per_million)
 ```
 
