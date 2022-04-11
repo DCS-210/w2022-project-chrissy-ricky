@@ -158,6 +158,10 @@ style_xaringan(
 
 - These aim to assist medical staff worldwide in triaging patients, especially in the context of limited healthcare resources.
 
+# Literature Review - [6: vitamin D and covi-19]
+https://www.frontiersin.org/articles/10.3389/fpubh.2021.736665/full
+
+Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD) and the likelihood of suffering severe symptoms of covid-19. The data supports a significant effect of vitamin D in preventing and mitigating respiratory tract infections have emerged. Severe deficiency, deficiency and insufficiency of vitamin D were all associated with ICU admission In this study of almost 1.5 million individuals. 
 ---
 
 # Literature Review - [6?]
@@ -444,7 +448,7 @@ linear_reg() %>%
 # Results & Implications - [2b: regression analyses - other]
 
 
----
+
 
 # Results & Implications - [3: machine learnng]
 
