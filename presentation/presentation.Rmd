@@ -466,11 +466,41 @@ linear_reg() %>%
 
 # Results & Implications - [2b: regression analyses - other]
 
+<<<<<<< HEAD
 1. Fixed effect
 
 2. Difference in Difference
 
 3. Regression Discontinuity
+=======
+```{r make-dummy2}
+covid_data2 <- covid_data1 %>%
+  select(vaccine_introduced, total_vaccinations, date, first_vaccination, interaction_term, location, new_cases_per_million, weekly_hosp_admissions_per_million)
+```
+```{r make-dataset2}
+covid_data3 <- covid_data1 %>%
+  select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred, population_density, total_cases_per_million)
+```
+
+```{r make-covid-data-10}
+covid_data7 <- covid_data3 %>%
+  filter(location == "United States" | location == "United Kingdom" | location == "Canada" | location == "Belgium" | location == "Israel")
+```
+
+``` {r make-feregression}
+library(plm)       # Panel data analysis library
+library(car)       # Companion to applied regression 
+library(gplots)    # Various programing tools for plotting data
+library(tseries)   # For timeseries analysis
+library(lmtest)    # For hetoroskedasticity analysis
+fixed.dum <-lm(weekly_hosp_admissions_per_million ~ people_fully_vaccinated_per_hundred + factor(location) - 1, data = covid_data7)
+summary(fixed.dum)
+
+yhat <- fixed.dum$fitted
+scatterplot(yhat ~ covid_data7$people_fully_vaccinated_per_hundred | covid_data7$location,  xlab ="people fully vaccinated per hundred", ylab ="covid cases", boxplots = FALSE, smooth = FALSE)
+abline(lm(covid_data7$weekly_hosp_admissions_per_million~covid_data7$people_fully_vaccinated_per_hundred),lwd=5, col="red")
+```
+>>>>>>> eb7ab7868ef12ebd9c0d2ef54c662dfadadd09ae
 
 
 # Results & Implications - [3: machine learnng]
