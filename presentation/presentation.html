@@ -4,7 +4,7 @@
     <title>Covid-19, Global Pandemic, and Data Science</title>
     <meta charset="utf-8" />
     <meta name="author" content="Team Chrissy &amp; Ricky   Chrissy Aman and Ricky Sun" />
-    <meta name="date" content="2022-04-05" />
+    <meta name="date" content="2022-04-11" />
     <script src="libs/header-attrs-2.11/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
@@ -15,7 +15,7 @@ class: center, middle, inverse, title-slide
 # Covid-19, Global Pandemic, and Data Science
 ### Team Chrissy &amp; Ricky <br> Chrissy Aman and Ricky Sun
 ### Bates College
-### 2022-04-05
+### 2022-04-11
 
 ---
 
@@ -29,6 +29,13 @@ class: center, middle, inverse, title-slide
 
 
 ## Outline 
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 30px;
+    padding: 1em 4em 1em 4em;
+}
+&lt;/style&gt;
 
 - Introduction
 
@@ -44,32 +51,39 @@ class: center, middle, inverse, title-slide
 
 ---
 
-## Research Question
-
-- In our research, we are trying to use Covid-19 related data, together with other relevant
-data to find potential predictors for Covid-19 cases, deaths, or vaccination rates. 
-
-? how to add a navigation bar below 
-
-? how to change font size
-
-? how to adjust positioning of texts
-
----
 
 class: inverse, center, middle
 
+background-image: url("images/cool.png")
+
 # Introduction
-? How to add background pic 
+
+How to add background pic 
 ---
 
 # Introduction 
 
 COVID-19, also known as Coronavirus disease 2019 is a contagious disease caused by a virus, the severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)
 
-Up until yesterday, there are over xxx infections and xxx deaths since the beginning of 2020
+Up until yesterday, there are over xxx infections and xxx deaths since the beginning of the pandemic
 
 Although no one can predict a pandemic like this, with the help of data, we might be able to use available data to, for example, evaluate risks, so that the virus can be better managed or even contained in earlier stages. 
+
+---
+
+## Research Question
+
+- In our research, we are trying to use Covid-19 related data, together with other relevant
+data to find potential predictors for Covid-19 cases, deaths, or vaccination rates. 
+
+
+? Do vaccinations effectively mitigate the death rate 
+
+? Can we implement machine learning algorithm to predict Covid-19
+
+? Are higher percentage of older people predicts higher death rate
+
+? What about other variables in predicting Covid-19
 
 ---
 
@@ -81,44 +95,48 @@ class: inverse, middle, center
 
 ---
 
-# Literature Review - [1]
+# [1] Covid-19 severity
 
+- The unpredictability of the progression of coronavirus disease 2019 (COVID-19) may be attributed to the low precision of the tools used to predict the prognosis of this disease, especially when the virus is mutating in a fast speed from alpha, to Omicron, and there are more recent variants too. 
 
----
-
-# Literature Review - [2 Covid-19 and meta-analyses of research]
-
-https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7607482/
-
----
-# Literature Review - [3: Covid-19 and weather]
-
-https://www.nature.com/articles/s41598-021-01189-3
-
-Rising temperature levels during spring and summer are often argued to enable lifting of strict containment measures even in the absence of herd immunity. Despite broad scholarly interest in the relationship between weather and coronavirus spread, previous studies come to very mixed results. To contribute to this puzzle, the paper examines the impact of weather on the COVID-19 pandemic using a unique granular dataset of over 1.2 million daily observations covering over 3700 counties in nine countries for all seasons of 2020. Our results show that temperature and wind speed have a robust negative effect on virus spread after controlling for a range of potential confounding factors. These effects, however, are substantially larger during mealtimes, as well as in periods of high mobility and low containment, suggesting an important role for social behaviour.
+- With the help of models proposed (using clinical data) by those paper, we may be better at prognosis of Covid-19 cases severity. This can also be used in decision-making related to the care of patients infected with COVID-19.
 
 ---
 
-# Literature Review - [4: COVID-19 vaccines and economic activity]
+# [2] Covid-19 and weather
 
-https://sjes.springeropen.com/articles/10.1186/s41937-021-00082-0
+- Akin to respiratory tract infection diseases, climatic conditions may significantly influence the COVID-19 pandemic Since the beginning of the COVID-19 pandemic, significant efforts have been made to explore the relationship between climatic condition and growth in number of COVID-19 cases. 
 
-https://www.sciencedirect.com/science/article/pii/S0929664621002357
+- From those studies, it seems that there are significant Interactions of temperature and relative humidity for growth of COVID-19 cases and death rates. Air pollution may be another factor that predict covid-19 deaths. Those evidence are collected from various of countries.
 
+---
+# [3] Covid-19 and social media
 
-This paper empirically examines the economic effects of COVID-19 vaccine rollouts using a cross-country daily database of vaccinations and high-frequency indicators of economic activity—nitrogen dioxide (NO2) emissions, carbon monoxide (CO) emissions, and Google mobility indices—for a sample of 46 countries over the period December 16, 2020 to June 20, 2021. Using surprises in vaccines administered, we find that an unexpected increase in vaccination per capita is associated with a significant increase in economic activity. We also find evidence for nonlinear effects of vaccines, with the marginal economic benefits being larger when vaccination rates are higher. Country-specific conditions play an important role, with lower economic gains if strict containment measures are in place or if the country is experiencing a severe outbreak. Finally, the results provide evidence of spillovers across borders, highlighting the importance of equitable access to vaccines across nations.
+- Social media data (such as twits or social media indexes) from, for example, google search, twitter, facebook and other social media platform, may also be used to develop models and as early warning signals of COVID-19 outbreaks. Social media data can also presents with people's perception of risks and general mental states of a region.
 
 ---
 
-# Literature Review - [5: Covid-19 and social media]
+# [4] COVID-19 and impacts
 
-The COVID-19 risk perception: A survey on socioeconomics and media attention
+- Covid-19 also has had great impacts in our daily lives (racial issues, job markets, also economic activities, and so on)
 
-This brief communication examines the role of socioeconomic factors and use of social media on the risk perception about COVID-19 in Vietnam, which shares a common border with China. Moreover, Vietnam was the first country to succeed in containment of severe acute respiratory syndrome (SARS) in 2003. From a sample of 391 Vietnamese respondents aged from 15 to 47 years, the present study found that geographical regions and behaviors in using social media have a positive impact on the risk perception of COVID-19 epidemic in Vietnam. It also adds to the significance of understanding the risk perception among people to communicate the public health response to COVID-19 to curb the spread of this deadly virus.
+### It is found that an increase in vaccination per capita is associated with a significant increase in economic activity. 
+
+### It is also found evidence for nonlinear effects of vaccines: marginal economic benefits when vaccination rates are higher. 
+
+### Country-specific conditions play an important role, with lower economic gains if strict containment measures are in place or if the country is experiencing a severe outbreak.
 
 ---
 
-# Literature Review - [6]
+# [5] Covid-19 and machine learning
+
+- Developing accurate forecasting tools will help in our fight against the pandemic. Prediction models that combine several features to estimate the risk of infection have been developed. 
+
+- These aim to assist medical staff worldwide in triaging patients, especially in the context of limited healthcare resources.
+
+---
+
+# Literature Review - [6?]
 
 ---
 
@@ -162,7 +180,299 @@ We have three major parts of analyses:
 
 class: inverse, middle, center
 
-# Results &amp; Implications [1: preliminary analyses]
+# Results &amp; Implications 
+
+---
+
+# Results &amp; Implications [1a: preliminary analyses - summary statistics]
+
+1. covid data (cases, death, vaccinations)
+
+```r
+covid_data %&gt;%
+  filter(date == "2022-02-20") %&gt;%
+  filter(is.na(continent) == FALSE) %&gt;%
+  mutate(vaccination_rate = people_fully_vaccinated/population) %&gt;%
+  select(location, vaccination_rate) %&gt;%
+  arrange(desc(vaccination_rate)) %&gt;%
+  top_n(10)
+```
+
+```
+## Selecting by vaccination_rate
+```
+
+```
+## # A tibble: 10 × 2
+##    location             vaccination_rate
+##    &lt;chr&gt;                           &lt;dbl&gt;
+##  1 United Arab Emirates            0.945
+##  2 Portugal                        0.915
+##  3 Singapore                       0.898
+##  4 Malta                           0.894
+##  5 Chile                           0.893
+##  6 Cuba                            0.872
+##  7 South Korea                     0.864
+##  8 Spain                           0.831
+##  9 Denmark                         0.815
+## 10 Cambodia                        0.815
+```
+
+
+```r
+covid_data %&gt;%
+  filter(date == "2022-02-20") %&gt;%
+  filter(is.na(continent) == FALSE) %&gt;%
+  mutate(booster = total_boosters/population) %&gt;%
+  select(location, booster) %&gt;%
+  arrange(desc(booster)) %&gt;%
+  top_n(10)
+```
+
+```
+## Selecting by booster
+```
+
+```
+## # A tibble: 10 × 2
+##    location    booster
+##    &lt;chr&gt;         &lt;dbl&gt;
+##  1 Chile         0.713
+##  2 Malta         0.660
+##  3 Singapore     0.653
+##  4 Denmark       0.623
+##  5 Italy         0.611
+##  6 Belgium       0.601
+##  7 Portugal      0.597
+##  8 South Korea   0.594
+##  9 Luxembourg    0.566
+## 10 Ireland       0.561
+```
+
+2. medical resources (handwashing facilities, hospital beds per thousand, ...)
+
+
+3. general health information (aged 70 and over, diabete prevalence, female &amp; male smoker)
+
+
+
+4. development (life expectancy, HDI, population density, extreme poverty)
+
+
+5. stringency index (how strict)
+
+
+---
+
+# Results &amp; Implications [1b: preliminary analyses - correlation and heat map]
+
+
+```r
+covid_heat &lt;- covid_data %&gt;%
+  filter(date == "2022-02-20") %&gt;%
+  filter(is.na(continent) == FALSE) %&gt;%
+  mutate(smoker = female_smokers + male_smokers) %&gt;%
+  select(total_vaccinations, total_cases, total_deaths, total_boosters, icu_patients_per_million, hosp_patients_per_million, population_density, extreme_poverty, aged_70_older, cardiovasc_death_rate, smoker, human_development_index) %&gt;%
+  na.omit()
+  
+cormat &lt;- round(cor(covid_heat),2)
+cormat
+```
+
+```
+##                           total_vaccinations total_cases total_deaths total_boosters
+## total_vaccinations                      1.00        0.99         0.99           0.98
+## total_cases                             0.99        1.00         1.00           0.96
+## total_deaths                            0.99        1.00         1.00           0.96
+## total_boosters                          0.98        0.96         0.96           1.00
+## icu_patients_per_million                0.38        0.41         0.43           0.32
+## hosp_patients_per_million              -0.28       -0.23        -0.21          -0.27
+## population_density                     -0.31       -0.23        -0.25          -0.26
+## extreme_poverty                         0.46        0.41         0.44           0.54
+## aged_70_older                          -0.06       -0.04        -0.04           0.03
+## cardiovasc_death_rate                   0.16        0.12         0.14           0.13
+## smoker                                 -0.02        0.05         0.04           0.03
+## human_development_index                 0.13        0.17         0.14           0.12
+##                           icu_patients_per_million hosp_patients_per_million
+## total_vaccinations                            0.38                     -0.28
+## total_cases                                   0.41                     -0.23
+## total_deaths                                  0.43                     -0.21
+## total_boosters                                0.32                     -0.27
+## icu_patients_per_million                      1.00                      0.17
+## hosp_patients_per_million                     0.17                      1.00
+## population_density                            0.29                      0.63
+## extreme_poverty                               0.32                      0.00
+## aged_70_older                                -0.05                      0.16
+## cardiovasc_death_rate                        -0.30                     -0.07
+## smoker                                        0.48                      0.44
+## human_development_index                       0.22                     -0.03
+##                           population_density extreme_poverty aged_70_older
+## total_vaccinations                     -0.31            0.46         -0.06
+## total_cases                            -0.23            0.41         -0.04
+## total_deaths                           -0.25            0.44         -0.04
+## total_boosters                         -0.26            0.54          0.03
+## icu_patients_per_million                0.29            0.32         -0.05
+## hosp_patients_per_million               0.63            0.00          0.16
+## population_density                      1.00           -0.14          0.07
+## extreme_poverty                        -0.14            1.00          0.47
+## aged_70_older                           0.07            0.47          1.00
+## cardiovasc_death_rate                  -0.23           -0.24         -0.65
+## smoker                                  0.62            0.19          0.23
+## human_development_index                 0.11            0.01          0.34
+##                           cardiovasc_death_rate smoker human_development_index
+## total_vaccinations                         0.16  -0.02                    0.13
+## total_cases                                0.12   0.05                    0.17
+## total_deaths                               0.14   0.04                    0.14
+## total_boosters                             0.13   0.03                    0.12
+## icu_patients_per_million                  -0.30   0.48                    0.22
+## hosp_patients_per_million                 -0.07   0.44                   -0.03
+## population_density                        -0.23   0.62                    0.11
+## extreme_poverty                           -0.24   0.19                    0.01
+## aged_70_older                             -0.65   0.23                    0.34
+## cardiovasc_death_rate                      1.00  -0.06                   -0.79
+## smoker                                    -0.06   1.00                   -0.21
+## human_development_index                   -0.79  -0.21                    1.00
+```
+
+```r
+melted_cormat &lt;- melt(cormat)
+head(melted_cormat)
+```
+
+```
+##                        Var1               Var2 value
+## 1        total_vaccinations total_vaccinations  1.00
+## 2               total_cases total_vaccinations  0.99
+## 3              total_deaths total_vaccinations  0.99
+## 4            total_boosters total_vaccinations  0.98
+## 5  icu_patients_per_million total_vaccinations  0.38
+## 6 hosp_patients_per_million total_vaccinations -0.28
+```
+
+```r
+ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile() +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       midpoint = 0, limit = c(-1,1), space = "Lab",
+                       name="Pearson\nCorrelation") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                   size = 12, hjust = 1))+
+  coord_fixed()
+```
+
+&lt;img src="presentation_files/figure-html/correlation_heatmap-1.png" width="80%" /&gt;
+
+---
+
+# Results &amp; Implications [1c: preliminary analyses - maps]
+
+Include dynamic maps for vaccination
+
+
+
+Alt (alternative) text
+1. chart type
+2. of type data (x and y, color)
+3. reason for including chart
+
+
+
+
+```r
+worldshapefile &lt;- "data/world_shape_file/TM_WORLD_BORDERS-0.3.shp"
+shape &lt;- st_read(dsn = "../data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
+```
+
+```
+## Reading layer `TM_WORLD_BORDERS-0.3' from data source 
+##   `/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp' using driver `ESRI Shapefile'
+## Simple feature collection with 246 features and 11 fields
+## Geometry type: MULTIPOLYGON
+## Dimension:     XY
+## Bounding box:  xmin: -180 ymin: -90 xmax: 180 ymax: 83.6236
+## Geodetic CRS:  WGS 84
+```
+
+---
+
+# Results &amp; Implications [1d: preliminary analyses - scatter plots and other ggplots]
+
+Alt (alternative) text
+1. chart type
+2. of type data (x and y, color)
+3. reason for including chart
+
+
+```r
+covid_data %&gt;%
+  filter(date == "2022-02-20") %&gt;%
+  filter(is.na(continent) == FALSE) %&gt;%
+  mutate(smoker = female_smokers + male_smokers) %&gt;%
+  mutate(vaccination_rate = people_fully_vaccinated/population) %&gt;%  
+  mutate(booster = total_boosters/population) %&gt;%
+  ggplot(mapping = aes(x = vaccination_rate, 
+                       y = human_development_index)) +
+  geom_point(size = 1, mapping = aes()) +
+  labs(title = "vaccination rate vs. human development index", 
+       subtitle = "xx",
+       x = "vaccination rate",
+       y = "human development index") +
+  scale_color_viridis_d() +
+  geom_smooth(color = "blue") 
+```
+
+```
+## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+```
+
+```
+## Warning: Removed 131 rows containing non-finite values (stat_smooth).
+```
+
+```
+## Warning: Removed 131 rows containing missing values (geom_point).
+```
+
+&lt;img src="presentation_files/figure-html/vaccination-HDI-1.png" width="80%" /&gt;
+
+
+```r
+covid_data %&gt;%
+  filter(date == "2022-02-20") %&gt;%
+  filter(is.na(continent) == FALSE) %&gt;%
+  mutate(smoker = female_smokers + male_smokers) %&gt;%
+  mutate(death = total_deaths/population) %&gt;%  
+  mutate(booster = total_boosters/population) %&gt;%
+  ggplot(mapping = aes(x = death, 
+                       y = diabetes_prevalence)) +
+  geom_point(size = 1, mapping = aes()) +
+  labs(title = "percentage death of population vs. diabetes prevalence", 
+       subtitle = "xx",
+       x = "percentage death of population",
+       y = "diabetes prevalence") +
+  scale_color_viridis_d() +
+  geom_smooth(color = "blue") 
+```
+
+```
+## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+```
+
+```
+## Warning: Removed 22 rows containing non-finite values (stat_smooth).
+```
+
+```
+## Warning: Removed 22 rows containing missing values (geom_point).
+```
+
+&lt;img src="presentation_files/figure-html/cases-diabetes-1.png" width="80%" /&gt;
+
+---
+
+# Results &amp; Implications [1e: time series analyses]
 
 ---
 
@@ -192,6 +502,28 @@ linear_reg() %&gt;%
 ```
 
 
+```r
+linear_reg() %&gt;%
+  set_engine("lm") %&gt;%
+  fit(total_cases_per_million ~ population_density, data = covid_country) %&gt;%
+  tidy()
+```
+
+```
+## # A tibble: 2 × 5
+##   term                estimate std.error statistic  p.value
+##   &lt;chr&gt;                  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)        117818.     9238.      12.8   1.11e-27
+## 2 population_density      1.29      4.29     0.301 7.64e- 1
+```
+
+---
+
+# Results &amp; Implications - [2a: regression analyses - simple linear regression]
+
+
+
+
 ---
 
 # Results &amp; Implications - [2b: regression analyses - other]
@@ -200,6 +532,15 @@ linear_reg() %&gt;%
 ---
 
 # Results &amp; Implications - [3: machine learnng]
+
+1. linear regression
+
+
+2. logistic regression
+
+
+3. KNN (clusters) https://github.com/allisonhorst/stats-illustrations/
+
 
 
 ---
@@ -216,6 +557,8 @@ class: inverse, middle, center
 ---
 
 # Future Studies
+
+Future studies
 
 ---
 

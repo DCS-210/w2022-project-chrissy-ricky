@@ -15,14 +15,20 @@ output:
       countIncrementalSlides: false
 
 #xaringan::inf_mr()
+#accessible colors: scale_color_viridis_d() 
 ---
 
 ```{r load-packages, include = FALSE}
 # Add any additional packages you need to this chunk
 library(tidyverse)
 library(tidymodels)
+library(reshape2)
 library(palmerpenguins)
 library(knitr)
+library(tmap)
+library(tmaptools)
+library(sf)
+library(leaflet)
 library(xaringanthemer)
 ```
 
@@ -33,6 +39,7 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 
 ```{r load-data, include=FALSE}
 # Load your data here
+covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
 ```
 
 ```{r title-page-pic, include=FALSE}
@@ -42,6 +49,13 @@ style_xaringan(
 ```
 
 ## Outline 
+
+<style type="text/css">
+.remark-slide-content {
+    font-size: 30px;
+    padding: 1em 4em 1em 4em;
+}
+</style>
 
 - Introduction
 
@@ -55,9 +69,25 @@ style_xaringan(
 
 - Limitations and Potential Future Studies
 
-```{r castle, echo = FALSE, out.width = "60%", fig.align = "center", fig.cap = "Image credit: Photo by Jörg Angeli on Unsplash."}
-include_graphics("https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80")
-```
+---
+
+
+class: inverse, center, middle
+
+background-image: url("images/cool.png")
+
+# Introduction
+
+How to add background pic 
+---
+
+# Introduction 
+
+COVID-19, also known as Coronavirus disease 2019 is a contagious disease caused by a virus, the severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)
+
+Up until yesterday, there are over xxx infections and xxx deaths since the beginning of the pandemic
+
+Although no one can predict a pandemic like this, with the help of data, we might be able to use available data to, for example, evaluate risks, so that the virus can be better managed or even contained in earlier stages. 
 
 ---
 
@@ -66,29 +96,14 @@ include_graphics("https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?i
 - In our research, we are trying to use Covid-19 related data, together with other relevant
 data to find potential predictors for Covid-19 cases, deaths, or vaccination rates. 
 
-? how to add a navigation bar below 
 
-? how to change font size
+? Do vaccinations effectively mitigate the death rate 
 
-? how to adjust positioning of texts
+? Can we implement machine learning algorithm to predict Covid-19
 
----
+? Are higher percentage of older people predicts higher death rate
 
-class: inverse, center, middle
-
-# Introduction
-? How to add background pic 
-
-background-image: url(https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80)
----
-
-# Introduction 
-
-COVID-19, also known as Coronavirus disease 2019 is a contagious disease caused by a virus, the severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)
-
-Up until yesterday, there are over xxx infections and xxx deaths since the beginning of 2020
-
-Although no one can predict a pandemic like this, with the help of data, we might be able to use available data to, for example, evaluate risks, so that the virus can be better managed or even contained in earlier stages. 
+? What about other variables in predicting Covid-19
 
 ---
 
@@ -104,44 +119,48 @@ style_xaringan(
 
 ---
 
-# Literature Review - [1]
+# [1] Covid-19 severity
 
+- The unpredictability of the progression of coronavirus disease 2019 (COVID-19) may be attributed to the low precision of the tools used to predict the prognosis of this disease, especially when the virus is mutating in a fast speed from alpha, to Omicron, and there are more recent variants too. 
 
----
-
-# Literature Review - [2 Covid-19 and meta-analyses of research]
-
-https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7607482/
-
----
-# Literature Review - [3: Covid-19 and weather]
-
-https://www.nature.com/articles/s41598-021-01189-3
-
-Rising temperature levels during spring and summer are often argued to enable lifting of strict containment measures even in the absence of herd immunity. Despite broad scholarly interest in the relationship between weather and coronavirus spread, previous studies come to very mixed results. To contribute to this puzzle, the paper examines the impact of weather on the COVID-19 pandemic using a unique granular dataset of over 1.2 million daily observations covering over 3700 counties in nine countries for all seasons of 2020. Our results show that temperature and wind speed have a robust negative effect on virus spread after controlling for a range of potential confounding factors. These effects, however, are substantially larger during mealtimes, as well as in periods of high mobility and low containment, suggesting an important role for social behaviour.
+- With the help of models proposed (using clinical data) by those paper, we may be better at prognosis of Covid-19 cases severity. This can also be used in decision-making related to the care of patients infected with COVID-19.
 
 ---
 
-# Literature Review - [4: COVID-19 vaccines and economic activity]
+# [2] Covid-19 and weather
 
-https://sjes.springeropen.com/articles/10.1186/s41937-021-00082-0
+- Akin to respiratory tract infection diseases, climatic conditions may significantly influence the COVID-19 pandemic Since the beginning of the COVID-19 pandemic, significant efforts have been made to explore the relationship between climatic condition and growth in number of COVID-19 cases. 
 
-https://www.sciencedirect.com/science/article/pii/S0929664621002357
+- From those studies, it seems that there are significant Interactions of temperature and relative humidity for growth of COVID-19 cases and death rates. Air pollution may be another factor that predict covid-19 deaths. Those evidence are collected from various of countries.
 
+---
+# [3] Covid-19 and social media
 
-This paper empirically examines the economic effects of COVID-19 vaccine rollouts using a cross-country daily database of vaccinations and high-frequency indicators of economic activity—nitrogen dioxide (NO2) emissions, carbon monoxide (CO) emissions, and Google mobility indices—for a sample of 46 countries over the period December 16, 2020 to June 20, 2021. Using surprises in vaccines administered, we find that an unexpected increase in vaccination per capita is associated with a significant increase in economic activity. We also find evidence for nonlinear effects of vaccines, with the marginal economic benefits being larger when vaccination rates are higher. Country-specific conditions play an important role, with lower economic gains if strict containment measures are in place or if the country is experiencing a severe outbreak. Finally, the results provide evidence of spillovers across borders, highlighting the importance of equitable access to vaccines across nations.
+- Social media data (such as twits or social media indexes) from, for example, google search, twitter, facebook and other social media platform, may also be used to develop models and as early warning signals of COVID-19 outbreaks. Social media data can also presents with people's perception of risks and general mental states of a region.
 
 ---
 
-# Literature Review - [5: Covid-19 and social media]
+# [4] COVID-19 and impacts
 
-The COVID-19 risk perception: A survey on socioeconomics and media attention
+- Covid-19 also has had great impacts in our daily lives (racial issues, job markets, also economic activities, and so on)
 
-This brief communication examines the role of socioeconomic factors and use of social media on the risk perception about COVID-19 in Vietnam, which shares a common border with China. Moreover, Vietnam was the first country to succeed in containment of severe acute respiratory syndrome (SARS) in 2003. From a sample of 391 Vietnamese respondents aged from 15 to 47 years, the present study found that geographical regions and behaviors in using social media have a positive impact on the risk perception of COVID-19 epidemic in Vietnam. It also adds to the significance of understanding the risk perception among people to communicate the public health response to COVID-19 to curb the spread of this deadly virus.
+### It is found that an increase in vaccination per capita is associated with a significant increase in economic activity. 
+
+### It is also found evidence for nonlinear effects of vaccines: marginal economic benefits when vaccination rates are higher. 
+
+### Country-specific conditions play an important role, with lower economic gains if strict containment measures are in place or if the country is experiencing a severe outbreak.
 
 ---
 
-# Literature Review - [6]
+# [5] Covid-19 and machine learning
+
+- Developing accurate forecasting tools will help in our fight against the pandemic. Prediction models that combine several features to estimate the risk of infection have been developed. 
+
+- These aim to assist medical staff worldwide in triaging patients, especially in the context of limited healthcare resources.
+
+---
+
+# Literature Review - [6?]
 
 ---
 
@@ -184,7 +203,154 @@ include_graphics("https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?i
 
 class: inverse, middle, center
 
-# Results & Implications [1: preliminary analyses]
+# Results & Implications 
+
+---
+
+# Results & Implications [1a: preliminary analyses - summary statistics]
+
+1. covid data (cases, death, vaccinations)
+```{r cases-death-vaccination-1}
+covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(vaccination_rate = people_fully_vaccinated/population) %>%
+  select(location, vaccination_rate) %>%
+  arrange(desc(vaccination_rate)) %>%
+  top_n(10)
+```
+
+```{r cases-death-vaccination-2}
+covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(booster = total_boosters/population) %>%
+  select(location, booster) %>%
+  arrange(desc(booster)) %>%
+  top_n(10)
+```
+
+2. medical resources (handwashing facilities, hospital beds per thousand, ...)
+```{r}
+
+```
+
+3. general health information (aged 70 and over, diabete prevalence, female & male smoker)
+```{r}
+
+```
+
+
+4. development (life expectancy, HDI, population density, extreme poverty)
+```{r}
+
+```
+
+5. stringency index (how strict)
+```{r}
+
+```
+
+---
+
+# Results & Implications [1b: preliminary analyses - correlation and heat map]
+
+```{r correlation_heatmap}
+covid_heat <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(smoker = female_smokers + male_smokers) %>%
+  select(total_vaccinations, total_cases, total_deaths, total_boosters, icu_patients_per_million, hosp_patients_per_million, population_density, extreme_poverty, aged_70_older, cardiovasc_death_rate, smoker, human_development_index) %>%
+  na.omit()
+  
+cormat <- round(cor(covid_heat),2)
+cormat
+
+melted_cormat <- melt(cormat)
+head(melted_cormat)
+
+ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile() +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       midpoint = 0, limit = c(-1,1), space = "Lab",
+                       name="Pearson\nCorrelation") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                   size = 12, hjust = 1))+
+  coord_fixed()
+```
+
+---
+
+# Results & Implications [1c: preliminary analyses - maps]
+
+Include dynamic maps for vaccination
+
+
+
+Alt (alternative) text
+1. chart type
+2. of type data (x and y, color)
+3. reason for including chart
+
+```{r, echo = FALSE, fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
+
+```
+
+```{r shapefile}
+worldshapefile <- "data/world_shape_file/TM_WORLD_BORDERS-0.3.shp"
+shape <- st_read(dsn = "../data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
+```
+
+---
+
+# Results & Implications [1d: preliminary analyses - scatter plots and other ggplots]
+
+Alt (alternative) text
+1. chart type
+2. of type data (x and y, color)
+3. reason for including chart
+
+```{r vaccination-HDI}
+covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(smoker = female_smokers + male_smokers) %>%
+  mutate(vaccination_rate = people_fully_vaccinated/population) %>%  
+  mutate(booster = total_boosters/population) %>%
+  ggplot(mapping = aes(x = vaccination_rate, 
+                       y = human_development_index)) +
+  geom_point(size = 1, mapping = aes()) +
+  labs(title = "vaccination rate vs. human development index", 
+       subtitle = "xx",
+       x = "vaccination rate",
+       y = "human development index") +
+  scale_color_viridis_d() +
+  geom_smooth(color = "blue") 
+```
+
+```{r cases-diabetes}
+covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(smoker = female_smokers + male_smokers) %>%
+  mutate(death = total_deaths/population) %>%  
+  mutate(booster = total_boosters/population) %>%
+  ggplot(mapping = aes(x = death, 
+                       y = diabetes_prevalence)) +
+  geom_point(size = 1, mapping = aes()) +
+  labs(title = "percentage death of population vs. diabetes prevalence", 
+       subtitle = "xx",
+       x = "percentage death of population",
+       y = "diabetes prevalence") +
+  scale_color_viridis_d() +
+  geom_smooth(color = "blue") 
+```
+
+---
+
+# Results & Implications [1e: time series analyses]
 
 ---
 
@@ -206,9 +372,18 @@ linear_reg() %>%
 ```{r linear-model-2}
 linear_reg() %>%
   set_engine("lm") %>%
-  fit(total_cases_per_million ~ population_density + hospital_beds_per_thousand, data = covid_country) %>%
+  fit(total_cases_per_million ~ population_density, data = covid_country) %>%
   tidy()
 ```
+
+---
+
+# Results & Implications - [2a: regression analyses - simple linear regression]
+
+```{r training-test}
+
+```
+
 
 ---
 
@@ -218,6 +393,15 @@ linear_reg() %>%
 ---
 
 # Results & Implications - [3: machine learnng]
+
+1. linear regression
+
+
+2. logistic regression
+
+
+3. KNN (clusters) https://github.com/allisonhorst/stats-illustrations/
+
 
 
 ---
@@ -234,6 +418,8 @@ class: inverse, middle, center
 ---
 
 # Future Studies
+
+Future studies
 
 ---
 
