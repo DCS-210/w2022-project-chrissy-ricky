@@ -77,6 +77,30 @@ style_xaringan(
 
 ---
 
+
+Development (HDI)
+
+.pull-left[
+- Some text
+- goes here
+]
+.pull-right[
+```{r development, echo = FALSE}
+development <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  select(location, human_development_index) %>%
+  arrange(desc(human_development_index)) %>%
+  top_n(10)
+
+development
+```
+]
+
+
+
+---
+
 # Hello World
 
 - Click the `Knit` button to compile your presentation

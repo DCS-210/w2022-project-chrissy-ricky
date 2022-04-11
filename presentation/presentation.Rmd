@@ -6,7 +6,7 @@ institute: "Bates College"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: xaringan-themer.css
+    css: xaringan-themer2.css
     lib_dir: libs
     nature:
       ratio: "16:9"
@@ -30,6 +30,7 @@ library(tmaptools)
 library(sf)
 library(leaflet)
 library(xaringanthemer)
+library(rgdal)
 ```
 
 ```{r setup, include=FALSE}
@@ -40,6 +41,10 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 ```{r load-data, include=FALSE}
 # Load your data here
 covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
+covid_data <- covid_data %>%
+  mutate(year = format(date, format="%Y")) %>%
+  mutate(month = format(date, format="%M")) %>%
+  mutate(day = format(date, format="%D")) 
 ```
 
 ```{r title-page-pic, include=FALSE}
@@ -78,7 +83,7 @@ background-image: url("images/cool.png")
 
 # Introduction
 
-How to add background pic 
+background-image: url(https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80)
 ---
 
 # Introduction 
@@ -123,7 +128,7 @@ class: my-one-page-font
 
 # [1] Covid-19 severity
 
-- The unpredictability of the progression of coronavirus disease 2019 (COVID-19) may be attributed to the low precision of the tools used to predict the prognosis of this disease, especially when the virus is mutating in a fast speed from alpha, to Omicron, and there are more recent variants too. 
+- .small[The unpredictability of the progression of coronavirus disease 2019 (COVID-19) may be attributed to the low precision of the tools used to predict the prognosis of this disease, especially when the virus is mutating in a fast speed from alpha, to Omicron, and there are more recent variants too.]
 
 - With the help of models proposed (using clinical data) by those paper, we may be better at prognosis of Covid-19 cases severity. This can also be used in decision-making related to the care of patients infected with COVID-19.
 
@@ -167,6 +172,8 @@ vv
 - Developing accurate forecasting tools will help in our fight against the pandemic. Prediction models that combine several features to estimate the risk of infection have been developed. 
 
 - These aim to assist medical staff worldwide in triaging patients, especially in the context of limited healthcare resources.
+
+---
 
 # [6] vitamin D and covid-19
 https://www.frontiersin.org/articles/10.3389/fpubh.2021.736665/full
@@ -227,6 +234,12 @@ class: inverse, middle, center
 
 # [1a] summary statistics
 Development (HDI)
+
+.pull-left[
+- Some text
+- goes here
+]
+.pull-right[
 ```{r development, echo = FALSE}
 development <- covid_data %>%
   filter(date == "2022-02-20") %>%
@@ -237,6 +250,8 @@ development <- covid_data %>%
 
 development
 ```
+]
+
 ---
 
 ```{r HDI-map, echo = FALSE}
@@ -246,15 +261,15 @@ HDI <- covid_data %>%
   select(iso_code, location, date, human_development_index) %>%
   na.omit()
 
-world_spdf <- readOGR( 
+worldshape <- readOGR( 
   dsn= ("/cloud/project/data/world_shape_file/"), 
   layer="TM_WORLD_BORDERS-0.3",
   verbose=FALSE)
 
-world_spdf2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
+worldshape2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
 
 hdi_map <- HDI %>% 
-  left_join(world_spdf2, by = c("location" = "NAME")) %>%
+  left_join(worldshape2, by = c("location" = "NAME")) %>%
   st_as_sf()
 
 pal2 <- colorNumeric(palette = "RdYlGn", domain = hdi_map$human_development_index)
@@ -263,14 +278,14 @@ labels <- sprintf("<strong>%s</strong><br/>%s ", hdi_map$location, hdi_map$human
 
 h_map <- leaflet(data = hdi_map) %>% 
   addTiles()  %>% 
-  setView( lat=10, lng=0 , zoom=1) %>%
+  setView(lat=10, lng=0 , zoom=1.5) %>%
   addPolygons(fillColor = ~pal2(hdi_map$human_development_index),
                                  fillOpacity = 1, 
                                  color = "white",
                                  opacity = 0.7,
                                  weight = 1,
                                  label = labels) %>%
-  addLegend("bottomleft", pal = pal2, values = ~hdi_map$human_development_index,
+  leaflet::addLegend("topright", pal = pal2, values = ~hdi_map$human_development_index,
     title = "Human Development Index",
     opacity = 1)
 
@@ -312,7 +327,6 @@ ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
 Include dynamic maps for vaccination
 
 
-
 Alt (alternative) text
 1. chart type
 2. of type data (x and y, color)
@@ -331,7 +345,7 @@ shape <- st_read(dsn = "../data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
 
 # Results & Implications [1d: preliminary analyses - scatter plots and other ggplots]
 
-```{r vaccination-HDI}
+```{r vaccination-HDI, fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
 covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
@@ -389,28 +403,33 @@ covid_time <- covid_data %>%
 ```
 
 ```{r}
-covid_time_wide <- reshape(data=covid_time,idvar="location",
-                          v.names = "total_cases",
-                          timevar = "date",
-                          direction="wide")
+covid_time_wide <- pivot_wider(data = covid_time,
+                                names_from = location,
+                                values_from = total_cases)
 ```
 
 
 ```{r}
-data <- data.frame(
-  time=seq(date), 
-  value1=
-  value2=
-)
+# data <- covid_time_wide(
+#   time=seq(date), 
+#   value1=total_cases.China,
+#   value2=total_cases.United_States
+# )
+# 
+# don
 
-# Then you can create the xts format:
-don=xts( x=data[,-1], order.by=data$time)
+don = xts(x = covid_time_wide[,-1], order.by = covid_time_wide$date)
 
 # Chart
 p <- dygraph(don)
 p
 
 ```
+---
+# Results & Implications [1e: time series analyses]
+
+
+
 
 
 ---
@@ -419,24 +438,28 @@ p
 
 ```{r linear-model-1, echo = FALSE}
 covid_total <- covid_data %>%
-  filter(date == "2021-02-24")
+  filter(date == "2022-02-20")
 
 covid_country <- covid_total %>%
-  filter(is.na(continent) == FALSE)
+  filter(is.na(continent) == FALSE) %>%
+  mutate(vaccination = people_fully_vaccinated/population) %>%
+  mutate(booster = total_boosters/population)
 
 covid_other <- covid_total %>%
   filter(is.na(continent) == TRUE)
 
-linear_reg() %>%
+reg1 <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(total_cases_per_million ~ population_density + hospital_beds_per_thousand, data = covid_country) %>%
+  fit(total_deaths_per_million ~ human_development_index + vaccination, data = covid_country) %>%
   tidy()
+#glance(reg1)$r.squared
+#glance(reg1)$adj.r.squared
 ```
 
 ```{r linear-model-2, echo = FALSE}
 linear_reg() %>%
   set_engine("lm") %>%
-  fit(total_cases_per_million ~ population_density, data = covid_country) %>%
+  fit(total_deaths_per_million ~ human_development_index + vaccination + booster + stringency_index, data = covid_country) %>%
   tidy()
 ```
 
@@ -453,7 +476,11 @@ linear_reg() %>%
 
 # Results & Implications - [2b: regression analyses - other]
 
+1. Fixed effect
 
+2. Difference in Difference
+
+3. Regression Discontinuity
 
 
 # Results & Implications - [3: machine learnng]
