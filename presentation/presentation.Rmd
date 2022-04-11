@@ -119,12 +119,22 @@ style_xaringan(
 
 ---
 
+class: my-one-page-font
+
 # [1] Covid-19 severity
 
 - The unpredictability of the progression of coronavirus disease 2019 (COVID-19) may be attributed to the low precision of the tools used to predict the prognosis of this disease, especially when the virus is mutating in a fast speed from alpha, to Omicron, and there are more recent variants too. 
 
 - With the help of models proposed (using clinical data) by those paper, we may be better at prognosis of Covid-19 cases severity. This can also be used in decision-making related to the care of patients infected with COVID-19.
 
+.my-one-page-font {
+  font-size: 20px;
+}
+
+]
+.footnote[
+vv
+]
 ---
 
 # [2] Covid-19 and weather
@@ -158,7 +168,7 @@ style_xaringan(
 
 - These aim to assist medical staff worldwide in triaging patients, especially in the context of limited healthcare resources.
 
-# Literature Review - [6: vitamin D and covi-19]
+# [6] vitamin D and covid-19
 https://www.frontiersin.org/articles/10.3389/fpubh.2021.736665/full
 
 Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD) and the likelihood of suffering severe symptoms of covid-19. The data supports a significant effect of vitamin D in preventing and mitigating respiratory tract infections have emerged. Severe deficiency, deficiency and insufficiency of vitamin D were all associated with ICU admission In this study of almost 1.5 million individuals. 
@@ -212,10 +222,40 @@ class: inverse, middle, center
 ---
 
 # [1a] summary statistics
+Cases
+```{r cases, echo = FALSE}
+library(scales)
+cases <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  select(location, total_cases_per_million) %>%
+  arrange(desc(total_cases_per_million)) %>%
+  top_n(10)
+
+cases
+```
+
+---
+map1
+
+
+---
+
+Deaths
+```{r death, echo = FALSE}
+death <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  select(location, total_deaths_per_million) %>%
+  arrange(desc(total_deaths_per_million)) %>%
+  top_n(10)
+
+death
+```
+---
 
 Vaccinations
-```{r cases-death-vaccination-1, echo = FALSE}
-library(scales)
+```{r vaccination, echo = FALSE}
 vaccination <- covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
@@ -229,6 +269,46 @@ vaccination
 ```
 ---
 
+```{r vaccination-map, echo = FALSE}
+vaccinations <- covid_data %>%
+  filter(date == "2022-02-18") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(vaccination_per_person = total_vaccinations/population) %>%
+  select(iso_code, location, date, vaccination_per_person) %>%
+  na.omit()
+
+world_spdf <- readOGR( 
+  dsn= ("/cloud/project/data/world_shape_file/"), 
+  layer="TM_WORLD_BORDERS-0.3",
+  verbose=FALSE)
+
+world_spdf2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
+
+vac_map <- vaccinations %>% 
+  left_join(world_spdf2, by = c("location" = "NAME")) %>%
+  st_as_sf()
+
+pal2 <- colorNumeric(palette = "RdYlGn", domain = vac_map$vaccination_per_person)
+labels <- sprintf("<strong>%s</strong><br/>%s ", vac_map$location, vac_map$vaccination_per_person) %>%
+  lapply(htmltools::HTML)
+
+v_map <- leaflet(data = vac_map) %>% 
+  addTiles()  %>% 
+  setView( lat=10, lng=0 , zoom=1) %>%
+  addPolygons(fillColor = ~pal2(vac_map$vaccination_per_person),
+                                 fillOpacity = 1, 
+                                 color = "white",
+                                 opacity = 0.7,
+                                 weight = 1,
+                                 label = labels) %>%
+  addLegend("bottomleft", pal = pal2, values = ~vac_map$vaccination_per_person,
+    title = "Vaccinations per Person",
+    opacity = 1)
+
+v_map
+```
+
+---
 # [1a] summary statistics
 Boosters
 ```{r cases-death-vaccination-2, echo = FALSE}
@@ -262,7 +342,7 @@ icu_ad
 ---
 
 # [1a] summary statistics
-4. general health information (aged 70 and over)
+General health information (aged 70 and over)
 ```{r elderly, echo = FALSE}
 elder <- covid_data %>%
   filter(date == "2022-02-20") %>%
@@ -279,34 +359,33 @@ elder
 ---
 
 # [1a] summary statistics
-6. general health information (female & male smoker)
+General health information (diabetes prevalence)
 ```{r smoker, echo = FALSE}
-smoker <- covid_data %>%
+diab <- covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
-  mutate(smoking = (female_smokers + male_smokers)/100) %>%
-  select(location, smoking) %>%
-  arrange(desc(smoking)) %>%
+  mutate(diabetesp = (diabetes_prevalence)/100) %>%
+  select(location, diabetesp) %>%
+  arrange(desc(diabetesp)) %>%
   top_n(10)
 
-smoker$smoking <- percent(smoker$smoking, accuracy=1)
-smoker
+diab$diabetesp <- percent(diab$diabetesp, accuracy=1)
+diab
 ```
 
 ---
 
 # [1a] summary statistics
-7. development (HDI)
-```{r}
+Development (HDI)
+```{r development, echo = FALSE}
+development <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  select(location, human_development_index) %>%
+  arrange(desc(human_development_index)) %>%
+  top_n(10)
 
-```
-
----
-
-# [1a] summary statistics
-8. stringency index (how strict is the policy around Covid-19)
-```{r}
-
+development
 ```
 
 ---

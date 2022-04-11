@@ -71,14 +71,75 @@ covid_heat <- covid_data %>%
   select()
 ```
 
-```{r}
-covid_data %>%
-  select(iso_code, location, date, total_vaccinations) %>%
+```{r vaccination-map, echo = FALSE}
+vaccinations <- covid_data %>%
+  filter(date == "2022-02-18") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(vaccination_per_person = total_vaccinations/population) %>%
+  select(iso_code, location, date, vaccination_per_person) %>%
   na.omit()
+
+world_spdf <- readOGR( 
+  dsn= ("/cloud/project/data/world_shape_file/"), 
+  layer="TM_WORLD_BORDERS-0.3",
+  verbose=FALSE)
+
+world_spdf2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
+
+vac_map <- vaccinations %>% 
+  left_join(world_spdf2, by = c("location" = "NAME")) %>%
+  st_as_sf()
+
+pal2 <- colorNumeric(palette = "RdYlGn", domain = vac_map$vaccination_per_person)
+labels <- sprintf("<strong>%s</strong><br/>%s ", vac_map$location, vac_map$vaccination_per_person) %>%
+  lapply(htmltools::HTML)
+
+v_map <- leaflet(data = vac_map) %>% 
+  addTiles()  %>% 
+  setView( lat=10, lng=0 , zoom=1) %>%
+  addPolygons(fillColor = ~pal2(vac_map$vaccination_per_person),
+                                 fillOpacity = 1, 
+                                 color = "white",
+                                 opacity = 0.7,
+                                 weight = 1,
+                                 label = labels) %>%
+  addLegend("bottomleft", pal = pal2, values = ~vac_map$vaccination_per_person,
+    title = "Vaccinations per Person",
+    opacity = 1)
+
+v_map
+```
+
+
+
+```{r}
+
 ```
 
 ```{r}
 
+```
+
+
+```{r}
+library(sf)
+world_df <- st_read(system.file(dsn = "./data/world_shape_file/TM_WORLD_BORDERS-0.3.shp", package="sf"))
+```
+
+
+
+
+```{r}
+china <- covid_data %>%
+  filter(location == "China")
+```
+
+
+```{r}
+covid_data %>%
+  mutate(vaccination_rate = people_fully_vaccinated/population) %>%
+  select(iso_code, location, date, vaccination_rate) %>%
+  na.omit()
 ```
 
 

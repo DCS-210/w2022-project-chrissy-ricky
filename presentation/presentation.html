@@ -95,12 +95,22 @@ class: inverse, middle, center
 
 ---
 
+class: my-one-page-font
+
 # [1] Covid-19 severity
 
 - The unpredictability of the progression of coronavirus disease 2019 (COVID-19) may be attributed to the low precision of the tools used to predict the prognosis of this disease, especially when the virus is mutating in a fast speed from alpha, to Omicron, and there are more recent variants too. 
 
 - With the help of models proposed (using clinical data) by those paper, we may be better at prognosis of Covid-19 cases severity. This can also be used in decision-making related to the care of patients infected with COVID-19.
 
+.my-one-page-font {
+  font-size: 20px;
+}
+
+]
+.footnote[
+vv
+]
 ---
 
 # [2] Covid-19 and weather
@@ -134,6 +144,10 @@ class: inverse, middle, center
 
 - These aim to assist medical staff worldwide in triaging patients, especially in the context of limited healthcare resources.
 
+# [6] vitamin D and covid-19
+https://www.frontiersin.org/articles/10.3389/fpubh.2021.736665/full
+
+Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD) and the likelihood of suffering severe symptoms of covid-19. The data supports a significant effect of vitamin D in preventing and mitigating respiratory tract infections have emerged. Severe deficiency, deficiency and insufficiency of vitamin D were all associated with ICU admission In this study of almost 1.5 million individuals. 
 ---
 
 # Literature Review - [6?]
@@ -184,6 +198,56 @@ class: inverse, middle, center
 ---
 
 # [1a] summary statistics
+Cases
+
+```
+## Selecting by total_cases_per_million
+```
+
+```
+## # A tibble: 10 × 2
+##    location       total_cases_per_million
+##    &lt;chr&gt;                            &lt;dbl&gt;
+##  1 Faeroe Islands                 653253.
+##  2 Andorra                        485935.
+##  3 Denmark                        443474.
+##  4 Gibraltar                      441453.
+##  5 Slovenia                       422392.
+##  6 San Marino                     415966.
+##  7 Seychelles                     393449.
+##  8 Georgia                        389191.
+##  9 Israel                         382398.
+## 10 Slovakia                       367140.
+```
+
+---
+map1
+
+
+---
+
+Deaths
+
+```
+## Selecting by total_deaths_per_million
+```
+
+```
+## # A tibble: 10 × 2
+##    location               total_deaths_per_million
+##    &lt;chr&gt;                                     &lt;dbl&gt;
+##  1 Peru                                      6279.
+##  2 Bulgaria                                  5081.
+##  3 Bosnia and Herzegovina                    4677.
+##  4 Hungary                                   4470.
+##  5 North Macedonia                           4272.
+##  6 Montenegro                                4232.
+##  7 Georgia                                   3984.
+##  8 Croatia                                   3630.
+##  9 Czechia                                   3564.
+## 10 Slovakia                                  3347.
+```
+---
 
 Vaccinations
 
@@ -259,7 +323,7 @@ Medical resources (icu_patients_per_million)
 ---
 
 # [1a] summary statistics
-4. general health information (aged 70 and over)
+General health information (aged 70 and over)
 
 ```
 ## Selecting by age70
@@ -284,39 +348,52 @@ Medical resources (icu_patients_per_million)
 ---
 
 # [1a] summary statistics
-6. general health information (female &amp; male smoker)
+General health information (diabetes prevalence)
 
 ```
-## Selecting by smoking
+## Selecting by diabetesp
 ```
 
 ```
 ## # A tibble: 10 × 2
-##    location               smoking
-##    &lt;chr&gt;                  &lt;chr&gt;  
-##  1 Kiribati               95%    
-##  2 Montenegro             92%    
-##  3 Greece                 87%    
-##  4 Timor                  84%    
-##  5 Russia                 82%    
-##  6 Indonesia              79%    
-##  7 Bosnia and Herzegovina 78%    
-##  8 Serbia                 78%    
-##  9 Latvia                 77%    
-## 10 Chile                  76%
+##    location             diabetesp
+##    &lt;chr&gt;                &lt;chr&gt;    
+##  1 Marshall Islands     31%      
+##  2 New Caledonia        23%      
+##  3 Kiribati             23%      
+##  4 French Polynesia     23%      
+##  5 Mauritius            22%      
+##  6 Solomon Islands      19%      
+##  7 Saudi Arabia         18%      
+##  8 Papua New Guinea     18%      
+##  9 Egypt                17%      
+## 10 United Arab Emirates 17%
 ```
 
 ---
 
 # [1a] summary statistics
-7. development (HDI)
+Development (HDI)
 
+```
+## Selecting by human_development_index
+```
 
----
-
-# [1a] summary statistics
-8. stringency index (how strict is the policy around Covid-19)
-
+```
+## # A tibble: 10 × 2
+##    location    human_development_index
+##    &lt;chr&gt;                         &lt;dbl&gt;
+##  1 Norway                        0.957
+##  2 Ireland                       0.955
+##  3 Switzerland                   0.955
+##  4 Hong Kong                     0.949
+##  5 Iceland                       0.949
+##  6 Germany                       0.947
+##  7 Sweden                        0.945
+##  8 Australia                     0.944
+##  9 Netherlands                   0.944
+## 10 Denmark                       0.94
+```
 
 ---
 
@@ -585,7 +662,7 @@ linear_reg() %&gt;%
 # Results &amp; Implications - [2b: regression analyses - other]
 
 
----
+
 
 # Results &amp; Implications - [3: machine learnng]
 
