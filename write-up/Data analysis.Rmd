@@ -20,6 +20,17 @@ library(leafsync) ## For placing plots side by side
 library(kableExtra) ## Table  output (in slides)
 ```
 
+```{r heat-map-package}
+library(ggplot2)
+library(dplyr) # easier data wrangling 
+library(viridis) # colour blind friendly palette, works in B&W also
+#library(Interpol.T) #  will generate a large dataset on initial load
+library(lubridate) # for easy date manipulation
+library(ggExtra) # because remembering ggplot theme options is beyond me
+library(tidyr) 
+```
+
+
 ```{r import_data}
 covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
 covid_data_codebook <- readr::read_csv(file = "../data/owid-covid-codebook.csv")
@@ -39,6 +50,33 @@ covid_other <- covid_total %>%
   filter(is.na(continent) == TRUE)
 ```
 
+```{r}
+covid_total <- covid_data %>%
+  filter(date == "2021-02-24")
+
+covid_country <- covid_total %>%
+  filter(is.na(continent) == FALSE)
+
+covid_other <- covid_total %>%
+  filter(is.na(continent) == TRUE)
+```
+
+```{r}
+covid_heat <- covid_data %>%
+  select()
+```
+
+```{r}
+covid_data %>%
+  select(iso_code, location, date, total_vaccinations) %>%
+  na.omit()
+```
+
+```{r}
+
+```
+
+
 ```{r create-variables}
 covid_country <- covid_country %>%
   mutate(percentage_cases = total_cases/population,
@@ -54,6 +92,55 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 ## Preliminary data analysis
 
+```{r 2018-data-leaflet}
+testleaflet <- leaflettdata %>%
+  filter(year == "2018")
+```
+
+```{r filter-worldspdf-hippo}
+covid_country %>% 
+  left_join(TM_WORLD_BORDERS-0.3.shp, by = c("country" = "NAME")) %>%
+  st_as_sf()
+```
+
+```{r leaflet-attempt}
+#attempt at making leaflet where you can switch between years (uses two data frames)
+pal3 <- colorNumeric(palette = "RdYlGn", domain = ninetyleaflet$renewables_share_energy)
+pal2 <- colorNumeric(palette = "RdYlGn", domain = testleaflet$renewables_share_energy)
+
+#labels <- sprintf("<strong>%s</strong><br/>%s ", ninetyleaflet$country, #ninetyleaflet$renewables_share_energy) %>%
+#  lapply(htmltools::HTML)
+
+b <- leaflet(data = covid_country) %>% 
+  addTiles()  %>% 
+  setView( lat=10, lng=0 , zoom=2) %>%
+  addPolygons(fillColor = ~pal3(ninetyleaflet$renewables_share_energy),
+                                 fillOpacity = 1, 
+                                 color = "white",
+                                 opacity = 0.7,
+                                 weight = 1,
+                                 #label = labels,
+                                 group = "1990") %>%
+   addPolygons(fillColor = ~pal2(testleaflet$renewables_share_energy),
+                                 fillOpacity = 1, 
+                                 color = "white",
+                                 opacity = 0.7,
+                                 weight = 1,
+                                 #label = labels,
+                                 group = "2018") %>%
+   addLayersControl(
+    baseGroups = c("2018", "1990"),
+    options = layersControlOptions(collapsed = FALSE))
+
+    #addLegend("bottomright", pal = pal3, values = ~ninetyleaflet$renewables_share_energy,
+    #title = "1990 Renewable<br> Energy Share",
+    #opacity = 1)
+  
+  
+b
+```
+
+
 ```{r}
 library(rgdal)
 my_spdf <- readOGR( 
@@ -67,8 +154,34 @@ my_spdf <- readOGR(
 world_df <- st_read(system.file("data/world_shape_file/TM_WORLD_BORDERS-0.3.shp", package="sf"))
 ```
 
-```{r}
+```{r parse-date}
+dates <- as.POSIXct(covid_country, format = "%Y/%m/%d")
+format(dates, format="%Y")
+```
 
+
+```{r time-heat-map}
+p <-ggplot(covid_country, aes(day,hour,fill=temp))+
+  geom_tile(color= "white",size=0.1) + 
+  scale_fill_viridis(name="Hrly Temps C",option ="C")
+p <-p + facet_grid(year~month)
+p <-p + scale_y_continuous(trans = "reverse", breaks = unique(df$hour))
+p <-p + scale_x_continuous(breaks =c(1,10,20,31))
+p <-p + theme_minimal(base_size = 8)
+p <-p + labs(title= paste("Hourly Temps - Station",statno), x="Day", y="Hour Commencing")
+p <-p + theme(legend.position = "bottom")+
+  theme(plot.title=element_text(size = 14))+
+  theme(axis.text.y=element_text(size=6)) +
+  theme(strip.background = element_rect(colour="white"))+
+  theme(plot.title=element_text(hjust=0))+
+  theme(axis.ticks=element_blank())+
+  theme(axis.text=element_text(size=7))+
+  theme(legend.title=element_text(size=8))+
+  theme(legend.text=element_text(size=6))+
+  removeGrid()#ggExtra
+ 
+# you will want to expand your plot screen before this bit!
+p #awesomeness
 ```
 
 ## Statistical analyses and regressions
