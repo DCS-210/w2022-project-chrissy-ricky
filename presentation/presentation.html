@@ -4,15 +4,7 @@
     <title>Covid-19, Global Pandemic, and Data Science</title>
     <meta charset="utf-8" />
     <meta name="author" content="Team Chrissy &amp; Ricky   Chrissy Aman and Ricky Sun" />
-<<<<<<< HEAD
     <meta name="date" content="2022-04-11" />
-=======
-<<<<<<< HEAD
-    <meta name="date" content="2022-04-07" />
-=======
-    <meta name="date" content="2022-04-05" />
->>>>>>> 212e2c715d2a7d95c691166f32b075a19a027414
->>>>>>> 29bd4237196734d297af5771973416d61ee9194b
     <script src="libs/header-attrs-2.11/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
@@ -23,15 +15,7 @@ class: center, middle, inverse, title-slide
 # Covid-19, Global Pandemic, and Data Science
 ### Team Chrissy &amp; Ricky <br> Chrissy Aman and Ricky Sun
 ### Bates College
-<<<<<<< HEAD
 ### 2022-04-11
-=======
-<<<<<<< HEAD
-### 2022-04-07
-=======
-### 2022-04-05
->>>>>>> 212e2c715d2a7d95c691166f32b075a19a027414
->>>>>>> 29bd4237196734d297af5771973416d61ee9194b
 
 ---
 
@@ -140,25 +124,7 @@ class: inverse, middle, center
 
 ### It is also found evidence for nonlinear effects of vaccines: marginal economic benefits when vaccination rates are higher. 
 
-<<<<<<< HEAD
 ### Country-specific conditions play an important role, with lower economic gains if strict containment measures are in place or if the country is experiencing a severe outbreak.
-=======
-<<<<<<< HEAD
-```r
-glance(model)
-```
-
-```
-## # A tibble: 1 × 12
-##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
-##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     0.651         0.644  15.4      89.6 1.49e-12     1  -207.  419.  425.
-## # … with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;
-```
-=======
-This paper empirically examines the economic effects of COVID-19 vaccine rollouts using a cross-country daily database of vaccinations and high-frequency indicators of economic activity—nitrogen dioxide (NO2) emissions, carbon monoxide (CO) emissions, and Google mobility indices—for a sample of 46 countries over the period December 16, 2020 to June 20, 2021. Using surprises in vaccines administered, we find that an unexpected increase in vaccination per capita is associated with a significant increase in economic activity. We also find evidence for nonlinear effects of vaccines, with the marginal economic benefits being larger when vaccination rates are higher. Country-specific conditions play an important role, with lower economic gains if strict containment measures are in place or if the country is experiencing a severe outbreak. Finally, the results provide evidence of spillovers across borders, highlighting the importance of equitable access to vaccines across nations.
->>>>>>> 212e2c715d2a7d95c691166f32b075a19a027414
->>>>>>> 29bd4237196734d297af5771973416d61ee9194b
 
 ---
 
@@ -182,7 +148,15 @@ class: inverse, middle, center
 
 ## Our Data - details
 
-We used the COVID-19 dataset from "Our World in Data", where they combined multiple datasets together from CDC, John Hopkins, WDI,....
+Our dataset is coming from "Our World in Data" Covid-19 public data, together with data from JHU, WHO, CDC and World Bank. The data covers a wide range:
+
+- Basic Covid-19 data (cases, deaths)
+- Hospital &amp; ICU (ICU beds, ICU patients)
+- Policy responses (stringency_index)
+- Reproduction rate
+- Tests &amp; positivity
+- Vaccinations
+- Others (populations, life_expectancy, GDP per catpita and so on)
 
 ---
 
@@ -203,34 +177,15 @@ We have three major parts of analyses:
 
 ---
 
-# Methods &amp; Data Analyses - details
-
-&lt;div class="figure" style="text-align: center"&gt;
-&lt;img src="https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1650&amp;q=80" alt="Image credit: Photo by Jörg Angeli on Unsplash." width="60%" /&gt;
-&lt;p class="caption"&gt;Image credit: Photo by Jörg Angeli on Unsplash.&lt;/p&gt;
-&lt;/div&gt;
-
----
-
 class: inverse, middle, center
 
 # Results &amp; Implications 
 
 ---
 
-# Results &amp; Implications [1a: preliminary analyses - summary statistics]
+# [1a] summary statistics
 
-1. covid data (cases, death, vaccinations)
-
-```r
-covid_data %&gt;%
-  filter(date == "2022-02-20") %&gt;%
-  filter(is.na(continent) == FALSE) %&gt;%
-  mutate(vaccination_rate = people_fully_vaccinated/population) %&gt;%
-  select(location, vaccination_rate) %&gt;%
-  arrange(desc(vaccination_rate)) %&gt;%
-  top_n(10)
-```
+Vaccinations
 
 ```
 ## Selecting by vaccination_rate
@@ -239,29 +194,22 @@ covid_data %&gt;%
 ```
 ## # A tibble: 10 × 2
 ##    location             vaccination_rate
-##    &lt;chr&gt;                           &lt;dbl&gt;
-##  1 United Arab Emirates            0.945
-##  2 Portugal                        0.915
-##  3 Singapore                       0.898
-##  4 Malta                           0.894
-##  5 Chile                           0.893
-##  6 Cuba                            0.872
-##  7 South Korea                     0.864
-##  8 Spain                           0.831
-##  9 Denmark                         0.815
-## 10 Cambodia                        0.815
+##    &lt;chr&gt;                &lt;chr&gt;           
+##  1 United Arab Emirates 95%             
+##  2 Portugal             91%             
+##  3 Singapore            90%             
+##  4 Malta                89%             
+##  5 Chile                89%             
+##  6 Cuba                 87%             
+##  7 South Korea          86%             
+##  8 Spain                83%             
+##  9 Denmark              82%             
+## 10 Cambodia             82%
 ```
+---
 
-
-```r
-covid_data %&gt;%
-  filter(date == "2022-02-20") %&gt;%
-  filter(is.na(continent) == FALSE) %&gt;%
-  mutate(booster = total_boosters/population) %&gt;%
-  select(location, booster) %&gt;%
-  arrange(desc(booster)) %&gt;%
-  top_n(10)
-```
+# [1a] summary statistics
+Boosters
 
 ```
 ## Selecting by booster
@@ -270,30 +218,104 @@ covid_data %&gt;%
 ```
 ## # A tibble: 10 × 2
 ##    location    booster
-##    &lt;chr&gt;         &lt;dbl&gt;
-##  1 Chile         0.713
-##  2 Malta         0.660
-##  3 Singapore     0.653
-##  4 Denmark       0.623
-##  5 Italy         0.611
-##  6 Belgium       0.601
-##  7 Portugal      0.597
-##  8 South Korea   0.594
-##  9 Luxembourg    0.566
-## 10 Ireland       0.561
+##    &lt;chr&gt;       &lt;chr&gt;  
+##  1 Chile       71%    
+##  2 Malta       66%    
+##  3 Singapore   65%    
+##  4 Denmark     62%    
+##  5 Italy       61%    
+##  6 Belgium     60%    
+##  7 Portugal    60%    
+##  8 South Korea 59%    
+##  9 Luxembourg  57%    
+## 10 Ireland     56%
+```
+---
+
+# [1a] summary statistics
+
+Medical resources (icu_patients_per_million)
+
+```
+## Selecting by icu_patients_per_million
 ```
 
-2. medical resources (handwashing facilities, hospital beds per thousand, ...)
+```
+## # A tibble: 10 × 2
+##    location      icu_patients_per_million
+##    &lt;chr&gt;                            &lt;dbl&gt;
+##  1 Chile                             52.5
+##  2 France                            43.4
+##  3 Argentina                         34.5
+##  4 Czechia                           33.6
+##  5 Israel                            33.4
+##  6 United States                     32.4
+##  7 Germany                           28.5
+##  8 Belgium                           27.1
+##  9 Spain                             25.8
+## 10 Austria                           20.8
+```
+
+---
+
+# [1a] summary statistics
+4. general health information (aged 70 and over)
+
+```
+## Selecting by age70
+```
+
+```
+## # A tibble: 10 × 2
+##    location  age70
+##    &lt;chr&gt;     &lt;chr&gt;
+##  1 Japan     18%  
+##  2 Italy     16%  
+##  3 Germany   16%  
+##  4 Portugal  15%  
+##  5 Greece    15%  
+##  6 Latvia    14%  
+##  7 Spain     14%  
+##  8 Lithuania 14%  
+##  9 Austria   14%  
+## 10 Estonia   13%
+```
+
+---
+
+# [1a] summary statistics
+6. general health information (female &amp; male smoker)
+
+```
+## Selecting by smoking
+```
+
+```
+## # A tibble: 10 × 2
+##    location               smoking
+##    &lt;chr&gt;                  &lt;chr&gt;  
+##  1 Kiribati               95%    
+##  2 Montenegro             92%    
+##  3 Greece                 87%    
+##  4 Timor                  84%    
+##  5 Russia                 82%    
+##  6 Indonesia              79%    
+##  7 Bosnia and Herzegovina 78%    
+##  8 Serbia                 78%    
+##  9 Latvia                 77%    
+## 10 Chile                  76%
+```
+
+---
+
+# [1a] summary statistics
+7. development (HDI)
 
 
-3. general health information (aged 70 and over, diabete prevalence, female &amp; male smoker)
+---
 
-
-
-4. development (life expectancy, HDI, population density, extreme poverty)
-
-
-5. stringency index (how strict)
+# [1a] summary statistics
+8. stringency index (how strict is the policy around Covid-19)
 
 
 ---

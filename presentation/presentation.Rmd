@@ -172,7 +172,15 @@ class: inverse, middle, center
 
 ## Our Data - details
 
-We used the COVID-19 dataset from "Our World in Data", where they combined multiple datasets together from CDC, John Hopkins, WDI,....
+Our dataset is coming from "Our World in Data" Covid-19 public data, together with data from JHU, WHO, CDC and World Bank. The data covers a wide range:
+
+- Basic Covid-19 data (cases, deaths)
+- Hospital & ICU (ICU beds, ICU patients)
+- Policy responses (stringency_index)
+- Reproduction rate
+- Tests & positivity
+- Vaccinations
+- Others (populations, life_expectancy, GDP per catpita and so on)
 
 ---
 
@@ -193,60 +201,106 @@ We have three major parts of analyses:
 
 ---
 
-# Methods & Data Analyses - details
-
-```{r castle, echo = FALSE, out.width = "60%", fig.align = "center", fig.cap = "Image credit: Photo by Jörg Angeli on Unsplash."}
-include_graphics("https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80")
-```
-
----
-
 class: inverse, middle, center
 
 # Results & Implications 
 
 ---
 
-# Results & Implications [1a: preliminary analyses - summary statistics]
+# [1a] summary statistics
 
-1. covid data (cases, death, vaccinations)
-```{r cases-death-vaccination-1}
-covid_data %>%
+Vaccinations
+```{r cases-death-vaccination-1, echo = FALSE}
+library(scales)
+vaccination <- covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
   mutate(vaccination_rate = people_fully_vaccinated/population) %>%
   select(location, vaccination_rate) %>%
   arrange(desc(vaccination_rate)) %>%
   top_n(10)
-```
 
-```{r cases-death-vaccination-2}
-covid_data %>%
+vaccination$vaccination_rate <- percent(vaccination$vaccination_rate, accuracy=1)
+vaccination
+```
+---
+
+# [1a] summary statistics
+Boosters
+```{r cases-death-vaccination-2, echo = FALSE}
+boosters <- covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
   mutate(booster = total_boosters/population) %>%
   select(location, booster) %>%
   arrange(desc(booster)) %>%
   top_n(10)
+
+boosters$booster <- percent(boosters$booster, accuracy=1)
+boosters
+```
+---
+
+# [1a] summary statistics
+
+Medical resources (icu_patients_per_million)
+```{r icu, echo = FALSE}
+icu_ad <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  select(location, icu_patients_per_million) %>%
+  arrange(desc(icu_patients_per_million)) %>%
+  top_n(10)
+
+icu_ad
 ```
 
-2. medical resources (handwashing facilities, hospital beds per thousand, ...)
+---
+
+# [1a] summary statistics
+4. general health information (aged 70 and over)
+```{r elderly, echo = FALSE}
+elder <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(age70 = aged_70_older/100) %>%
+  select(location, age70) %>%
+  arrange(desc(age70)) %>%
+  top_n(10)
+
+elder$age70 <- percent(elder$age70, accuracy=1)
+elder
+```
+
+---
+
+# [1a] summary statistics
+6. general health information (female & male smoker)
+```{r smoker, echo = FALSE}
+smoker <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(smoking = (female_smokers + male_smokers)/100) %>%
+  select(location, smoking) %>%
+  arrange(desc(smoking)) %>%
+  top_n(10)
+
+smoker$smoking <- percent(smoker$smoking, accuracy=1)
+smoker
+```
+
+---
+
+# [1a] summary statistics
+7. development (HDI)
 ```{r}
 
 ```
 
-3. general health information (aged 70 and over, diabete prevalence, female & male smoker)
-```{r}
+---
 
-```
-
-
-4. development (life expectancy, HDI, population density, extreme poverty)
-```{r}
-
-```
-
-5. stringency index (how strict)
+# [1a] summary statistics
+8. stringency index (how strict is the policy around Covid-19)
 ```{r}
 
 ```

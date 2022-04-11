@@ -36,6 +36,11 @@ covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
 covid_data_codebook <- readr::read_csv(file = "../data/owid-covid-codebook.csv")
 ```
 
+```{r}
+
+```
+
+
 ## Data Cleaning and Manipulation
 
 The data is from 2020-02-24 to 2022-02-24
