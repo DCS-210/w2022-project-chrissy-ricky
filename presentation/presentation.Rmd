@@ -139,6 +139,10 @@ The COVID-19 risk perception: A survey on socioeconomics and media attention
 
 This brief communication examines the role of socioeconomic factors and use of social media on the risk perception about COVID-19 in Vietnam, which shares a common border with China. Moreover, Vietnam was the first country to succeed in containment of severe acute respiratory syndrome (SARS) in 2003. From a sample of 391 Vietnamese respondents aged from 15 to 47 years, the present study found that geographical regions and behaviors in using social media have a positive impact on the risk perception of COVID-19 epidemic in Vietnam. It also adds to the significance of understanding the risk perception among people to communicate the public health response to COVID-19 to curb the spread of this deadly virus.
 
+# Literature Review - [6: vitamin D and covi-19]
+https://www.frontiersin.org/articles/10.3389/fpubh.2021.736665/full
+
+Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD) and the likelihood of suffering severe symptoms of covid-19. The data supports a significant effect of vitamin D in preventing and mitigating respiratory tract infections have emerged. Severe deficiency, deficiency and insufficiency of vitamin D were all associated with ICU admission In this study of almost 1.5 million individuals. 
 ---
 
 # Literature Review - [6]
@@ -215,7 +219,7 @@ linear_reg() %>%
 # Results & Implications - [2b: regression analyses - other]
 
 
----
+
 
 # Results & Implications - [3: machine learnng]
 
