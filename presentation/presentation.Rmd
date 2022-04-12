@@ -31,6 +31,13 @@ library(sf)
 library(leaflet)
 library(xaringanthemer)
 library(rgdal)
+library(plm)       # Panel data analysis library
+library(car)       # Companion to applied regression 
+library(gplots)    # Various programing tools for plotting data
+library(tseries)   # For timeseries analysis
+library(lmtest)    # For hetoroskedasticity analysis
+library(dygraphs)
+library(xts) # To make the convertion data-frame / xts format
 ```
 
 ```{r setup, include=FALSE}
@@ -134,15 +141,28 @@ class: inverse, middle, center
 
 # [2] Covid-19 and weather
 
-- Akin to respiratory tract infection diseases, climatic conditions may significantly influence the COVID-19 pandemic Since the beginning of the COVID-19 pandemic, significant efforts have been made to explore the relationship between climatic condition and growth in number of COVID-19 cases. 
+- Akin to respiratory tract infection diseases, climatic conditions may significantly influence the COVID-19 pandemic, significant efforts have been made to explore the relationship between climatic condition and growth in number of COVID-19 cases. 
 
 - From those studies, it seems that there are significant Interactions of temperature and relative humidity for growth of COVID-19 cases and death rates. Air pollution may be another factor that predict covid-19 deaths. Those evidence are collected from various of countries.
 
+]
+.footnote[.small[
+[1] Khan, A. R., Abedin, S., &amp; Khan, S. (2022). Interaction of temperature and relative        humidity for growth of COVID-19 cases and death rates. Environmental Research Letters   
+[2] Azuma, K., Kagi, N., Kim, H., &amp; Hayashi, M. (2020). Impact of climate and ambient air       pollution on the epidemic growth during COVID-19 outbreak in Japan                 
+[3] Aboubakri, O., Ballester, J., Shoraka, H. R., Karamoozian, A., &amp; Golchini, E. (2022). Ambient temperature and covid-19 transmission: An evidence from a region of Iran based on weather station and satellite data
+]
 ---
 # [3] Covid-19 and social media
 
 - Social media data (such as twits or social media indexes) from, for example, google search, twitter, facebook and other social media platform, may also be used to develop models and as early warning signals of COVID-19 outbreaks. Social media data can also presents with people's perception of risks and general mental states of a region.
 
+]
+.footnote[.small[
+[1] 
+[2]
+[3]
+]
+]
 ---
 
 # [4] COVID-19 and impacts
@@ -155,6 +175,13 @@ class: inverse, middle, center
 
 ### Country-specific conditions play an important role, with lower economic gains if strict containment measures are in place or if the country is experiencing a severe outbreak.
 
+]
+.footnote[.small[
+[1] 
+[2]
+[3]
+]
+]
 ---
 
 # [5] Covid-19 and machine learning
@@ -163,12 +190,27 @@ class: inverse, middle, center
 
 - These aim to assist medical staff worldwide in triaging patients, especially in the context of limited healthcare resources.
 
+]
+.footnote[.small[
+[1] 
+[2]
+[3]
+]
+]
 ---
 
 # [6] vitamin D and covid-19
 https://www.frontiersin.org/articles/10.3389/fpubh.2021.736665/full
 
 Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD) and the likelihood of suffering severe symptoms of covid-19. The data supports a significant effect of vitamin D in preventing and mitigating respiratory tract infections have emerged. Severe deficiency, deficiency and insufficiency of vitamin D were all associated with ICU admission In this study of almost 1.5 million individuals. 
+
+]
+.footnote[.small[
+[1] 
+[2]
+[3]
+]
+]
 ---
 
 # Literature Review - [6?]
@@ -380,41 +422,30 @@ covid_data %>%
 # Results & Implications [1e: time series analyses]
 
 ---
-```{r}
-# Libraries
-library(dygraphs)
-library(xts) # To make the convertion data-frame / xts format
-
-# Format 3: Several variables for each date
+```{r time-table, echo = FALSE}
 covid_time <- covid_data %>%
   select(location, date, total_cases) %>%
   filter(location == c("China", "Japan", "India", "Brazil", "France", "Germany", "Italy", "Mexico", "Russia", "United Kindom", "United States"))
 
-```
-
-```{r}
 covid_time_wide <- pivot_wider(data = covid_time,
                                 names_from = location,
                                 values_from = total_cases)
-```
-
-
-```{r}
-# data <- covid_time_wide(
-#   time=seq(date), 
-#   value1=total_cases.China,
-#   value2=total_cases.United_States
-# )
-# 
-# don
 
 don = xts(x = covid_time_wide[,-1], order.by = covid_time_wide$date)
 
-# Chart
 p <- dygraph(don)
 p
 
+
 ```
+
+---
+
+```{r}
+
+```
+
+
 ---
 # Results & Implications [1e: time series analyses]
 
@@ -466,42 +497,36 @@ linear_reg() %>%
 
 # Results & Implications - [2b: regression analyses - other]
 
-<<<<<<< HEAD
 1. Fixed effect
 
 2. Difference in Difference
 
 3. Regression Discontinuity
-=======
+
 ```{r make-dummy2}
-covid_data2 <- covid_data1 %>%
-  select(vaccine_introduced, total_vaccinations, date, first_vaccination, interaction_term, location, new_cases_per_million, weekly_hosp_admissions_per_million)
+#covid_data2 <- covid_data1 %>%
+# select(vaccine_introduced, total_vaccinations, date, first_vaccination, interaction_term, #location, new_cases_per_million, weekly_hosp_admissions_per_million)
 ```
 ```{r make-dataset2}
-covid_data3 <- covid_data1 %>%
-  select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred, population_density, total_cases_per_million)
+#covid_data3 <- covid_data1 %>%
+#  select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred, population_density, total_cases_per_million)
 ```
 
 ```{r make-covid-data-10}
-covid_data7 <- covid_data3 %>%
-  filter(location == "United States" | location == "United Kingdom" | location == "Canada" | location == "Belgium" | location == "Israel")
+#covid_data7 <- covid_data3 %>%
+#  filter(location == "United States" | location == "United Kingdom" | location == "Canada" | location == "Belgium" | location == "Israel")
 ```
 
 ``` {r make-feregression}
-library(plm)       # Panel data analysis library
-library(car)       # Companion to applied regression 
-library(gplots)    # Various programing tools for plotting data
-library(tseries)   # For timeseries analysis
-library(lmtest)    # For hetoroskedasticity analysis
-fixed.dum <-lm(weekly_hosp_admissions_per_million ~ people_fully_vaccinated_per_hundred + factor(location) - 1, data = covid_data7)
-summary(fixed.dum)
+#fixed.dum <-lm(weekly_hosp_admissions_per_million ~ people_fully_vaccinated_per_hundred + factor(location) - 1, data = covid_data7)
+#summary(fixed.dum)
 
-yhat <- fixed.dum$fitted
-scatterplot(yhat ~ covid_data7$people_fully_vaccinated_per_hundred | covid_data7$location,  xlab ="people fully vaccinated per hundred", ylab ="covid cases", boxplots = FALSE, smooth = FALSE)
-abline(lm(covid_data7$weekly_hosp_admissions_per_million~covid_data7$people_fully_vaccinated_per_hundred),lwd=5, col="red")
+#yhat <- fixed.dum$fitted
+#scatterplot(yhat ~ covid_data7$people_fully_vaccinated_per_hundred | covid_data7$location,  xlab ="people fully vaccinated per hundred", ylab ="covid cases", boxplots = FALSE, smooth = FALSE)
+#abline(lm(covid_data7$weekly_hosp_admissions_per_million~covid_data7$people_fully_vaccinated_per_hundred),lwd=5, col="red")
 ```
->>>>>>> eb7ab7868ef12ebd9c0d2ef54c662dfadadd09ae
 
+---
 
 # Results & Implications - [3: machine learnng]
 
