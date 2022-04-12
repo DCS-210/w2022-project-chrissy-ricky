@@ -38,6 +38,7 @@ library(tseries)   # For timeseries analysis
 library(lmtest)    # For hetoroskedasticity analysis
 library(dygraphs)
 library(xts) # To make the convertion data-frame / xts format
+library(forecast)
 ```
 
 ```{r setup, include=FALSE}
@@ -50,8 +51,8 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
 covid_data <- covid_data %>%
   mutate(year = format(date, format="%Y")) %>%
-  mutate(month = format(date, format="%M")) %>%
-  mutate(day = format(date, format="%D")) 
+  mutate(month = format(date, format="%m")) %>%
+  mutate(day = format(date, format="%d")) 
 ```
 
 ```{r title-page-pic, include=FALSE}
@@ -131,9 +132,9 @@ class: inverse, middle, center
 
 ]
 .footnote[.small[
-[1] 
-[2]
-[3]
+[1] Mudatsir, M. et al., (2021). Predictors of COVID-19 severity: A systematic review and meta-analysis
+[2] Izcovich, A., et al., (2020). Prognostic factors for severity and mortality in patients infected with COVID-19: A systematic review
+[3] Li, J., et al., (2021). Meta-analysis investigating the relationship between clinical features, outcomes, and severity of severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2) pneumonia.
 ]
 
 ---
@@ -144,9 +145,7 @@ Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD)
 
 ]
 .footnote[.small[
-[1] 
-[2]
-[3]
+[1] Chiodini, I., et al., (2021). Vitamin D status and SARS-COV-2 infection and COVID-19 clinical outcomes.  
 ]
 
 ---
@@ -159,9 +158,9 @@ Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD)
 
 ]
 .footnote[.small[
-[1] Khan, A. R., Abedin, S., &amp; Khan, S. (2022). Interaction of temperature and relative        humidity for growth of COVID-19 cases and death rates. Environmental Research Letters   
-[2] Azuma, K., Kagi, N., Kim, H., &amp; Hayashi, M. (2020). Impact of climate and ambient air       pollution on the epidemic growth during COVID-19 outbreak in Japan                 
-[3] Aboubakri, O., Ballester, J., Shoraka, H. R., Karamoozian, A., &amp; Golchini, E. (2022). Ambient temperature and covid-19 transmission: An evidence from a region of Iran based on weather station and satellite data
+[1] Khan, A., et al., (2022). Interaction of temperature and relative humidity for growth of COVID-19 cases and death rates
+[2] Azuma, K., et al.,  (2020). Impact of climate and ambient air pollution on the epidemic growth during COVID-19 outbreak in Japan
+[3]Aboubakri, O., et al., (2022). Ambient temperature and covid-19 transmission: An evidence from a region of Iran based on weather station and satellite data. 
 ]
 ---
 # [3] Covid-19 and social media
@@ -170,9 +169,9 @@ Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD)
 
 ]
 .footnote[.small[
-[1] 
-[2]
-[3]
+[1] Yousefinaghani, S., et al., (2021). Prediction of covid-19 waves using social media and google search: A case study of the US and Canada. 
+[2] Qin, Lei, et al., (2020). "Prediction of Number of Cases of 2019 Novel Coronavirus (COVID-19) Using Social Media Search Index"
+[3] Hou, Z., et al., (2020). Assessment of public attention, risk perception, emotional and behavioural responses to the COVID-19 outbreak: Social media surveillance in China. 
 ]
 
 ---
@@ -189,9 +188,9 @@ Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD)
 
 ]
 .footnote[.small[
-[1] 
-[2]
-[3]
+[1] Ray, R. L., et al., (2022). What is the impact of COVID-19 pandemic on global carbon emissions?   
+[2] Lee, C.-K., et al., (2022). Impact of perception of covid-19 on NPI, job satisfaction, and customer orientation: Highlighting three types of npis for the airline industry. 
+[3] Fernández-González, R., et al., (2022). Socio-economic impact of covid-19 on the fishing sector: A case study of a region highly dependent on fishing in Spain. 
 ]
 
 ---
@@ -204,9 +203,10 @@ Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD)
 
 ]
 .footnote[.small[
-[1] 
-[2]
-[3]
+[1] Zoabi, Y., Deri-Rozov, S. & Shomron, N. (2021). Machine learning-based prediction of COVID-19 diagnosis based on symptoms.
+[2] Xu, L., Magar, R., & Barati Farimani, A. (2022). Forecasting covid-19 new cases using Deep Learning Methods. 
+[3] Chew, A. W., et al., (2021). Hybrid deep learning of social media big data for predicting the evolution of COVID-19 transmission. 
+[4] Fritz, C., Dorigatti, E., & Rügamer, D. (2022). Combining graph neural networks and spatio-temporal disease models to improve the prediction of weekly COVID-19 cases in Germany.
 ]
 
 ---
@@ -364,11 +364,6 @@ Alt (alternative) text
 
 ```
 
-```{r shapefile}
-worldshapefile <- "data/world_shape_file/TM_WORLD_BORDERS-0.3.shp"
-shape <- st_read(dsn = "../data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
-```
-
 ---
 
 # Results & Implications [1d: preliminary analyses - scatter plots and other ggplots]
@@ -421,7 +416,7 @@ covid_data %>%
 ```{r time-table, echo = FALSE}
 covid_time <- covid_data %>%
   select(location, date, total_cases) %>%
-  filter(location == c("China", "Japan", "India", "Brazil", "France", "Germany", "Italy", "Mexico", "Russia", "United Kindom", "United States"))
+  filter(location == c("China", "Japan", "India", "Brazil", "France", "Germany", "Italy", "Mexico", "Russia", "United Kingdom", "United States"))
 
 covid_time_wide <- pivot_wider(data = covid_time,
                                 names_from = location,
@@ -437,16 +432,60 @@ p
 
 ---
 
-```{r}
+# Results & Implications [1e: time series analyses]
 
+```{r ARiMA, echo = FALSE}
+library(TTR)
+covid_time <- covid_data %>%
+  filter(location == "United States") %>%
+  select(date, new_cases) %>%
+  na.omit()
+
+ggplot(data = covid_time, aes(x = date, y = new_cases)) +
+      geom_line(stat = "identity", fill = "purple") +
+      labs(title = "Total Covid-19 cases in United States",
+           subtitle = "by time",
+           x = "Date", y = "Total cases") +
+      theme_minimal()
+
+covid_time <- covid_time %>%
+  mutate (cases_SMA = SMA(new_cases, n=8))
+
+ggplot(data = covid_time, aes(x = date, y = cases_SMA)) +
+      geom_line(stat = "identity", fill = "purple") +
+      labs(title = "Total Covid-19 cases in United States",
+           subtitle = "by time",
+           x = "Date", y = "Total cases") +
+      theme_minimal()
+  
+```
+
+```{r}
+cases_diff <- diff(covid_time$new_cases, differences=1)
+acf(cases_diff, lag.max=20)             
+acf(cases_diff, lag.max=20, plot=FALSE) 
+```
+
+```{r}
+pacf(cases_diff, lag.max=20)             # plot a partial correlogram
+pacf(cases_diff, lag.max=20, plot=FALSE) # get the partial autocorrelation values
 ```
 
 
----
-# Results & Implications [1e: time series analyses]
+```{r}
+auto.arima(cases_diff)
+```
 
+```{r}
+covid_time_arima <- arima(covid_time$new_cases, order=c(2,0,2)) 
+covid_time_arima
+```
 
-
+```{r}
+fit <- Arima(cases_diff, order=c(2,0,2))
+checkresiduals(fit)
+autoplot(forecast(fit))
+```
 
 
 ---
@@ -468,7 +507,8 @@ covid_other <- covid_total %>%
 reg1 <- linear_reg() %>%
   set_engine("lm") %>%
   fit(total_deaths_per_million ~ human_development_index + vaccination, data = covid_country) 
-reg1
+reg1 %>%
+  tidy()
 glance(reg1)$r.squared
 glance(reg1)$adj.r.squared
 ```
