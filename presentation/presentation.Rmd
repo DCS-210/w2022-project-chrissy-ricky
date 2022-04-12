@@ -124,7 +124,7 @@ class: inverse, middle, center
 
 ---
 
-# [1] Covid-19 severity
+# [1a] Covid-19 severity
 
 - The unpredictability of the progression of coronavirus disease 2019 (COVID-19) may be attributed to the low precision of the tools used to predict the prognosis of this disease, especially when the virus is mutating in a fast speed from alpha, to Omicron, and there are more recent variants too.
 
@@ -136,7 +136,20 @@ class: inverse, middle, center
 [2]
 [3]
 ]
+
+---
+
+# [1b] vitamin D and covid-19
+
+Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD) and the likelihood of suffering severe symptoms of covid-19. The data supports a significant effect of vitamin D in preventing and mitigating respiratory tract infections have emerged. Severe deficiency, deficiency and insufficiency of vitamin D were all associated with ICU admission In this study of almost 1.5 million individuals. 
+
 ]
+.footnote[.small[
+[1] 
+[2]
+[3]
+]
+
 ---
 
 # [2] Covid-19 and weather
@@ -162,7 +175,7 @@ class: inverse, middle, center
 [2]
 [3]
 ]
-]
+
 ---
 
 # [4] COVID-19 and impacts
@@ -181,7 +194,7 @@ class: inverse, middle, center
 [2]
 [3]
 ]
-]
+
 ---
 
 # [5] Covid-19 and machine learning
@@ -196,24 +209,6 @@ class: inverse, middle, center
 [2]
 [3]
 ]
-]
----
-
-# [6] vitamin D and covid-19
-https://www.frontiersin.org/articles/10.3389/fpubh.2021.736665/full
-
-Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD) and the likelihood of suffering severe symptoms of covid-19. The data supports a significant effect of vitamin D in preventing and mitigating respiratory tract infections have emerged. Severe deficiency, deficiency and insufficiency of vitamin D were all associated with ICU admission In this study of almost 1.5 million individuals. 
-
-]
-.footnote[.small[
-[1] 
-[2]
-[3]
-]
-]
----
-
-# Literature Review - [6?]
 
 ---
 
