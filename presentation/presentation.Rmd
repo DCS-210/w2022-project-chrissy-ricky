@@ -39,6 +39,8 @@ library(lmtest)    # For hetoroskedasticity analysis
 library(dygraphs)
 library(xts) # To make the convertion data-frame / xts format
 library(forecast)
+library(rddtools)
+library(magrittr)
 ```
 
 ```{r setup, include=FALSE}
@@ -499,14 +501,16 @@ covid_total <- covid_data %>%
 covid_country <- covid_total %>%
   filter(is.na(continent) == FALSE) %>%
   mutate(vaccination = people_fully_vaccinated/population) %>%
-  mutate(booster = total_boosters/population)
-
+  mutate(booster = total_boosters/population) %>%
+  mutate(death_norm = (total_deaths_per_million - mean(total_deaths_per_million)) /   sd(total_deaths_per_million)) 
+  
 covid_other <- covid_total %>%
   filter(is.na(continent) == TRUE)
 
 reg1 <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(total_deaths_per_million ~ human_development_index + vaccination, data = covid_country) 
+  fit(total_deaths_per_million ~ vaccination + stringency_index + handwashing_facilities + gdp_per_capita, data = covid_country) 
+
 reg1 %>%
   tidy()
 glance(reg1)$r.squared
@@ -514,10 +518,26 @@ glance(reg1)$adj.r.squared
 ```
 
 ```{r linear-model-2, echo = FALSE}
-linear_reg() %>%
+covid_total <- covid_data %>%
+  filter(date == "2021-03-20")
+
+covid_country <- covid_total %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(vaccination = people_fully_vaccinated/population) %>%
+  mutate(booster = total_boosters/population) %>%
+  mutate(death_norm = (total_deaths_per_million - mean(total_deaths_per_million)) /   sd(total_deaths_per_million)) 
+  
+covid_other <- covid_total %>%
+  filter(is.na(continent) == TRUE)
+
+reg1 <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(total_deaths_per_million ~ human_development_index + vaccination + booster + stringency_index, data = covid_country) %>%
+  fit(total_deaths_per_million ~ vaccination + stringency_index + handwashing_facilities + gdp_per_capita, data = covid_country) 
+
+reg1 %>%
   tidy()
+glance(reg1)$r.squared
+glance(reg1)$adj.r.squared
 ```
 
 ---
@@ -534,10 +554,6 @@ linear_reg() %>%
 # Results & Implications - [2b: regression analyses - other]
 
 1. Fixed effect
-
-2. Difference in Difference
-
-3. Regression Discontinuity
 
 ```{r make-dummy2}
 #covid_data2 <- covid_data1 %>%
@@ -560,6 +576,98 @@ linear_reg() %>%
 #yhat <- fixed.dum$fitted
 #scatterplot(yhat ~ covid_data7$people_fully_vaccinated_per_hundred | covid_data7$location,  xlab ="people fully vaccinated per hundred", ylab ="covid cases", boxplots = FALSE, smooth = FALSE)
 #abline(lm(covid_data7$weekly_hosp_admissions_per_million~covid_data7$people_fully_vaccinated_per_hundred),lwd=5, col="red")
+```
+
+---
+
+# Results & Implications - [2b: regression analyses - other]
+
+2. Regression Discontinuity
+
+
+```{r}
+rdd_data(y = covid_country$new_deaths_per_million, 
+         x = covid_country$vaccination, 
+         cutpoint = 0.1) %>% 
+  rdd_reg_lm(slope = "separate") %>% 
+  summary()
+```
+
+```{r}
+covid_country %>%
+  select(vaccination, new_deaths_per_million) %>%
+  mutate(threshold = as.factor(ifelse(vaccination >= 0.1, 1, 0))) %>%
+  ggplot(aes(x = vaccination, y = new_deaths_per_million)) +
+  geom_point(aes(color = threshold)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_color_brewer(palette = "Accent") +
+  guides(color = FALSE) +
+  geom_vline(xintercept = 0.1, color = "red",
+    size = 1, linetype = "dashed") +
+  labs(y = "New deaths (per million)",
+       x = "Vaccination rate") +
+  theme_minimal()
+
+covid_country %>%
+  select(vaccination, new_deaths_per_million) %>%
+  mutate(threshold = as.factor(ifelse(vaccination >= 0.1, 1, 0))) %>%
+  ggplot(aes(x = vaccination, y = new_deaths_per_million, color = threshold)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_color_brewer(palette = "Accent") +
+  guides(color = FALSE) +
+  geom_vline(xintercept = 0.1, color = "red",
+    size = 1, linetype = "dashed") +
+  labs(y = "New deaths (per million)",
+       x = "Vaccination rate") +
+  theme_minimal()
+```
+
+```{r}
+covid_total <- covid_data %>%
+  filter(date == "2022-02-20")
+
+covid_country <- covid_total %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(vaccination = people_fully_vaccinated/population) %>%
+  mutate(booster = total_boosters/population) %>%
+  mutate(death_norm = (total_deaths_per_million - mean(total_deaths_per_million)) /   sd(total_deaths_per_million)) 
+
+rdd_data(y = covid_country$new_deaths_per_million, 
+         x = covid_country$vaccination, 
+         cutpoint = 0.5) %>% 
+  rdd_reg_lm(slope = "same") %>% 
+  summary()
+```
+
+```{r}
+covid_country %>%
+  select(vaccination, new_deaths_per_million) %>%
+  mutate(threshold = as.factor(ifelse(vaccination >= 0.5, 1, 0))) %>%
+  ggplot(aes(x = vaccination, y = new_deaths_per_million)) +
+  geom_point(aes(color = threshold)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_color_brewer(palette = "Accent") +
+  guides(color = FALSE) +
+  geom_vline(xintercept = 0.5, color = "red",
+    size = 1, linetype = "dashed") +
+  labs(y = "New deaths (per million)",
+       x = "Vaccination rate") +
+  theme_minimal()
+
+covid_country %>%
+  select(vaccination, new_deaths_per_million) %>%
+  mutate(threshold = as.factor(ifelse(vaccination >= 0.5, 1, 0))) %>%
+  ggplot(aes(x = vaccination, y = new_deaths_per_million, color = threshold)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_color_brewer(palette = "Accent") +
+  guides(color = FALSE) +
+  geom_vline(xintercept = 0.5, color = "red",
+    size = 1, linetype = "dashed") +
+  labs(y = "New deaths (per million)",
+       x = "Vaccination rate") +
+  theme_minimal()
 ```
 
 ---
