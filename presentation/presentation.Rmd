@@ -128,100 +128,95 @@ class: inverse, middle, center
 
 # [1a] Covid-19 severity
 
+.pull-left[
+```{r severity, echo = FALSE, out.width = "80%", fig.align = "center", fig.cap = "Reference: Mulinari T.O., et al. (2020). MDPI"}
+include_graphics("https://www.mdpi.com/pathogens/pathogens-09-00817/article_deploy/html/images/pathogens-09-00817-g001-550.jpg")
+```
+]
+.pull-right[
 - The unpredictability of the progression of coronavirus disease 2019 (COVID-19) may be attributed to the low precision of the tools used to predict the prognosis of this disease, especially when the virus is mutating in a fast speed from alpha, to Omicron, and there are more recent variants too.
-
-- With the help of models proposed (using clinical data) by those paper, we may be better at prognosis of Covid-19 cases severity. This can also be used in decision-making related to the care of patients infected with COVID-19.
-
 ]
-.footnote[.small[
-[1] Mudatsir, M. et al., (2021). Predictors of COVID-19 severity: A systematic review and meta-analysis
-[2] Izcovich, A., et al., (2020). Prognostic factors for severity and mortality in patients infected with COVID-19: A systematic review
-[3] Li, J., et al., (2021). Meta-analysis investigating the relationship between clinical features, outcomes, and severity of severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2) pneumonia.
-]
+
 
 ---
 
 # [1b] vitamin D and covid-19
-
-Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD) and the likelihood of suffering severe symptoms of covid-19. The data supports a significant effect of vitamin D in preventing and mitigating respiratory tract infections have emerged. Severe deficiency, deficiency and insufficiency of vitamin D were all associated with ICU admission In this study of almost 1.5 million individuals. 
-
+.pull-left[
+```{r vitaminD, echo = FALSE, out.width = "100%", fig.align = "center", fig.cap = "Reference: Meltzer DO, et al. 2021. JAMA Netw Open"}
+include_graphics("https://www.healio.com/~/media/slack-news/fm_im/misc/infographics/2020/september/pc0920meltzer_graphic_01.jpg?h=630&w=1200&la=en&hash=AA5CE3037B8695511804123FBF351C92")
+```
 ]
-.footnote[.small[
-[1] Chiodini, I., et al., (2021). Vitamin D status and SARS-COV-2 infection and COVID-19 clinical outcomes.  
+.pull-right[
+- Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD) and the likelihood of suffering severe symptoms of covid-19. 
 ]
+
 
 ---
 
 # [2] Covid-19 and weather
-
+.pull-left[
 - Akin to respiratory tract infection diseases, climatic conditions may significantly influence the COVID-19 pandemic, significant efforts have been made to explore the relationship between climatic condition and growth in number of COVID-19 cases. 
-
-- From those studies, it seems that there are significant Interactions of temperature and relative humidity for growth of COVID-19 cases and death rates. Air pollution may be another factor that predict covid-19 deaths. Those evidence are collected from various of countries.
-
 ]
-.footnote[.small[
-[1] Khan, A., et al., (2022). Interaction of temperature and relative humidity for growth of COVID-19 cases and death rates
-[2] Azuma, K., et al.,  (2020). Impact of climate and ambient air pollution on the epidemic growth during COVID-19 outbreak in Japan
-[3]Aboubakri, O., et al., (2022). Ambient temperature and covid-19 transmission: An evidence from a region of Iran based on weather station and satellite data. 
+.pull-right[
+```{r weather, echo = FALSE, out.width = "80%", fig.align = "center", fig.cap = "Reference: Mesay Moges Menebo. (2020)"}
+include_graphics("https://ars.els-cdn.com/content/image/1-s2.0-S004896972033179X-ga1.jpg")
+```
 ]
+
 ---
+
 # [3] Covid-19 and social media
-
-- Social media data (such as twits or social media indexes) from, for example, google search, twitter, facebook and other social media platform, may also be used to develop models and as early warning signals of COVID-19 outbreaks. Social media data can also presents with people's perception of risks and general mental states of a region.
-
+.pull-left[
+- Social media data from, 
+for example, google search, twitter, facebook and other social media platform, 
+may also be used to develop models and as early warning signals of COVID-19 outbreaks. 
+Social media data can also presents with people's perception of risks 
+and general mental states of a region. 
 ]
-.footnote[.small[
-[1] Yousefinaghani, S., et al., (2021). Prediction of covid-19 waves using social media and google search: A case study of the US and Canada. 
-[2] Qin, Lei, et al., (2020). "Prediction of Number of Cases of 2019 Novel Coronavirus (COVID-19) Using Social Media Search Index"
-[3] Hou, Z., et al., (2020). Assessment of public attention, risk perception, emotional and behavioural responses to the COVID-19 outbreak: Social media surveillance in China. 
+.pull-right[
+```{r weather, echo = FALSE, out.width = "80%", fig.align = "center", fig.cap = "Reference: JHU Hub (2020)"}
+include_graphics("https://api.hub.jhu.edu/factory/sites/default/files/styles/soft_crop_2400/public/social_media_032720.jpg?itok=oJE4T6Tf")
+```
 ]
 
 ---
 
 # [4] COVID-19 and impacts
-
-- Covid-19 also has had great impacts in our daily lives (racial issues, job markets, also economic activities, and so on)
-
-### It is found that an increase in vaccination per capita is associated with a significant increase in economic activity. 
-
-### It is also found evidence for nonlinear effects of vaccines: marginal economic benefits when vaccination rates are higher. 
-
-### Country-specific conditions play an important role, with lower economic gains if strict containment measures are in place or if the country is experiencing a severe outbreak.
-
+.pull-left[
+```{r vitaminD, echo = FALSE, out.width = "100%", fig.align = "center", fig.cap = "Reference: James G.. (2020)"}
+include_graphics("https://cdn-japantimes.com/wp-content/uploads/2020/03/np_file_1549.jpeg")
+```
 ]
-.footnote[.small[
-[1] Ray, R. L., et al., (2022). What is the impact of COVID-19 pandemic on global carbon emissions?   
-[2] Lee, C.-K., et al., (2022). Impact of perception of covid-19 on NPI, job satisfaction, and customer orientation: Highlighting three types of npis for the airline industry. 
-[3] Fernández-González, R., et al., (2022). Socio-economic impact of covid-19 on the fishing sector: A case study of a region highly dependent on fishing in Spain. 
+.pull-right[
+- Covid-19 also has had great impacts in our daily lives (racial issues, job markets, also economic activities, and so on)
 ]
 
 ---
 
 # [5] Covid-19 and machine learning
-
+.pull-left[
+```{r vitaminD, echo = FALSE, out.width = "100%", fig.align = "center"}
+include_graphics("www.aha.org/sites/default/files/2020-07/ms_072020_Machine_Learning_header_620_1624749.jpg")
+```
+]
+.pull-right[
 - Developing accurate forecasting tools will help in our fight against the pandemic. Prediction models that combine several features to estimate the risk of infection have been developed. 
 
-- These aim to assist medical staff worldwide in triaging patients, especially in the context of limited healthcare resources.
+- These aim to assist medical staff worldwide in helping patients, especially in the context of limited healthcare resources.
+]
 
-]
-.footnote[.small[
-[1] Zoabi, Y., Deri-Rozov, S. & Shomron, N. (2021). Machine learning-based prediction of COVID-19 diagnosis based on symptoms.
-[2] Xu, L., Magar, R., & Barati Farimani, A. (2022). Forecasting covid-19 new cases using Deep Learning Methods. 
-[3] Chew, A. W., et al., (2021). Hybrid deep learning of social media big data for predicting the evolution of COVID-19 transmission. 
-[4] Fritz, C., Dorigatti, E., & Rügamer, D. (2022). Combining graph neural networks and spatio-temporal disease models to improve the prediction of weekly COVID-19 cases in Germany.
-]
 
 ---
 
 class: inverse, middle, center
 
-# Our Data
+# Data
 
 ---
 
-## Our Data - details
+## Data - details
 
-Our dataset is coming from "Our World in Data" Covid-19 public data, together with data from JHU, WHO, CDC and World Bank. The data covers a wide range:
+The dataset is coming from "Our World in Data" Covid-19 public data, together with data from JHU, WHO, CDC and World Bank. The data covers a wide range:
 
 - Basic Covid-19 data (cases, deaths)
 - Hospital & ICU (ICU beds, ICU patients)
@@ -241,12 +236,11 @@ class: inverse, middle, center
 
 # Methods & Data Analyses - details
 
-We have three major parts of analyses:
-1. preliminary exploration like summary statistics, scatter plots, correlations, maps
+Part I: Preliminary exploration like summary statistics, scatter plots, correlations, maps
 
-2. Regression analyses, ranging from OLS, Diff in Diff, regression continuity
+Part II: Regression analyses, ranging from OLS, Diff in Diff, regression continuity
 
-3. Advanced models and machine learning algorithnms
+Part III: Advanced models and machine learning algorithnms
 
 ---
 
@@ -257,31 +251,9 @@ class: inverse, middle, center
 ---
 
 # [1a] summary statistics
-
----
-
-# [1a] summary statistics
-Development (HDI)
+Development (HDI) and Total cases
 
 .pull-left[
-- Some text
-- goes here
-]
-.pull-right[
-```{r development, echo = FALSE}
-development <- covid_data %>%
-  filter(date == "2022-02-20") %>%
-  filter(is.na(continent) == FALSE) %>%
-  select(location, human_development_index) %>%
-  arrange(desc(human_development_index)) %>%
-  top_n(10)
-
-development
-```
-]
-
----
-
 ```{r HDI-map, echo = FALSE}
 HDI <- covid_data %>%
   filter(date == "2022-02-20") %>%
@@ -313,12 +285,83 @@ h_map <- leaflet(data = hdi_map) %>%
                                  opacity = 0.7,
                                  weight = 1,
                                  label = labels) %>%
-  leaflet::addLegend("topright", pal = pal2, values = ~hdi_map$human_development_index,
+  leaflet::addLegend("bottomleft", pal = pal2, values = ~hdi_map$human_development_index,
     title = "Human Development Index",
     opacity = 1)
 
 h_map
 ```
+]
+.pull-right[
+```{r death-map, echo = FALSE}
+cases <- covid_data %>%
+  filter(date == "2022-02-18") %>%
+  filter(is.na(continent) == FALSE) %>%
+  select(iso_code, location, date, total_cases_per_million) %>%
+  na.omit()
+
+worldshape1 <- readOGR( 
+  dsn= ("/cloud/project/data/world_shape_file/"), 
+  layer="TM_WORLD_BORDERS-0.3",
+  verbose=FALSE)
+
+worldshape2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
+
+cases_map <- death %>% 
+  left_join(worldshape2, by = c("location" = "NAME")) %>%
+  st_as_sf()
+
+pal2 <- colorNumeric(palette = "RdYlGn", domain = cases_map$total_cases_per_million)
+labels <- sprintf("<strong>%s</strong><br/>%s ", cases_map$location, cases_map$total_cases_per_million) %>%
+  lapply(htmltools::HTML)
+
+c_map <- leaflet(data = cases_map) %>% 
+  addTiles()  %>% 
+  setView( lat=10, lng=0 , zoom=1) %>%
+  addPolygons(fillColor = ~pal2(cases_map$total_cases_per_million),
+                                 fillOpacity = 1, 
+                                 color = "white",
+                                 opacity = 1,
+                                 weight = 1,
+                                 label = labels) %>%
+  addLegend("bottomleft", pal = pal2, values = ~deaths_map$total_deaths_per_million,
+    title = "Total Deaths per Million",
+    opacity = 1)
+
+c_map
+```
+]
+
+
+---
+
+# [1a] summary statistics
+Development (HDI)
+
+.pull-left[
+```{r development, echo = FALSE}
+development <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  select(location, human_development_index) %>%
+  arrange(desc(human_development_index)) %>%
+  top_n(10)
+
+development
+```
+]
+.pull-right[
+```{r development, echo = FALSE}
+development <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  select(location, human_development_index) %>%
+  arrange(desc(human_development_index)) %>%
+  top_n(10)
+
+development
+```
+]
 
 ---
 
