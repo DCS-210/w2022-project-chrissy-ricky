@@ -6,34 +6,51 @@ output: github_document
 
 ## Summary
 
-COVID-19, also known as Coronavirus disease 2019 is a contagious disease caused by a virus, the severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)
+COVID-19, also known as Coronavirus disease 2019 is a contagious disease caused by a virus, the severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2). Up until April 11, there are over 497,057,239 infections and 6,179,104 deaths since the beginning of the pandemic. Although no one could have predicted a pandemic like Covid-19, with the help of data, we might be able to use current data to, for example, evaluate risks and predict future trends, so that the virus and mutations can be better managed or even contained in earlier stages. 
 
-Up until yesterday, there are over xxx infections and xxx deaths since the beginning of the pandemic
+Current research has already explored a wide variety of predictors for Covid-19 severity and infections, and evaluated potential impacts of the pandemic. Social media, weather data, economic related data, general health information are all factors that have been studied in current literature. 
 
-Although no one can predict a pandemic like this, with the help of data, we might be able to use available data to, for example, evaluate risks, so that the virus can be better managed or even contained in earlier stages. 
+In our research, we are trying to use Covid-19 related data, together with other relevant
+data to take a brief look of the global Covid-19 situation, explore potential predictors and models for Covid-19 cases, deaths, and evaluate the effects of vaccines. Factors like population of elder people, stringency index (how strict the policy is around the Covid-19), population density, and so on, which is, to some degree, a summary of previous research, with some new elements. 
 
-Write-up of your project and findings go here. 
-Think of this as the text of your presentation. 
-The length should be roughly 5 minutes when read out loud.
-Although pacing varies, a 5-minute speech is roughly 750 words. 
-To use the word count addin, select the text you want to count the words of (probably this is the 
-Summary section of this document, go to Addins, and select the `Word count` addin).
-This addin counts words using two different algorithms, but the results should be similar and as long as you're in the ballpark of 750 words, you're good! 
-The addin will ignore code chunks and only count the words in prose.
+According to the summary statistics, we found that those more developed countries, such as Norway, France, United States, have more Covid-19 infections but lower death rate. This could be due to the following reasons:
+1. more developed countries have better testing and recording methods. Many developing countries have encountered similar surge of cases in earlier stages, but they may not be able to reflect that through data, because of their testing constraint. 
+2. People from more developed countries embrace more of the "free will", so many people may not be willing to wear masks and implement those protocols recommended by CDC or WHO. Ther bette medical resources and technologies also make people think of Covid-19 just another "flu" during earlier stages.
+3. With considerations of economies, developed countries may not be willing to lockdown the whole country for an extended period of time. 
 
-You can also load your data here and present any analysis results / plots, but I strongly urge you to keep that to a minimum (maybe only the most important graphic, if you have one you can choose). 
-And make sure to hide your code with  `echo = FALSE` unless the point you are trying to make is about the code itself.
-Your results with proper output and graphics go in your presentation, this space is for a brief summary of your project.
+Of course, more developed countries also have much higher rate of vaccination rate, which is the potential reason for lower death rate. 
 
-```{r load-data, echo = FALSE}
-covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
-```
+We also included multiple maps to better visualize the global discrepancies in Covid-19 cases, death, HDI, and so on. 
+
+According to the heat map, it is interesting to see that, smoking is correlated with Covid-19 deaths, but it is a little bit counter-intuitive that population density is negatively correlated with Covid-19 cases.
+
+The simple linear regressions also show that the the vaccination rate can negatively predict the Covid-19 deaths.
+
+Because of the nature of panel data, the simple linear regressions selecting a specific day, the models may not be sufficient in making predictions. Also, when considering the time span from 2020 to 2022, the virus has mutated from alpha, Delta, to currently Omicron, and vaccinations have also been developed from first, second to booster doses. The simple linear regression may not be able to compromise those factors. Thus, we continued our analyses with more advanced manipulations.
+
+The fixed effect regression model uses a fixed effect to control for differences in-country to isolate the effect of vaccination rate on covid hospitalizations. The beta1 coefficient, the coefficient for vaccination rate was -0.39604 meaning a one-unit change in the number of fully vaccinated people per hundred would result in .26733 fewer hospitalizations per week per million. The t statistic is statistically significant at -5.138. The graph below and the regression were performed on a limited data set of countries that used similar vaccines and limited for purposes of r-studio not crashing every time the regression runs. This visualization shows the effect of vaccination on hospitalization when controlled for differences between countries. The red line signifies the average. There is a clear negative correlation between vaccination rate and hospitalizations which makes sense. 
+
+The two maps show covid cases by country early in the pandemic. The first graph shows cases on a day in March when the pandemic was just beginning and then two months later in May when the pandemic was spreading more. A country that sticks out is the United States which took a more reserved approach to the lockdowns compared to other countries, especially when compared to China which started out as a country with a lot of cases relatively but in the two months, time was able to lower their cases significantly especially compared to the which started out with fewer cases than china but went up significantly in the two months. 
+
+Beyond those models mentioned above, time series analyses and machine learning models could also be useful. If time permits, we will also include those analyses in our project.
+
+Finally, the limitations of our project and potential future studies will be discussed in the presentation.
 
 ## Presentation
 
 Our presentation can be found [here](presentation/presentation.html).
 
 ## Data 
+
+Our dataset is coming from "Our World in Data" Covid-19 public data, together with data from JHU, WHO, CDC and World Bank. The data covers a wide range:
+
+- Basic Covid-19 data (cases, deaths)
+- Hospital & ICU (ICU beds, ICU patients)
+- Policy responses (stringency_index)
+- Reproduction rate
+- Tests & positivity
+- Vaccinations
+- Others (populations, life_expectancy, GDP per catpita and so on)
 
 Hannah Ritchie, Edouard Mathieu, Lucas Rodés-Guirao, Cameron Appel, Charlie Giattino, Esteban Ortiz-Ospina, Joe Hasell, Bobbie Macdonald, Diana Beltekian and Max Roser (2020) - "Coronavirus Pandemic (COVID-19)". Published online at OurWorldInData.org. viewed 25 February 2022, Retrieved from: 'https://ourworldindata.org/coronavirus' [Online Resource]
 

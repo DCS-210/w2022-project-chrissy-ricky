@@ -96,9 +96,9 @@ background-image: url("images/cool.png")
 
 COVID-19, also known as Coronavirus disease 2019 is a contagious disease caused by a virus, the severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)
 
-Up until yesterday, there are over xxx infections and xxx deaths since the beginning of the pandemic
+Up until yesterday, there are over 497,057,239 infections and 6,179,104 deaths since the beginning of the pandemic
 
-Although no one can predict a pandemic like this, with the help of data, we might be able to use available data to, for example, evaluate risks, so that the virus can be better managed or even contained in earlier stages. 
+Although no one can predict a pandemic like this, with the help of data, we might be able to use available data to, for example, evaluate risks, so that the virus and mutations can be better managed or even contained in earlier stages
 
 ---
 
@@ -106,7 +106,6 @@ Although no one can predict a pandemic like this, with the help of data, we migh
 
 - In our research, we are trying to use Covid-19 related data, together with other relevant
 data to find potential predictors for Covid-19 cases, deaths, or vaccination rates. 
-
 
 ? Do vaccinations effectively mitigate the death rate 
 
@@ -328,7 +327,9 @@ covid_heat <- covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
   mutate(smoker = female_smokers + male_smokers) %>%
-  select(total_vaccinations, total_cases, total_deaths, total_boosters, population_density, extreme_poverty, aged_70_older, cardiovasc_death_rate, smoker, human_development_index) %>%
+  mutate(vaccination = people_fully_vaccinated/population) %>%
+  mutate(boosters = total_boosters/population) %>%
+  select(vaccination, total_cases_per_million, total_deaths_per_million, boosters, population_density, stringency_index, aged_70_older, gdp_per_capita, hospital_beds_per_thousand,smoker, human_development_index) %>%
   na.omit()
   
 cormat <- round(cor(covid_heat),2)
@@ -466,10 +467,10 @@ covid_other <- covid_total %>%
 
 reg1 <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(total_deaths_per_million ~ human_development_index + vaccination, data = covid_country) %>%
-  tidy()
-#glance(reg1)$r.squared
-#glance(reg1)$adj.r.squared
+  fit(total_deaths_per_million ~ human_development_index + vaccination, data = covid_country) 
+reg1
+glance(reg1)$r.squared
+glance(reg1)$adj.r.squared
 ```
 
 ```{r linear-model-2, echo = FALSE}
