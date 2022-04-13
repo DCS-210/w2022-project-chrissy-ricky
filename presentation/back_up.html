@@ -4,7 +4,7 @@
     <title>Covid-19, Global Pandemic, and Data Science</title>
     <meta charset="utf-8" />
     <meta name="author" content="Team Chrissy &amp; Ricky   Chrissy Aman and Ricky Sun" />
-    <meta name="date" content="2022-04-12" />
+    <meta name="date" content="2022-04-13" />
     <script src="libs/header-attrs-2.11/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
@@ -15,7 +15,7 @@ class: center, middle, inverse, title-slide
 # Covid-19, Global Pandemic, and Data Science
 ### Team Chrissy &amp; Ricky <br> Chrissy Aman and Ricky Sun
 ### Bates College
-### 2022-04-12
+### 2022-04-13
 
 ---
 
@@ -69,26 +69,35 @@ Development (HDI)
 ]
 .pull-right[
 
-```
-## Selecting by human_development_index
+]
+
+---
+
+
+```r
+covid_data &lt;- readr::read_csv(file = "../data/owid-covid-data.csv")
 ```
 
 ```
-## # A tibble: 10 × 2
-##    location    human_development_index
-##    &lt;chr&gt;                         &lt;dbl&gt;
-##  1 Norway                        0.957
-##  2 Ireland                       0.955
-##  3 Switzerland                   0.955
-##  4 Hong Kong                     0.949
-##  5 Iceland                       0.949
-##  6 Germany                       0.947
-##  7 Sweden                        0.945
-##  8 Australia                     0.944
-##  9 Netherlands                   0.944
-## 10 Denmark                       0.94
+## Rows: 164243 Columns: 67
 ```
-]
+
+```
+## ── Column specification ───────────────────────────────────────────────────────────────────────
+## Delimiter: ","
+## chr   (4): iso_code, continent, location, tests_units
+## dbl  (62): total_cases, new_cases, new_cases_smoothed, total_deaths, new_deaths, new_deaths...
+## date  (1): date
+```
+
+```
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+
+
+---
 
 
 
@@ -192,7 +201,7 @@ class: inverse, middle, center
 - goes here
 ]
 .pull-right[
-&lt;img src="back_up_files/figure-html/unnamed-chunk-1-1.png" width="100%" /&gt;
+&lt;img src="back_up_files/figure-html/unnamed-chunk-2-1.png" width="100%" /&gt;
 ]
 
 ---

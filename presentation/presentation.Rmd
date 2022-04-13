@@ -19,7 +19,6 @@ output:
 ---
 
 ```{r load-packages, include = FALSE}
-# Add any additional packages you need to this chunk
 library(tidyverse)
 library(tidymodels)
 library(reshape2)
@@ -422,22 +421,6 @@ ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
 
 ---
 
-# Results & Implications [1c: preliminary analyses - maps]
-
-Include dynamic maps for vaccination
-
-
-Alt (alternative) text
-1. chart type
-2. of type data (x and y, color)
-3. reason for including chart
-
-```{r, echo = FALSE, fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
-
-```
-
----
-
 # Results & Implications [1d: preliminary analyses - scatter plots and other ggplots]
 
 ```{r vaccination-HDI, fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
@@ -482,29 +465,25 @@ covid_data %>%
 
 ---
 
+# Important Dates
+
+Covid-19 Alpha: 31 December 2019 (January 22, 2020)
+
+Covid-19 Delta: 1 December 2020
+
+Covid-19 Omicron: 1 November, 2021
+
+-----------
+
+Vaccination: 13 December, 2020
+
+Booster: 13 August, 2021
+
+---
+
 # Results & Implications [1e: time series analyses]
 
----
-```{r time-table, echo = FALSE}
-covid_time <- covid_data %>%
-  select(location, date, total_cases) %>%
-  filter(location == c("Italy", "Japan", "France", "Germany", "United Kingdom", "Brazil", "India", "United States"))
-
-covid_time_wide <- pivot_wider(data = covid_time,
-                                names_from = location,
-                                values_from = total_cases)
-
-don = xts(x = covid_time_wide[,-1], order.by = covid_time_wide$date)
-
-p <- dygraph(don)
-p
-```
-
----
-
-# Results & Implications 
-
-```{r ARiMA_0, echo = FALSE, warning=FALSE}
+```{r ARiMA_0, echo = FALSE, warning=FALSE, message = FALSE}
 library(TTR)
 covid_time <- covid_data %>%
   filter(location == "United States") %>%
@@ -512,8 +491,7 @@ covid_time <- covid_data %>%
   na.omit()
 ```
 
----
-```{r ARiMA_1a, echo = FALSE, warning=FALSE, out.width="100%", out.height="60%"}
+```{r ARiMA_1a, echo = FALSE, warning=FALSE, message = FALSE, out.width="90%", out.height="40%"}
 
 ggplot(data = covid_time, aes(x = date, y = new_cases)) +
       geom_line(stat = "identity", fill = "purple") +
@@ -524,7 +502,7 @@ ggplot(data = covid_time, aes(x = date, y = new_cases)) +
 ```
 
 ---
-```{r ARiMA_1b, echo = FALSE, warning=FALSE, out.width="100%", out.height="60%"}
+```{r ARiMA_1b, echo = FALSE, warning=FALSE, message = FALSE, out.width="90%", out.height="40%"}
 covid_time <- covid_time %>%
   mutate (cases_SMA = SMA(new_cases, n=8))
 
@@ -538,44 +516,42 @@ ggplot(data = covid_time, aes(x = date, y = cases_SMA)) +
 ```
 
 ---
-```{r ARiMA_2, echo=FALSE, warning=FALSE, out.width="100%", out.height="80%"}
+```{r ARiMA_2, echo=FALSE, warning=FALSE, message = FALSE, out.width="90%", out.height="80%"}
 cases_diff <- diff(covid_time$new_cases, differences=1)
 acf(cases_diff, lag.max=20)             
 acf(cases_diff, lag.max=20, plot=FALSE) 
 ```
 
 ---
-```{r ARiMA_3, echo=FALSE, warning=FALSE, out.width="100%", out.height="80%"}
+```{r ARiMA_3, echo=FALSE, warning=FALSE, message = FALSE, out.width="90%", out.height="80%"}
 pacf(cases_diff, lag.max=20)             # plot a partial correlogram
 pacf(cases_diff, lag.max=20, plot=FALSE) # get the partial autocorrelation values
 ```
 
 ---
-```{r ARiMA_4, echo=FALSE, warning=FALSE}
+```{r ARiMA_4, echo=FALSE, warning=FALSE, message = FALSE}
 auto.arima(cases_diff)
 ```
 
----
-```{r ARiMA_5, echo=FALSE, warning=FALSE}
+```{r ARiMA_5, echo=FALSE, warning=FALSE, message = FALSE}
 covid_time_arima <- arima(covid_time$new_cases, order=c(2,0,2)) 
 covid_time_arima
 ```
 
 ---
-```{r ARiMA_6, echo=FALSE, warning=FALSE}
+# Results & Implications
+```{r ARiMA_6, echo=FALSE, warning=FALSE, message = FALSE, out.width="90%", out.height="90%"}
 fit <- Arima(cases_diff, order=c(2,0,2))
 ```
 
----
-```{r ARiMA_7, echo=FALSE, warning=FALSE}
+```{r ARiMA_7, echo=FALSE, warning=FALSE, message = FALSE}
 checkresiduals(fit)
 ```
 
 ---
-```{r ARiMA8, echo=FALSE, warning=FALSE }
+```{r ARiMA8, echo=FALSE, warning=FALSE, message = FALSE}
 autoplot(forecast(fit))
 ```
-
 ---
 
 # Results & Implications - [2a: regression analyses - simple linear regression]
@@ -627,24 +603,6 @@ reg1 %>%
 glance(reg1)$r.squared
 glance(reg1)$adj.r.squared
 ```
-
----
-
-# Important Dates
-
-Covid-19 Alpha: 31 December 2019 (January 22, 2020)
-
-Covid-19 Delta: 1 December 2020
-
-Covid-19 Omicron: 1 November, 2021
-
------------
-
-Vaccination: 13 December, 2020
-
-Booster: 13 August, 2021
-
-
 
 ---
 
@@ -749,14 +707,28 @@ covid_country %>%
 
 # Results & Implications - [3: machine learnng]
 
-1. linear regression
+1. logistic regression
 
+2. KNN (clusters) &  K-Means Clustering
 
-2. logistic regression
+3. Random Forest
 
+4. Support Vector Machine
 
-3. KNN (clusters) https://github.com/allisonhorst/stats-illustrations/
+5. Decision Trees
 
+---
+
+# Results & Implications - What is kNN Algorithm?
+
+Let’s assume we have several groups of labeled samples. The items present in the groups are homogeneous in nature. Now, suppose we have an unlabeled example which needs to be classified into one of the several labeled groups
+
+---
+
+# Results & Implications
+```{r}
+
+```
 
 
 ---
@@ -769,23 +741,26 @@ class: inverse, middle, center
 
 # Limitations - details
 
+1. Data Point (county-level data)
+
+2. Standardization of data
+
+3. Mutations of Covid-19, types of vaccinations
+
+4. Policies
+
+5. Prediction at a global level may not be as useful
 
 ---
 
 # Future Studies
+1. Tracking recovery for children and elder population (sequelae, mental health)
 
-Future studies
+2. Studying the transitioning in traditional industries (airlines, manufacturing)
 
----
+3. Anti-trust activities during Covid-19
 
-# References
-
-[1] Want to find out more about `xaringan`? See https://slides.yihui.name/xaringan/#1.
-
-[2] You are welcomed to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
-
-[3]
-
-[4]
+4. County level data
 
 ---
+

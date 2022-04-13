@@ -21,9 +21,25 @@ output:
 # Add any additional packages you need to this chunk
 library(tidyverse)
 library(tidymodels)
+library(reshape2)
 library(palmerpenguins)
 library(knitr)
+library(tmap)
+library(tmaptools)
+library(sf)
+library(leaflet)
 library(xaringanthemer)
+library(rgdal)
+library(plm)       # Panel data analysis library
+library(car)       # Companion to applied regression 
+library(gplots)    # Various programing tools for plotting data
+library(tseries)   # For timeseries analysis
+library(lmtest)    # For hetoroskedasticity analysis
+library(dygraphs)
+library(xts) # To make the convertion data-frame / xts format
+library(forecast)
+library(rddtools)
+library(magrittr)
 ```
 
 ```{r setup, include=FALSE}
@@ -85,17 +101,17 @@ Development (HDI)
 - goes here
 ]
 .pull-right[
-```{r development, echo = FALSE}
-development <- covid_data %>%
-  filter(date == "2022-02-20") %>%
-  filter(is.na(continent) == FALSE) %>%
-  select(location, human_development_index) %>%
-  arrange(desc(human_development_index)) %>%
-  top_n(10)
 
-development
-```
 ]
+
+---
+
+```{r}
+covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
+```
+
+
+---
 
 
 
