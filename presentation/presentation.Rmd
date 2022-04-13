@@ -112,11 +112,13 @@ data to find potential predictors for Covid-19 cases, deaths, or vaccination rat
 
 ? Do vaccinations effectively mitigate the death rate 
 
-? Can we implement machine learning algorithm to predict Covid-19
-
 ? Are higher percentage of older people predicts higher death rate
 
 ? What about other variables in predicting Covid-19
+
+? Can we implement machine learning algorithm to predict Covid-19
+
+
 
 ---
 
@@ -129,12 +131,12 @@ class: inverse, middle, center
 # [1a] Covid-19 severity
 
 .pull-left[
-```{r severity, echo = FALSE, out.width = "80%", fig.align = "center", fig.cap = "Reference: Mulinari T.O., et al. (2020). MDPI"}
+```{r severity, echo = FALSE, out.width = "60%", fig.align = "center", fig.cap = "Reference: Mulinari T.O., et al. (2020) MDPI"}
 include_graphics("https://www.mdpi.com/pathogens/pathogens-09-00817/article_deploy/html/images/pathogens-09-00817-g001-550.jpg")
 ```
 ]
 .pull-right[
-- The unpredictability of the progression of coronavirus disease 2019 (COVID-19) may be attributed to the low precision of the tools used to predict the prognosis of this disease, especially when the virus is mutating in a fast speed from alpha, to Omicron, and there are more recent variants too.
+- The unpredictability of the progression of coronavirus disease 2019 (COVID-19) may be attributed to the low precision of the tools used to predict the prognosis of this disease, especially when the virus is mutating in a fast speed from alpha, to Omicron, and there are more recent variants too
 ]
 
 
@@ -142,12 +144,12 @@ include_graphics("https://www.mdpi.com/pathogens/pathogens-09-00817/article_depl
 
 # [1b] vitamin D and covid-19
 .pull-left[
-```{r vitaminD, echo = FALSE, out.width = "100%", fig.align = "center", fig.cap = "Reference: Meltzer DO, et al. 2021. JAMA Netw Open"}
+```{r vitaminD, echo = FALSE, out.width = "100%", fig.align = "center", fig.cap = "Reference: Meltzer DO, et al. (2021) JAMA Netw Open"}
 include_graphics("https://www.healio.com/~/media/slack-news/fm_im/misc/infographics/2020/september/pc0920meltzer_graphic_01.jpg?h=630&w=1200&la=en&hash=AA5CE3037B8695511804123FBF351C92")
 ```
 ]
 .pull-right[
-- Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD) and the likelihood of suffering severe symptoms of covid-19. 
+- Several studies suggest an association between serum 25-hydroxyvitamin D (25OHD) and the likelihood of suffering severe symptoms of covid-19
 ]
 
 
@@ -155,10 +157,10 @@ include_graphics("https://www.healio.com/~/media/slack-news/fm_im/misc/infograph
 
 # [2] Covid-19 and weather
 .pull-left[
-- Akin to respiratory tract infection diseases, climatic conditions may significantly influence the COVID-19 pandemic, significant efforts have been made to explore the relationship between climatic condition and growth in number of COVID-19 cases. 
+- Akin to respiratory tract infection diseases, climatic conditions may significantly influence the COVID-19 pandemic, significant efforts have been made to explore the relationship between climatic condition and growth in number of COVID-19 cases 
 ]
 .pull-right[
-```{r weather, echo = FALSE, out.width = "80%", fig.align = "center", fig.cap = "Reference: Mesay Moges Menebo. (2020)"}
+```{r weather, echo = FALSE, out.width = "80%", fig.align = "center", fig.cap = "Reference: Mesay Moges Menebo (2020)"}
 include_graphics("https://ars.els-cdn.com/content/image/1-s2.0-S004896972033179X-ga1.jpg")
 ```
 ]
@@ -167,14 +169,11 @@ include_graphics("https://ars.els-cdn.com/content/image/1-s2.0-S004896972033179X
 
 # [3] Covid-19 and social media
 .pull-left[
-- Social media data from, 
-for example, google search, twitter, facebook and other social media platform, 
-may also be used to develop models and as early warning signals of COVID-19 outbreaks. 
-Social media data can also presents with people's perception of risks 
-and general mental states of a region. 
+- Social media data from, for example, google search, twitter, facebook and other social media platforms, may also be used to develop models and as early warning signals of COVID-19 outbreaks. Social media data can also presents with people's perception of risks 
+and general mental states 
 ]
 .pull-right[
-```{r weather, echo = FALSE, out.width = "80%", fig.align = "center", fig.cap = "Reference: JHU Hub (2020)"}
+```{r social, echo = FALSE, out.width = "80%", fig.align = "center", fig.cap = "Reference: JHU Hub (2020)"}
 include_graphics("https://api.hub.jhu.edu/factory/sites/default/files/styles/soft_crop_2400/public/social_media_032720.jpg?itok=oJE4T6Tf")
 ```
 ]
@@ -183,7 +182,7 @@ include_graphics("https://api.hub.jhu.edu/factory/sites/default/files/styles/sof
 
 # [4] COVID-19 and impacts
 .pull-left[
-```{r vitaminD, echo = FALSE, out.width = "100%", fig.align = "center", fig.cap = "Reference: James G.. (2020)"}
+```{r impacts, echo = FALSE, out.width = "100%", fig.align = "center", fig.cap = "Reference: James G. (2020)"}
 include_graphics("https://cdn-japantimes.com/wp-content/uploads/2020/03/np_file_1549.jpeg")
 ```
 ]
@@ -195,17 +194,13 @@ include_graphics("https://cdn-japantimes.com/wp-content/uploads/2020/03/np_file_
 
 # [5] Covid-19 and machine learning
 .pull-left[
-```{r vitaminD, echo = FALSE, out.width = "100%", fig.align = "center"}
-include_graphics("www.aha.org/sites/default/files/2020-07/ms_072020_Machine_Learning_header_620_1624749.jpg")
+```{r ML, echo = FALSE, out.width = "100%", fig.align = "center", fig.cap = "Reference: Suchandrima Bhowmik (2021)"}
+include_graphics("https://www.news-medical.net/image.axd?picture=2021%2F12%2Fshutterstock_1722032125.jpg")
 ```
 ]
 .pull-right[
-- Developing accurate forecasting tools will help in our fight against the pandemic. Prediction models that combine several features to estimate the risk of infection have been developed. 
-
-- These aim to assist medical staff worldwide in helping patients, especially in the context of limited healthcare resources.
+- Developing accurate forecasting tools will help fighting against the pandemic. Prediction models that combine several features to estimate the risk of infection aim to assist medical staff worldwide in helping patients, especially in the context of limited healthcare resources
 ]
-
-
 ---
 
 class: inverse, middle, center
@@ -221,7 +216,7 @@ The dataset is coming from "Our World in Data" Covid-19 public data, together wi
 - Basic Covid-19 data (cases, deaths)
 - Hospital & ICU (ICU beds, ICU patients)
 - Policy responses (stringency_index)
-- Reproduction rate
+- Health info (Reproduction rate, diabetes prevalence)
 - Tests & positivity
 - Vaccinations
 - Others (populations, life_expectancy, GDP per catpita and so on)
@@ -238,9 +233,9 @@ class: inverse, middle, center
 
 Part I: Preliminary exploration like summary statistics, scatter plots, correlations, maps
 
-Part II: Regression analyses, ranging from OLS, Diff in Diff, regression continuity
+Part II: Regression analyses, ranging from OLS, fixed effects, to regression continuity
 
-Part III: Advanced models and machine learning algorithnms
+Part III: time series (ARiMA) and machine learning algorithm(s)
 
 ---
 
@@ -294,10 +289,11 @@ h_map
 ]
 .pull-right[
 ```{r death-map, echo = FALSE}
-cases <- covid_data %>%
+death <- covid_data %>%
   filter(date == "2022-02-18") %>%
   filter(is.na(continent) == FALSE) %>%
-  select(iso_code, location, date, total_cases_per_million) %>%
+  mutate(death_rate = total_deaths/total_cases) %>%
+  select(iso_code, location, date, death_rate) %>%
   na.omit()
 
 worldshape1 <- readOGR( 
@@ -307,39 +303,38 @@ worldshape1 <- readOGR(
 
 worldshape2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
 
-cases_map <- death %>% 
+death_map <- death %>% 
   left_join(worldshape2, by = c("location" = "NAME")) %>%
   st_as_sf()
 
-pal2 <- colorNumeric(palette = "RdYlGn", domain = cases_map$total_cases_per_million)
-labels <- sprintf("<strong>%s</strong><br/>%s ", cases_map$location, cases_map$total_cases_per_million) %>%
+pal2 <- colorNumeric(palette = "RdYlGn", domain = death_map$death_rate)
+labels <- sprintf("<strong>%s</strong><br/>%s ", death_map$location, death_map$death_rate) %>%
   lapply(htmltools::HTML)
 
-c_map <- leaflet(data = cases_map) %>% 
+d_map <- leaflet(data = death_map) %>% 
   addTiles()  %>% 
   setView( lat=10, lng=0 , zoom=1) %>%
-  addPolygons(fillColor = ~pal2(cases_map$total_cases_per_million),
+  addPolygons(fillColor = ~pal2(death_map$death_rate),
                                  fillOpacity = 1, 
                                  color = "white",
                                  opacity = 1,
                                  weight = 1,
                                  label = labels) %>%
-  addLegend("bottomleft", pal = pal2, values = ~deaths_map$total_deaths_per_million,
-    title = "Total Deaths per Million",
+  leaflet::addLegend("bottomleft", pal = pal2, values = ~ death_map$death_rate,
+    title = "Death Rate",
     opacity = 1)
 
-c_map
+d_map
 ```
 ]
 
 
 ---
 
-# [1a] summary statistics
-Development (HDI)
+# summary statistics
 
 .pull-left[
-```{r development, echo = FALSE}
+```{r development, echo = FALSE, warning=FALSE}
 development <- covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
@@ -351,17 +346,49 @@ development
 ```
 ]
 .pull-right[
-```{r development, echo = FALSE}
-development <- covid_data %>%
+```{r total_cases, echo = FALSE,warning=FALSE}
+t_cases <- covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
-  select(location, human_development_index) %>%
-  arrange(desc(human_development_index)) %>%
+  select(location, total_cases) %>%
+  arrange(desc(total_cases)) %>%
   top_n(10)
 
-development
+t_cases
 ```
 ]
+
+---
+
+# summary statistics
+
+.pull-left[
+```{r vaccination, echo = FALSE,warning=FALSE}
+vac <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(vaccination = people_fully_vaccinated/population) %>%
+  select(location, vaccination) %>%
+  arrange(desc(vaccination)) %>%
+  top_n(10)
+
+vac
+```
+]
+.pull-right[
+```{r death, echo = FALSE,warning=FALSE}
+death <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(death_rate = total_deaths/total_cases) %>%
+  select(location, death_rate) %>%
+  arrange(desc(death_rate)) %>%
+  top_n(10)
+
+death
+```
+]
+
 
 ---
 
@@ -461,7 +488,7 @@ covid_data %>%
 ```{r time-table, echo = FALSE}
 covid_time <- covid_data %>%
   select(location, date, total_cases) %>%
-  filter(location == c("China", "Japan", "India", "Brazil", "France", "Germany", "Italy", "Mexico", "Russia", "United Kingdom", "United States"))
+  filter(location == c("Italy", "Japan", "France", "Germany", "United Kingdom", "Brazil", "India", "United States"))
 
 covid_time_wide <- pivot_wider(data = covid_time,
                                 names_from = location,
@@ -471,67 +498,83 @@ don = xts(x = covid_time_wide[,-1], order.by = covid_time_wide$date)
 
 p <- dygraph(don)
 p
-
-
 ```
 
 ---
 
-# Results & Implications [1e: time series analyses]
+# Results & Implications 
 
-```{r ARiMA, echo = FALSE}
+```{r ARiMA_0, echo = FALSE, warning=FALSE}
 library(TTR)
 covid_time <- covid_data %>%
   filter(location == "United States") %>%
   select(date, new_cases) %>%
   na.omit()
+```
+
+---
+```{r ARiMA_1a, echo = FALSE, warning=FALSE, out.width="100%", out.height="60%"}
 
 ggplot(data = covid_time, aes(x = date, y = new_cases)) +
       geom_line(stat = "identity", fill = "purple") +
-      labs(title = "Total Covid-19 cases in United States",
+      labs(title = "New Covid-19 cases in United States",
            subtitle = "by time",
-           x = "Date", y = "Total cases") +
+           x = "Date", y = "New cases") +
       theme_minimal()
+```
 
+---
+```{r ARiMA_1b, echo = FALSE, warning=FALSE, out.width="100%", out.height="60%"}
 covid_time <- covid_time %>%
   mutate (cases_SMA = SMA(new_cases, n=8))
 
 ggplot(data = covid_time, aes(x = date, y = cases_SMA)) +
       geom_line(stat = "identity", fill = "purple") +
-      labs(title = "Total Covid-19 cases in United States",
+      labs(title = "New Covid-19 cases in United States",
            subtitle = "by time",
-           x = "Date", y = "Total cases") +
+           x = "Date", y = "New cases") +
       theme_minimal()
   
 ```
 
-```{r}
+---
+```{r ARiMA_2, echo=FALSE, warning=FALSE, out.width="100%", out.height="80%"}
 cases_diff <- diff(covid_time$new_cases, differences=1)
 acf(cases_diff, lag.max=20)             
 acf(cases_diff, lag.max=20, plot=FALSE) 
 ```
 
-```{r}
+---
+```{r ARiMA_3, echo=FALSE, warning=FALSE, out.width="100%", out.height="80%"}
 pacf(cases_diff, lag.max=20)             # plot a partial correlogram
 pacf(cases_diff, lag.max=20, plot=FALSE) # get the partial autocorrelation values
 ```
 
-
-```{r}
+---
+```{r ARiMA_4, echo=FALSE, warning=FALSE}
 auto.arima(cases_diff)
 ```
 
-```{r}
+---
+```{r ARiMA_5, echo=FALSE, warning=FALSE}
 covid_time_arima <- arima(covid_time$new_cases, order=c(2,0,2)) 
 covid_time_arima
 ```
 
-```{r}
+---
+```{r ARiMA_6, echo=FALSE, warning=FALSE}
 fit <- Arima(cases_diff, order=c(2,0,2))
-checkresiduals(fit)
-autoplot(forecast(fit))
 ```
 
+---
+```{r ARiMA_7, echo=FALSE, warning=FALSE}
+checkresiduals(fit)
+```
+
+---
+```{r ARiMA8, echo=FALSE, warning=FALSE }
+autoplot(forecast(fit))
+```
 
 ---
 
@@ -560,6 +603,8 @@ glance(reg1)$r.squared
 glance(reg1)$adj.r.squared
 ```
 
+---
+
 ```{r linear-model-2, echo = FALSE}
 covid_total <- covid_data %>%
   filter(date == "2021-03-20")
@@ -585,11 +630,20 @@ glance(reg1)$adj.r.squared
 
 ---
 
-# Results & Implications - [2a: regression analyses - simple linear regression]
+# Important Dates
 
-```{r training-test}
+Covid-19 Alpha: 31 December 2019 (January 22, 2020)
 
-```
+Covid-19 Delta: 1 December 2020
+
+Covid-19 Omicron: 1 November, 2021
+
+-----------
+
+Vaccination: 13 December, 2020
+
+Booster: 13 August, 2021
+
 
 
 ---
@@ -602,6 +656,7 @@ glance(reg1)$adj.r.squared
 #covid_data2 <- covid_data1 %>%
 # select(vaccine_introduced, total_vaccinations, date, first_vaccination, interaction_term, #location, new_cases_per_million, weekly_hosp_admissions_per_million)
 ```
+
 ```{r make-dataset2}
 #covid_data3 <- covid_data1 %>%
 #  select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred, population_density, total_cases_per_million)
@@ -627,8 +682,10 @@ glance(reg1)$adj.r.squared
 
 2. Regression Discontinuity
 
+# Results & Implications 
+Regression Discontinuity
 
-```{r}
+```{r rdd1, echo=FALSE, warning=FALSE}
 rdd_data(y = covid_country$new_deaths_per_million, 
          x = covid_country$vaccination, 
          cutpoint = 0.1) %>% 
@@ -636,21 +693,8 @@ rdd_data(y = covid_country$new_deaths_per_million,
   summary()
 ```
 
-```{r}
-covid_country %>%
-  select(vaccination, new_deaths_per_million) %>%
-  mutate(threshold = as.factor(ifelse(vaccination >= 0.1, 1, 0))) %>%
-  ggplot(aes(x = vaccination, y = new_deaths_per_million)) +
-  geom_point(aes(color = threshold)) +
-  geom_smooth(method = "lm", se = FALSE) +
-  scale_color_brewer(palette = "Accent") +
-  guides(color = FALSE) +
-  geom_vline(xintercept = 0.1, color = "red",
-    size = 1, linetype = "dashed") +
-  labs(y = "New deaths (per million)",
-       x = "Vaccination rate") +
-  theme_minimal()
-
+---
+```{r rdd_plot1, echo=FALSE, warning=FALSE}
 covid_country %>%
   select(vaccination, new_deaths_per_million) %>%
   mutate(threshold = as.factor(ifelse(vaccination >= 0.1, 1, 0))) %>%
@@ -666,7 +710,8 @@ covid_country %>%
   theme_minimal()
 ```
 
-```{r}
+---
+```{r rdd2, echo=FALSE, warning=FALSE}
 covid_total <- covid_data %>%
   filter(date == "2022-02-20")
 
@@ -683,21 +728,8 @@ rdd_data(y = covid_country$new_deaths_per_million,
   summary()
 ```
 
-```{r}
-covid_country %>%
-  select(vaccination, new_deaths_per_million) %>%
-  mutate(threshold = as.factor(ifelse(vaccination >= 0.5, 1, 0))) %>%
-  ggplot(aes(x = vaccination, y = new_deaths_per_million)) +
-  geom_point(aes(color = threshold)) +
-  geom_smooth(method = "lm", se = FALSE) +
-  scale_color_brewer(palette = "Accent") +
-  guides(color = FALSE) +
-  geom_vline(xintercept = 0.5, color = "red",
-    size = 1, linetype = "dashed") +
-  labs(y = "New deaths (per million)",
-       x = "Vaccination rate") +
-  theme_minimal()
-
+---
+```{r rdd_plot2, echo=FALSE, warning=FALSE}
 covid_country %>%
   select(vaccination, new_deaths_per_million) %>%
   mutate(threshold = as.factor(ifelse(vaccination >= 0.5, 1, 0))) %>%
