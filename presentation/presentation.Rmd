@@ -26,6 +26,7 @@ library(palmerpenguins)
 library(knitr)
 library(tmap)
 library(tmaptools)
+library(GGally)
 library(sf)
 library(leaflet)
 library(xaringanthemer)
@@ -232,11 +233,11 @@ class: inverse, middle, center
 
 # Methods & Data Analyses - details
 
-Part I: Preliminary exploration like summary statistics, scatter plots, correlations, maps
+Part I: Preliminary exploration like summary statistics, scatter plots, heatmap, maps
 
-Part II: Regression analyses, ranging from OLS, fixed effects, to regression continuity
+Part II: Regression analyses (Linear models, fixed effects, and regression continuity)
 
-Part III: time series (ARiMA) and machine learning algorithm(s)
+Part III: time series (ARiMA) and machine learning algorithm(KNN)
 
 ---
 
@@ -247,21 +248,22 @@ class: inverse, middle, center
 ---
 
 # HDI & Death Rate
-
 .pull-left[
-```{r HDI-map, echo = FALSE, warning = FALSE, message=FALSE}
-HDI <- covid_data %>%
-  filter(date == "2022-02-20") %>%
-  filter(is.na(continent) == FALSE) %>%
-  select(iso_code, location, date, human_development_index) %>%
-  na.omit()
-
+```{r read_shape, include=FALSE}
 worldshape <- readOGR( 
   dsn= ("/cloud/project/data/world_shape_file/"), 
   layer="TM_WORLD_BORDERS-0.3",
   verbose=FALSE)
 
 worldshape2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
+```
+
+```{r HDI-map, echo = FALSE, warning = FALSE, message=FALSE, out.height= "80%", out.width= "90%"}
+HDI <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  select(iso_code, location, date, human_development_index) %>%
+  na.omit()
 
 hdi_map <- HDI %>% 
   left_join(worldshape2, by = c("location" = "NAME")) %>%
@@ -288,20 +290,13 @@ h_map
 ```
 ]
 .pull-right[
-```{r death-map, echo = FALSE, warning = FALSE, message=FALSE}
+```{r death-map, echo = FALSE, warning = FALSE, message=FALSE, out.height= "80%", out.width= "90%"}
 death <- covid_data %>%
   filter(date == "2022-02-18") %>%
   filter(is.na(continent) == FALSE) %>%
   mutate(death_rate = total_deaths/total_cases) %>%
   select(iso_code, location, date, death_rate) %>%
   na.omit()
-
-worldshape1 <- readOGR( 
-  dsn= ("/cloud/project/data/world_shape_file/"), 
-  layer="TM_WORLD_BORDERS-0.3",
-  verbose=FALSE)
-
-worldshape2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
 
 death_map <- death %>% 
   left_join(worldshape2, by = c("location" = "NAME")) %>%
@@ -325,36 +320,6 @@ d_map <- leaflet(data = death_map) %>%
     opacity = 1)
 
 d_map
-```
-]
-
-
----
-
-# HDI & Total Cases
-
-.pull-left[
-```{r development, echo = FALSE, warning=FALSE}
-development <- covid_data %>%
-  filter(date == "2022-02-20") %>%
-  filter(is.na(continent) == FALSE) %>%
-  select(location, human_development_index) %>%
-  arrange(desc(human_development_index)) %>%
-  top_n(10)
-
-development
-```
-]
-.pull-right[
-```{r total_cases, echo = FALSE,warning=FALSE}
-t_cases <- covid_data %>%
-  filter(date == "2022-02-20") %>%
-  filter(is.na(continent) == FALSE) %>%
-  select(location, total_cases) %>%
-  arrange(desc(total_cases)) %>%
-  top_n(10)
-
-t_cases
 ```
 ]
 
@@ -392,16 +357,17 @@ death
 
 ---
 
-# Correlations
+# Correlations Heat Map
 
-```{r correlation_heatmap, echo = FALSE}
+```{r correlation_heatmap, echo = FALSE, fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
 covid_heat <- covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
   mutate(smoker = female_smokers + male_smokers) %>%
+  mutate(death = total_deaths/total_cases) %>%
   mutate(vaccination = people_fully_vaccinated/population) %>%
   mutate(boosters = total_boosters/population) %>%
-  select(vaccination, total_cases_per_million, total_deaths_per_million, boosters, population_density, stringency_index, aged_70_older, gdp_per_capita, hospital_beds_per_thousand,smoker, human_development_index) %>%
+  select(vaccination, death, boosters, population_density, stringency_index, aged_70_older, gdp_per_capita, hospital_beds_per_thousand, smoker, human_development_index, cardiovasc_death_rate) %>%
   na.omit()
   
 cormat <- round(cor(covid_heat),2)
@@ -435,7 +401,7 @@ covid_data %>%
                        y = human_development_index)) +
   geom_point(size = 2, mapping = aes()) +
   labs(title = "vaccination rate vs. human development index", 
-       subtitle = "xx",
+       subtitle = "",
        x = "vaccination rate",
        y = "human development index") +
   scale_color_viridis_d() +
@@ -445,9 +411,9 @@ covid_data %>%
 ---
 
 # Vaccination & Death Rate
-```{r vac-death, echo = FALSE, warning = FALSE, message=FALSE}
+```{r vac-death, echo = FALSE, warning = FALSE, message=FALSE, fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
 covid_data %>%
-  filter(date == "2022-02-20") %>%
+  filter(date == "2021-12-20") %>%
   filter(is.na(continent) == FALSE) %>%
   mutate(smoker = female_smokers + male_smokers) %>%
   mutate(vaccination_rate = people_fully_vaccinated/population) %>%  
@@ -458,8 +424,8 @@ covid_data %>%
   geom_point(size = 1, mapping = aes()) +
   labs(title = "percentage death of population vs. diabetes prevalence", 
        subtitle = "xx",
-       x = "percentage death of population",
-       y = "diabetes prevalence") +
+       x = "vaccination rate",
+       y = "death rate") +
   scale_color_viridis_d() +
   geom_smooth(color = "blue") 
 ```
@@ -475,18 +441,16 @@ covid_total <- covid_data %>%
 covid_country <- covid_total %>%
   filter(is.na(continent) == FALSE) %>%
   mutate(vaccination = people_fully_vaccinated/population) %>%
-  mutate(booster = total_boosters/population) %>%
-  mutate(death_norm = (total_deaths_per_million - mean(total_deaths_per_million)) /   sd(total_deaths_per_million)) 
-  
-covid_other <- covid_total %>%
-  filter(is.na(continent) == TRUE)
+  mutate(death = total_deaths/total_cases) %>%
+  mutate(booster = total_boosters/population) 
 
 reg1 <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(total_deaths_per_million ~ vaccination + stringency_index + handwashing_facilities + gdp_per_capita, data = covid_country) 
+  fit(death ~ vaccination, data = covid_country) 
 
 reg1 %>%
   tidy()
+
 glance(reg1)$r.squared
 glance(reg1)$adj.r.squared
 ```
@@ -496,26 +460,25 @@ glance(reg1)$adj.r.squared
 # Linear Model [omicron]
 ```{r linear-model-2, echo = FALSE}
 covid_total <- covid_data %>%
-  filter(date == "2021-03-20")
+  filter(date == "2022-02-20")
 
 covid_country <- covid_total %>%
   filter(is.na(continent) == FALSE) %>%
   mutate(vaccination = people_fully_vaccinated/population) %>%
   mutate(booster = total_boosters/population) %>%
-  mutate(death_norm = (total_deaths_per_million - mean(total_deaths_per_million)) /   sd(total_deaths_per_million)) 
+  mutate(death = total_deaths/total_cases)
   
-covid_other <- covid_total %>%
-  filter(is.na(continent) == TRUE)
-
-reg1 <- linear_reg() %>%
+reg2 <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(total_deaths_per_million ~ vaccination + stringency_index + handwashing_facilities + gdp_per_capita, data = covid_country) 
+  fit(death ~ vaccination + booster + stringency_index + gdp_per_capita + human_development_index + cardiovasc_death_rate + population_density, data = covid_country) 
 
-reg1 %>%
+reg2 %>%
   tidy()
+
 glance(reg1)$r.squared
 glance(reg1)$adj.r.squared
 ```
+
 
 ---
 
@@ -527,7 +490,7 @@ Covid-19 Delta: 1 December 2020
 
 Covid-19 Omicron: 1 November, 2021
 
------------
+--------------------------
 
 Vaccination: 13 December, 2020
 
@@ -536,26 +499,23 @@ Booster: 13 August, 2021
 ---
 
 
-# # Linear Model [Delta]
+# Linear Model [Delta]
 
 ```{r linear-model-3, echo = FALSE}
 covid_total <- covid_data %>%
-  filter(date == "2022-02-20")
+  filter(date == "2021-05-20")
 
 covid_country <- covid_total %>%
   filter(is.na(continent) == FALSE) %>%
   mutate(vaccination = people_fully_vaccinated/population) %>%
   mutate(booster = total_boosters/population) %>%
-  mutate(death_norm = (total_deaths_per_million - mean(total_deaths_per_million)) /   sd(total_deaths_per_million)) 
-  
-covid_other <- covid_total %>%
-  filter(is.na(continent) == TRUE)
+  mutate(death = total_deaths/total_cases)
 
-reg1 <- linear_reg() %>%
+reg3 <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(total_deaths_per_million ~ vaccination + stringency_index + handwashing_facilities + gdp_per_capita, data = covid_country) 
+  fit(death ~ vaccination + stringency_index + gdp_per_capita + human_development_index + cardiovasc_death_rate + population_density, data = covid_country) 
 
-reg1 %>%
+reg3 %>%
   tidy()
 glance(reg1)$r.squared
 glance(reg1)$adj.r.squared
@@ -563,25 +523,22 @@ glance(reg1)$adj.r.squared
 
 ---
 
-# # Linear Model [Alpha]
+# Linear Model [Alpha]
 ```{r linear-model-4, echo = FALSE}
 covid_total <- covid_data %>%
-  filter(date == "2021-03-20")
+  filter(date == "2020-10-30")
 
 covid_country <- covid_total %>%
   filter(is.na(continent) == FALSE) %>%
   mutate(vaccination = people_fully_vaccinated/population) %>%
   mutate(booster = total_boosters/population) %>%
-  mutate(death_norm = (total_deaths_per_million - mean(total_deaths_per_million)) /   sd(total_deaths_per_million)) 
+  mutate(death = total_cases/total_cases)
   
-covid_other <- covid_total %>%
-  filter(is.na(continent) == TRUE)
-
-reg1 <- linear_reg() %>%
+reg4 <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(total_deaths_per_million ~ vaccination + stringency_index + handwashing_facilities + gdp_per_capita, data = covid_country) 
+  fit(death ~ stringency_index + gdp_per_capita + human_development_index + cardiovasc_death_rate + population_density, data = covid_country) 
 
-reg1 %>%
+reg4 %>%
   tidy()
 glance(reg1)$r.squared
 glance(reg1)$adj.r.squared
@@ -589,57 +546,7 @@ glance(reg1)$adj.r.squared
 
 ---
 
-# # Linear Model [Vaccination]
-```{r linear-model-5, echo = FALSE}
-covid_total <- covid_data %>%
-  filter(date == "2021-03-20")
-
-covid_country <- covid_total %>%
-  filter(is.na(continent) == FALSE) %>%
-  mutate(vaccination = people_fully_vaccinated/population) %>%
-  mutate(booster = total_boosters/population) %>%
-  mutate(death_norm = (total_deaths_per_million - mean(total_deaths_per_million)) /   sd(total_deaths_per_million)) 
-  
-covid_other <- covid_total %>%
-  filter(is.na(continent) == TRUE)
-
-reg1 <- linear_reg() %>%
-  set_engine("lm") %>%
-  fit(total_deaths_per_million ~ vaccination + stringency_index + handwashing_facilities + gdp_per_capita, data = covid_country) 
-
-reg1 %>%
-  tidy()
-glance(reg1)$r.squared
-glance(reg1)$adj.r.squared
-```
----
-
-# # Linear Model [Boosters]
-```{r linear-model-6, echo = FALSE}
-covid_total <- covid_data %>%
-  filter(date == "2021-03-20")
-
-covid_country <- covid_total %>%
-  filter(is.na(continent) == FALSE) %>%
-  mutate(vaccination = people_fully_vaccinated/population) %>%
-  mutate(booster = total_boosters/population) %>%
-  mutate(death_norm = (total_deaths_per_million - mean(total_deaths_per_million)) /   sd(total_deaths_per_million)) 
-  
-covid_other <- covid_total %>%
-  filter(is.na(continent) == TRUE)
-
-reg1 <- linear_reg() %>%
-  set_engine("lm") %>%
-  fit(total_deaths_per_million ~ vaccination + stringency_index + handwashing_facilities + gdp_per_capita, data = covid_country) 
-
-reg1 %>%
-  tidy()
-glance(reg1)$r.squared
-glance(reg1)$adj.r.squared
-```
----
-
-```{r time-table1, echo = FALSE, warning=FALSE, out.width="100%", out.height="80%"}
+```{r time-table1, echo = FALSE, warning=FALSE, out.width="100%", out.height="80%", fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
 covid_time <- covid_data %>%
   select(location, date, total_cases) %>%
   filter(location == c("India", "Brazil", "France", "Germany", "Italy", "Mexico", "Russia", "United Kingdom", "United States"))
@@ -730,11 +637,10 @@ checkresiduals(fit)
 ```{r ARiMA8, echo=FALSE, warning=FALSE, message = FALSE}
 autoplot(forecast(fit))
 ```
+
 ---
 
 # Fixed Effects
-
-Fixed effect
 
 ```{r make-dummy2}
 #covid_data2 <- covid_data1 %>%
@@ -763,42 +669,15 @@ Fixed effect
 ---
 
 # Regression Discontinuity (RDD)
-
 ```{r rdd1, echo=FALSE, warning=FALSE, message=FALSE}
-rdd_data(y = covid_country$new_deaths_per_million, 
-         x = covid_country$vaccination, 
-         cutpoint = 0.1) %>% 
-  rdd_reg_lm(slope = "separate") %>% 
-  summary()
-```
-
----
-```{r rdd_plot1, echo=FALSE, warning=FALSE, message=FALSE}
-covid_country %>%
-  select(vaccination, new_deaths_per_million) %>%
-  mutate(threshold = as.factor(ifelse(vaccination >= 0.1, 1, 0))) %>%
-  ggplot(aes(x = vaccination, y = new_deaths_per_million, color = threshold)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE) +
-  scale_color_brewer(palette = "Accent") +
-  guides(color = FALSE) +
-  geom_vline(xintercept = 0.1, color = "red",
-    size = 1, linetype = "dashed") +
-  labs(y = "New deaths (per million)",
-       x = "Vaccination rate") +
-  theme_minimal()
-```
-
----
-```{r rdd2, echo=FALSE, warning=FALSE, message=FALSE}
-covid_total <- covid_data %>%
-  filter(date == "2022-02-20")
-
-covid_country <- covid_total %>%
+covid_country <- covid_data %>%
+  filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
-  mutate(vaccination = people_fully_vaccinated/population) %>%
   mutate(booster = total_boosters/population) %>%
-  mutate(death_norm = (total_deaths_per_million - mean(total_deaths_per_million)) /   sd(total_deaths_per_million)) 
+  mutate(vaccination = people_fully_vaccinated/population) %>%
+  mutate(death = total_deaths/total_cases)
+
+
 
 rdd_data(y = covid_country$new_deaths_per_million, 
          x = covid_country$vaccination, 
@@ -808,7 +687,7 @@ rdd_data(y = covid_country$new_deaths_per_million,
 ```
 
 ---
-```{r rdd_plot2, echo=FALSE, warning=FALSE, message=FALSE}
+```{r rdd_plot1, echo=FALSE, warning=FALSE, message=FALSE}
 covid_country %>%
   select(vaccination, new_deaths_per_million) %>%
   mutate(threshold = as.factor(ifelse(vaccination >= 0.5, 1, 0))) %>%
@@ -857,23 +736,29 @@ Let’s assume we have several groups of labeled samples. In our sample, this mi
 ```{r knn1, echo=FALSE, warning=FALSE, message = FALSE}
 knn_sample <- covid_data %>%
   filter(date == "2022-02-20") %>%
-  mutate(death_rate = total_deaths/total_cases) %>%
-  mutate(development = ifelse(human_development_index > 0.7225, "M", "L")) %>%
-  select(development, total_cases, people_fully_vaccinated, total_boosters, population_density, aged_70_older, gdp_per_capita, cardiovasc_death_rate, hospital_beds_per_thousand, human_development_index) %>%
+  mutate(death = total_deaths/total_cases) %>%
+  mutate(vaccination = people_fully_vaccinated/population) %>%
+  mutate(booster = total_boosters/population) %>%
+  select(death, vaccination, booster, population_density, aged_70_older, gdp_per_capita, cardiovasc_death_rate, hospital_beds_per_thousand, human_development_index) %>%
   na.omit()
 
-knn_sample$development <- factor(knn_sample$development, levels = c("M", "L"), labels = c("more developed country", "less developed country"))
+knn_sample <- knn_sample %>%
+  mutate(death_control = ifelse(death > 0.01, "Good", "Bad")) %>%
+  select(death_control, vaccination, booster, population_density, aged_70_older, gdp_per_capita, cardiovasc_death_rate, hospital_beds_per_thousand, human_development_index) %>%
+  na.omit()
+
+knn_train_labels <- knn_sample[1:31, 1]
+knn_test_labels <- knn_sample[32:62, 1] 
+
+knn_sample$death_control <- factor(knn_sample$death_control, levels = c("G", "B"), labels = c("Good", "Bad"))
 
 normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x))) }
 
-knn_norm <- as.data.frame(lapply(knn_sample[2:10], normalize))
+knn_norm <- as.data.frame(lapply(knn_sample[2:9], normalize))
 
 knn_train <- knn_norm[1:31,]
 knn_test <- knn_norm[32:62,]
-
-knn_train_labels <- knn_sample[1:31, 1]
-knn_test_labels <- knn_sample[32:62, 1] 
 
 knn_train <- as.data.frame(knn_train)
 knn_train_labels <- as.data.frame(knn_train_labels)
@@ -886,7 +771,7 @@ knn_test_pred <- knn(train = knn_train, test = knn_test, cl, k=7)
 ```
 
 ```{r knn2, echo=FALSE, warning=FALSE, message = FALSE, out.width="70%", out.height="40%"}
-CrossTable(x = test, knn_test_pred, prop.chisq = FALSE)
+knn_one <- CrossTable(x = test, knn_test_pred, prop.chisq = FALSE)
 ```
 
 ---
@@ -899,15 +784,13 @@ class: inverse, middle, center
 
 # Limitations 
 
-1. Data Point (county-level data)
+1. Level of data
 
-2. Standardization of data
+2. Mutations of Covid-19, types of vaccinations
 
-3. Mutations of Covid-19, types of vaccinations
+3. Policies
 
-4. Policies
-
-5. Prediction at a global level may not be as useful
+4. Others
 
 ---
 
@@ -919,6 +802,8 @@ class: inverse, middle, center
 3. Anti-trust activities during Covid-19
 
 4. County level data
+
+5. Others
 
 ---
 
