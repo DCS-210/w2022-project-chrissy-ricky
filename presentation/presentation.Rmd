@@ -394,14 +394,14 @@ linear_reg() %>%
 # Results & Implications - [2b: regression analyses - other]
 
 
-```{r make-dataset2}
+```{r make-dataset3}
 covid_data3 <- covid_data %>%
-  select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred, population_density, total_cases_per_million)
+  select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred, population_density, total_cases_per_million, total_cases)
 ```
 
-```{r make-covid-data-10}
-covid_data7 <- covid_data3 %>%
-  filter(location == "United States" | location == "United Kingdom" | location == "Canada" | location == "Belgium" | location == "Israel")
+```{r make-covid-data-4}
+covid_data4 <- covid_data3 %>%
+  filter(location == "United States" | location == "United Kingdom" | location == "Canada" | location == "Belgium" | location == "Israel" | location == "Spain")
 ```
 
 ``` {r make-feregression}
@@ -410,15 +410,55 @@ library(car)       # Companion to applied regression
 library(gplots)    # Various programing tools for plotting data
 library(tseries)   # For timeseries analysis
 library(lmtest)    # For hetoroskedasticity analysis
-fixed.dum <-lm(weekly_hosp_admissions_per_million ~ people_fully_vaccinated_per_hundred + factor(location) - 1, data = covid_data7)
+fixed.dum <-lm(weekly_hosp_admissions_per_million ~ people_fully_vaccinated_per_hundred + factor(location) - 1, data = covid_data4)
 summary(fixed.dum)
 
 yhat <- fixed.dum$fitted
-scatterplot(yhat ~ covid_data7$people_fully_vaccinated_per_hundred | covid_data7$location,  xlab ="people fully vaccinated per hundred", ylab ="covid cases", boxplots = FALSE, smooth = FALSE)
-abline(lm(covid_data7$weekly_hosp_admissions_per_million~covid_data7$people_fully_vaccinated_per_hundred),lwd=5, col="red")
+scatterplot(yhat ~ covid_data4$people_fully_vaccinated_per_hundred | covid_data4$location,  xlab ="people fully vaccinated per hundred", ylab ="covid cases", boxplots = FALSE, smooth = FALSE)
+abline(lm(covid_data4$weekly_hosp_admissions_per_million~covid_data4$people_fully_vaccinated_per_hundred),lwd=5, col="red")
 ```
 
+```{r make-covid-date-5}
+covid_data4 <- covid_data %>%
+  filter( date == "2020-03-23")
+``` 
 
+```{r filter-covid_cases_on_my_birthday}
+library(sf)
+library(maps)
+library(leaflet)
+library("rnaturalearth")
+world <- ne_countries(scale = "medium", returnclass = "sf")
+world <- st_drop_geometry(world)
+covid_data4 <- covid_data4 %>% 
+  left_join(world, by = c("location" = "name")) %>%
+  st_as_sf()
+
+ggplot(data = covid_data4) +
+    geom_sf(aes(fill = total_cases)) +
+    scale_fill_viridis_c(option = "plasma", trans = "sqrt")
+```
+```{r make-covid-date-6}
+covid_data5 <- covid_data %>%
+  filter( date == "2020-05-23")
+``` 
+
+
+```{r filter-covid_cases_on_my_birthday}
+library(sf)
+library(maps)
+library(leaflet)
+library("rnaturalearth")
+world <- ne_countries(scale = "medium", returnclass = "sf")
+#world <- st_drop_geometry(world)
+covid_data5 <- covid_data5 %>% 
+  left_join(world, by = c("location" = "name")) %>%
+  st_as_sf()
+
+ggplot(data = covid_data5) +
+    geom_sf(aes(fill = total_cases)) +
+    scale_fill_viridis_c(option = "plasma", trans = "sqrt")
+```
 # Results & Implications - [3: machine learnng]
 
 1. linear regression

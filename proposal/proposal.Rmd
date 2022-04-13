@@ -252,3 +252,24 @@ yhat <- fixed.dum$fitted
 scatterplot(yhat ~ covid_data7$people_fully_vaccinated_per_hundred | covid_data7$location,  xlab ="people fully vaccinated per hundred", ylab ="covid cases", boxplots = FALSE, smooth = FALSE)
 abline(lm(covid_data7$weekly_hosp_admissions_per_million~covid_data7$people_fully_vaccinated_per_hundred),lwd=5, col="red")
 ```
+
+```{r make-covid-date-5}
+covid_data4 <- covid_data %>%
+  filter( date == "2020-03-23")
+``` 
+
+```{r filter-covid_cases_on_my_birthday}
+library(sf)
+library(maps)
+library(leaflet)
+library("rnaturalearth")
+world <- ne_countries(scale = "medium", returnclass = "sf")
+#world <- st_drop_geometry(world)
+covid_data4 <- covid_data4 %>% 
+  left_join(world, by = c("location" = "name")) %>%
+  st_as_sf()
+
+ggplot(data = covid_data4) +
+    geom_sf(aes(fill = total_cases)) +
+    scale_fill_viridis_c(option = "plasma", trans = "sqrt")
+```
