@@ -114,11 +114,11 @@ data to find potential predictors for Covid-19 cases, deaths, or vaccination rat
 
 ? Do vaccinations effectively mitigate the death rate 
 
-? Are higher percentage of older people predicts higher death rate
+? Can stricter policies better contain the virus and control the death rate
 
 ? What about other variables in predicting Covid-19
 
-? Can we implement machine learning algorithm to predict Covid-19
+? Use of machine learning algorithm to predict Covid-19
 
 
 
@@ -144,7 +144,7 @@ include_graphics("https://www.mdpi.com/pathogens/pathogens-09-00817/article_depl
 
 ---
 
-# [1b] vitamin D and covid-19
+# [1b] Vitamin D and covid-19
 .pull-left[
 ```{r vitaminD, echo = FALSE, out.width = "100%", fig.align = "center", fig.cap = "Reference: Meltzer DO, et al. (2021) JAMA Netw Open"}
 include_graphics("https://www.healio.com/~/media/slack-news/fm_im/misc/infographics/2020/september/pc0920meltzer_graphic_01.jpg?h=630&w=1200&la=en&hash=AA5CE3037B8695511804123FBF351C92")
@@ -182,7 +182,7 @@ include_graphics("https://api.hub.jhu.edu/factory/sites/default/files/styles/sof
 
 ---
 
-# [4] COVID-19 and impacts
+# [4] Covid-19 and impacts
 .pull-left[
 ```{r impacts, echo = FALSE, out.width = "100%", fig.align = "center", fig.cap = "Reference: James G. (2020)"}
 include_graphics("https://cdn-japantimes.com/wp-content/uploads/2020/03/np_file_1549.jpeg")
@@ -248,7 +248,6 @@ class: inverse, middle, center
 ---
 
 # HDI & Death Rate
-.pull-left[
 ```{r read_shape, include=FALSE}
 worldshape <- readOGR( 
   dsn= ("/cloud/project/data/world_shape_file/"), 
@@ -257,6 +256,7 @@ worldshape <- readOGR(
 
 worldshape2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
 ```
+.pull-left[
 
 ```{r HDI-map, echo = FALSE, warning = FALSE, message=FALSE, out.height= "80%", out.width= "90%"}
 HDI <- covid_data %>%
@@ -337,6 +337,7 @@ vac <- covid_data %>%
   arrange(desc(vaccination)) %>%
   top_n(10)
 
+vac$vaccination <- percent(vac$vaccination, accuracy=1)
 vac
 ```
 ]
@@ -350,6 +351,7 @@ death <- covid_data %>%
   arrange(desc(death_rate)) %>%
   top_n(10)
 
+death$death_rate <- percent(death$death_rate, accuracy=1)
 death
 ```
 ]
@@ -423,7 +425,7 @@ covid_data %>%
                        y = death)) +
   geom_point(size = 1, mapping = aes()) +
   labs(title = "percentage death of population vs. diabetes prevalence", 
-       subtitle = "xx",
+       subtitle = "",
        x = "vaccination rate",
        y = "death rate") +
   scale_color_viridis_d() +
@@ -432,7 +434,7 @@ covid_data %>%
 
 ---
 
-# Linear Model [omicron]
+# Linear Model 1 [Omicron]
 
 ```{r linear-model-1, echo = FALSE}
 covid_total <- covid_data %>%
@@ -457,7 +459,7 @@ glance(reg1)$adj.r.squared
 
 ---
 
-# Linear Model [omicron]
+# Linear Model 2 [Omicron]
 ```{r linear-model-2, echo = FALSE}
 covid_total <- covid_data %>%
   filter(date == "2022-02-20")
@@ -499,7 +501,7 @@ Booster: 13 August, 2021
 ---
 
 
-# Linear Model [Delta]
+# Linear Model 3 [Delta]
 
 ```{r linear-model-3, echo = FALSE}
 covid_total <- covid_data %>%
@@ -523,7 +525,7 @@ glance(reg1)$adj.r.squared
 
 ---
 
-# Linear Model [Alpha]
+# Linear Model 4 [Alpha]
 ```{r linear-model-4, echo = FALSE}
 covid_total <- covid_data %>%
   filter(date == "2020-10-30")
@@ -545,11 +547,11 @@ glance(reg1)$adj.r.squared
 ```
 
 ---
-
+# Total cases by major economies
 ```{r time-table1, echo = FALSE, warning=FALSE, out.width="100%", out.height="80%", fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
 covid_time <- covid_data %>%
   select(location, date, total_cases) %>%
-  filter(location == c("India", "Brazil", "France", "Germany", "Italy", "Mexico", "Russia", "United Kingdom", "United States"))
+  filter(location == c("India", "Brazil", "France", "Germany", "Italy", "Mexico", "Russia", "United Kingdom", "United States", "China"))
 
 covid_time_wide <- pivot_wider(data = covid_time,
                                 names_from = location,
@@ -600,14 +602,14 @@ ggplot(data = covid_time, aes(x = date, y = cases_SMA)) +
 ```
 
 ---
-```{r ARiMA_2, echo=FALSE, warning=FALSE, message = FALSE, out.width="90%", out.height="90%"}
+```{r ARiMA_2, echo=FALSE, warning=FALSE, message = FALSE, out.width="90%", out.height="100%"}
 cases_diff <- diff(covid_time$new_cases, differences=1)
 acf(cases_diff, lag.max=20)             
 acf(cases_diff, lag.max=20, plot=FALSE) 
 ```
 
 ---
-```{r ARiMA_3, echo=FALSE, warning=FALSE, message = FALSE, out.width="90%", out.height="90%"}
+```{r ARiMA_3, echo=FALSE, warning=FALSE, message = FALSE, out.width="90%", out.height="100%"}
 pacf(cases_diff, lag.max=20)             # plot a partial correlogram
 pacf(cases_diff, lag.max=20, plot=FALSE) # get the partial autocorrelation values
 ```
