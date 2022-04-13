@@ -21,9 +21,25 @@ output:
 # Add any additional packages you need to this chunk
 library(tidyverse)
 library(tidymodels)
+library(reshape2)
 library(palmerpenguins)
 library(knitr)
+library(tmap)
+library(tmaptools)
+library(sf)
+library(leaflet)
 library(xaringanthemer)
+library(rgdal)
+library(plm)       # Panel data analysis library
+library(car)       # Companion to applied regression 
+library(gplots)    # Various programing tools for plotting data
+library(tseries)   # For timeseries analysis
+library(lmtest)    # For hetoroskedasticity analysis
+library(dygraphs)
+library(xts) # To make the convertion data-frame / xts format
+library(forecast)
+library(rddtools)
+library(magrittr)
 ```
 
 ```{r setup, include=FALSE}
@@ -74,6 +90,198 @@ style_xaringan(
   title_slide_background_image = "img/covid.jpg"
 )
 ```
+
+---
+```{r xx, include=FALSE}
+covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
+
+covid_heat <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(smoker = female_smokers + male_smokers) %>%
+  mutate(death = total_deaths/total_cases) %>%
+  mutate(vaccination = people_fully_vaccinated/population) %>%
+  mutate(boosters = total_boosters/population) %>%
+  select(vaccination, death, boosters, population_density, stringency_index, aged_70_older, gdp_per_capita, hospital_beds_per_thousand, smoker, human_development_index) %>%
+  na.omit()
+  
+cormat <- round(cor(covid_heat),2)
+
+melted_cormat <- melt(cormat)
+
+ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile() +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       midpoint = 0, limit = c(-1,1), space = "Lab",
+                       name="Pearson\nCorrelation") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                   size = 10, hjust = 1))+
+  coord_fixed()
+```
+```
+
+
+
+
+```{r knn1, echo=FALSE, warning=FALSE, message = FALSE}
+knn_sample <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  mutate(death = total_deaths/total_cases) 
+
+
+```
+
+
+```{r}
+
+knn_sample$development <- factor(knn_sample$development, levels = c("M", "L"), labels = c("more developed country", "less developed country"))
+
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x))) }
+
+knn_norm <- as.data.frame(lapply(knn_sample[2:10], normalize))
+
+knn_train <- knn_norm[1:31,]
+knn_test <- knn_norm[32:62,]
+
+knn_train_labels <- knn_sample[1:31, 1]
+knn_test_labels <- knn_sample[32:62, 1] 
+
+knn_train <- as.data.frame(knn_train)
+knn_train_labels <- as.data.frame(knn_train_labels)
+knn_test_labels <- as.data.frame(knn_test_labels)
+knn_test <- as.data.frame(knn_test)
+cl = knn_train_labels[,1]
+test = knn_test_labels[,1]
+
+knn_test_pred <- knn(train = knn_train, test = knn_test, cl, k=7)
+```
+
+
+
+
+.pull-left[
+```{r read_shape, include=FALSE}
+worldshape <- readOGR( 
+  dsn= ("/cloud/project/data/world_shape_file/"), 
+  layer="TM_WORLD_BORDERS-0.3",
+  verbose=FALSE)
+
+worldshape2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
+```
+
+```{r HDI-map, echo = FALSE, warning = FALSE, message=FALSE, out.height= "80%", out.width= "90%"}
+HDI <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  select(iso_code, location, date, human_development_index) %>%
+  na.omit()
+
+hdi_map <- HDI %>% 
+  left_join(worldshape2, by = c("location" = "NAME")) %>%
+  st_as_sf()
+
+pal2 <- colorNumeric(palette = "RdYlGn", domain = hdi_map$human_development_index)
+labels <- sprintf("<strong>%s</strong><br/>%s ", hdi_map$location, hdi_map$human_development_index) %>%
+  lapply(htmltools::HTML)
+
+h_map <- leaflet(data = hdi_map) %>% 
+  addTiles()  %>% 
+  setView(lat=10, lng=0 , zoom=1.5) %>%
+  addPolygons(fillColor = ~pal2(hdi_map$human_development_index),
+                                 fillOpacity = 1, 
+                                 color = "white",
+                                 opacity = 0.7,
+                                 weight = 1,
+                                 label = labels) %>%
+  leaflet::addLegend("topright", pal = pal2, values = ~hdi_map$human_development_index,
+    title = "Human Development Index",
+    opacity = 1)
+
+h_map
+```
+]
+.pull-right[
+```{r death-map, echo = FALSE, warning = FALSE, message=FALSE, out.height= "80%", out.width= "90%"}
+death <- covid_data %>%
+  filter(date == "2022-02-18") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(death_rate = total_deaths/total_cases) %>%
+  select(iso_code, location, date, death_rate) %>%
+  na.omit()
+
+death_map <- death %>% 
+  left_join(worldshape2, by = c("location" = "NAME")) %>%
+  st_as_sf()
+
+pal2 <- colorNumeric(palette = "RdYlGn", domain = death_map$death_rate)
+labels <- sprintf("<strong>%s</strong><br/>%s ", death_map$location, death_map$death_rate) %>%
+  lapply(htmltools::HTML)
+
+d_map <- leaflet(data = death_map) %>% 
+  addTiles()  %>% 
+  setView( lat=10, lng=0 , zoom=1) %>%
+  addPolygons(fillColor = ~pal2(death_map$death_rate),
+                                 fillOpacity = 1, 
+                                 color = "white",
+                                 opacity = 1,
+                                 weight = 1,
+                                 label = labels) %>%
+  leaflet::addLegend("topright", pal = pal2, values = ~ death_map$death_rate,
+    title = "Death Rate",
+    opacity = 1)
+
+d_map
+```
+]
+
+---
+
+```{r death, echo = FALSE,warning=FALSE}
+death <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(death_rate = total_deaths/total_cases) %>%
+  select(location, death_rate) %>%
+  arrange(desc(death_rate)) %>%
+  top_n(10)
+
+death
+```
+
+
+
+```{r}
+covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
+covid_data <- covid_data %>%
+  mutate(year = format(date, format="%Y")) %>%
+  mutate(month = format(date, format="%m")) %>%
+  mutate(day = format(date, format="%d")) 
+
+alpha <- covid_data %>%
+  filter(date < "2020-12-02")
+
+delta <- covid_data %>%
+  filter(date < "2021-11-02")
+
+omicron <- covid_data %>%
+  filter(date > "2021-11-01")
+
+vaccine <- covid_data %>%
+  filter(date > "2020-12-13")
+
+booster_vaccine <- covid_data %>%
+  filter(date > "2021-08-13")
+  
+```
+
+
+---
+
+
+
 
 ---
 
@@ -196,11 +404,14 @@ kable(head(iris), format = "html")
 
 # Images
 
-```{r castle, echo = FALSE, out.width = "60%", fig.align = "center", fig.cap = "Image credit: Photo by Jörg Angeli on Unsplash."}
-include_graphics("https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80")
+.pull-left[
+```{r castle, echo = FALSE, out.width = "100%", fig.align = "center", fig.cap = "Reference: Meltzer DO, et al. JAMA Netw Open"}
+include_graphics("https://www.healio.com/~/media/slack-news/fm_im/misc/infographics/2020/september/pc0920meltzer_graphic_01.jpg?h=630&w=1200&la=en&hash=AA5CE3037B8695511804123FBF351C92")
 ```
-
-Or you can also include a full page image. See next slide.
+]
+.pull-right[
+xxxx
+]
 
 ---
 
@@ -209,6 +420,8 @@ class: inverse, middle, center
 # Results & Implications
 
 ---
+
+sdsd
 
 background-image: url(https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80)
 

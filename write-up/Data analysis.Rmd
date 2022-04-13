@@ -69,7 +69,12 @@ format(dates, format="%Y")
 ```
 
 ## Maps
-
+```{r}
+covid_data %>%
+  filter(location == "United States") %>%
+  select(total_boosters, date) 
+  
+```
 
 # [1a] summary statistics
 
