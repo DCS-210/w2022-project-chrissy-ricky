@@ -48,6 +48,13 @@ library(gmodels)
 ```{r setup, include=FALSE}
 # For better figure resolution
 knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618, out.width = "80%")
+
+worldshape <- readOGR( 
+  dsn= ("/cloud/project/data/world_shape_file/"), 
+  layer="TM_WORLD_BORDERS-0.3",
+  verbose=FALSE)
+
+worldshape2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
 ```
 
 ```{r load-data, include=FALSE}
@@ -114,7 +121,7 @@ data to find potential predictors for Covid-19 cases, deaths, or vaccination rat
 
 ? Do vaccinations effectively mitigate the death rate 
 
-? Can stricter policies better contain the virus and control the death rate
+? Can stricter policies better contain the virus & the death rate
 
 ? What about other variables in predicting Covid-19
 
@@ -248,14 +255,6 @@ class: inverse, middle, center
 ---
 
 # HDI & Death Rate
-```{r read_shape, include=FALSE}
-worldshape <- readOGR( 
-  dsn= ("/cloud/project/data/world_shape_file/"), 
-  layer="TM_WORLD_BORDERS-0.3",
-  verbose=FALSE)
-
-worldshape2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
-```
 .pull-left[
 
 ```{r HDI-map, echo = FALSE, warning = FALSE, message=FALSE, out.height= "80%", out.width= "90%"}
