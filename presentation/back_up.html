@@ -96,8 +96,118 @@ covid_data &lt;- readr::read_csv(file = "../data/owid-covid-data.csv")
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
+```r
+covid_data &lt;- covid_data %&gt;%
+  mutate(year = format(date, format="%Y")) %&gt;%
+  mutate(month = format(date, format="%m")) %&gt;%
+  mutate(day = format(date, format="%d")) 
+
+alpha &lt;- covid_data %&gt;%
+  filter(date &lt; "2020-12-02")
+
+delta &lt;- covid_data %&gt;%
+  filter(date &lt; "2021-11-02")
+
+omicron &lt;- covid_data %&gt;%
+  filter(date &gt; "2021-11-01")
+
+vaccine &lt;- covid_data %&gt;%
+  filter(date &gt; "2020-12-13")
+
+booster_vaccine &lt;- covid_data %&gt;%
+  filter(date &gt; "2021-08-13")
+```
+
+
+
+
+
+
+```r
+knn_sample &lt;- covid_data %&gt;%
+  filter(date == "2022-02-20") %&gt;%
+  mutate(death_rate = total_deaths/total_cases) %&gt;%
+  mutate(development = ifelse(human_development_index &gt; 0.7225, "M", "L")) %&gt;%
+  select(development, total_cases, people_fully_vaccinated, total_boosters, population_density, aged_70_older, gdp_per_capita, cardiovasc_death_rate, hospital_beds_per_thousand, human_development_index) %&gt;%
+  na.omit()
+
+knn_sample$development &lt;- factor(knn_sample$development, levels = c("M", "L"), labels = c("more developed country", "less developed country"))
+```
+
+
+```r
+normalize &lt;- function(x) {
+  return ((x - min(x)) / (max(x) - min(x))) }
+
+knn_norm &lt;- as.data.frame(lapply(knn_sample[2:10], normalize))
+```
+
+
+
+```r
+knn_train &lt;- knn_norm[1:31,]
+knn_test &lt;- knn_norm[32:62,]
+
+knn_train_labels &lt;- knn_sample[1:31, 1]
+knn_test_labels &lt;- knn_sample[32:62, 1] 
+
+knn_train &lt;- as.data.frame(knn_train)
+knn_train_labels &lt;- as.data.frame(knn_train_labels)
+knn_test_labels &lt;- as.data.frame(knn_test_labels)
+knn_test &lt;- as.data.frame(knn_test)
+cl = knn_train_labels[,1]
+test = knn_test_labels[,1]
+```
+
+
+```r
+knn_test_pred &lt;- knn(train = knn_train, test = knn_test, cl, k=7)
+```
+
+
+```r
+CrossTable(x = test, knn_test_pred, prop.chisq = FALSE)
+```
+
+```
+## 
+##  
+##    Cell Contents
+## |-------------------------|
+## |                       N |
+## |           N / Row Total |
+## |           N / Col Total |
+## |         N / Table Total |
+## |-------------------------|
+## 
+##  
+## Total Observations in Table:  31 
+## 
+##  
+##                        | knn_test_pred 
+##                   test | more developed country | less developed country |              Row Total | 
+## -----------------------|------------------------|------------------------|------------------------|
+## more developed country |                     28 |                      0 |                     28 | 
+##                        |                  1.000 |                  0.000 |                  0.903 | 
+##                        |                  0.933 |                  0.000 |                        | 
+##                        |                  0.903 |                  0.000 |                        | 
+## -----------------------|------------------------|------------------------|------------------------|
+## less developed country |                      2 |                      1 |                      3 | 
+##                        |                  0.667 |                  0.333 |                  0.097 | 
+##                        |                  0.067 |                  1.000 |                        | 
+##                        |                  0.065 |                  0.032 |                        | 
+## -----------------------|------------------------|------------------------|------------------------|
+##           Column Total |                     30 |                      1 |                     31 | 
+##                        |                  0.968 |                  0.032 |                        | 
+## -----------------------|------------------------|------------------------|------------------------|
+## 
+## 
+```
+
+
 
 ---
+
 
 
 
@@ -201,7 +311,7 @@ class: inverse, middle, center
 - goes here
 ]
 .pull-right[
-&lt;img src="back_up_files/figure-html/unnamed-chunk-2-1.png" width="100%" /&gt;
+&lt;img src="back_up_files/figure-html/unnamed-chunk-8-1.png" width="100%" /&gt;
 ]
 
 ---
@@ -293,6 +403,8 @@ class: inverse, middle, center
 # Results &amp; Implications
 
 ---
+
+sdsd
 
 background-image: url(https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1650&amp;q=80)
 
