@@ -43,18 +43,14 @@ library(rddtools)
 library(magrittr)
 library(class)
 library(gmodels)
+library(rnaturalearthdata)
+library(rnaturalearth)
+library(rgeos)
 ```
 
 ```{r setup, include=FALSE}
 # For better figure resolution
 knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618, out.width = "80%")
-
-worldshape <- readOGR( 
-  dsn= ("/cloud/project/data/world_shape_file/"), 
-  layer="TM_WORLD_BORDERS-0.3",
-  verbose=FALSE)
-
-worldshape2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
 ```
 
 ```{r load-data, include=FALSE}
@@ -253,11 +249,55 @@ class: inverse, middle, center
 # Results & Implications 
 
 ---
+# Early Covid-19 Cases
+
+```{r covid_cases_early_1, echo = FALSE, warning = FALSE, message=FALSE, fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
+world <- ne_countries(scale = "medium", returnclass = "sf")
+#world <- st_drop_geometry(world)
+
+covid_data5 <- covid_data %>%
+  filter(date == "2020-03-23")
+
+covid_data5 <- covid_data5 %>%
+left_join(world, by = c("location" = "name")) %>%
+st_as_sf()
+
+ggplot(data = covid_data5) +
+geom_sf(aes(fill = total_cases)) +
+scale_fill_viridis_c(option = "plasma", trans = "sqrt")
+```
+---
+# Early Covid-19 Cases
+```{r covid_cases_early_2, echo = FALSE, warning = FALSE, message=FALSE, fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+
+covid_data5 <- covid_data %>%
+  filter(date == "2020-05-23")
+
+covid_data5 <- covid_data5 %>%
+left_join(world, by = c("location" = "name")) %>%
+st_as_sf()
+
+ggplot(data = covid_data5) +
+geom_sf(aes(fill = total_cases)) +
+scale_fill_viridis_c(option = "plasma", trans = "sqrt")
+```
+
+---
 
 # HDI & Death Rate
-.pull-left[
 
-```{r HDI-map, echo = FALSE, warning = FALSE, message=FALSE, out.height= "80%", out.width= "90%"}
+```{r shape, include=FALSE}
+worldshape <- readOGR( 
+  dsn= ("/cloud/project/data/world_shape_file/"), 
+  layer="TM_WORLD_BORDERS-0.3",
+  verbose=FALSE)
+
+worldshape2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
+```
+
+```{r HDI-map, echo = FALSE, warning = FALSE, message=FALSE, include=FALSE, out.height= "80%", out.width= "90%"}
 HDI <- covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
@@ -284,12 +324,9 @@ h_map <- leaflet(data = hdi_map) %>%
   leaflet::addLegend("bottomleft", pal = pal2, values = ~hdi_map$human_development_index,
     title = "Human Development Index",
     opacity = 1)
-
-h_map
 ```
-]
-.pull-right[
-```{r death-map, echo = FALSE, warning = FALSE, message=FALSE, out.height= "80%", out.width= "90%"}
+
+```{r death-map, echo = FALSE, warning = FALSE, message=FALSE, include=FALSE, out.height= "80%", out.width= "90%"}
 death <- covid_data %>%
   filter(date == "2022-02-18") %>%
   filter(is.na(continent) == FALSE) %>%
@@ -320,7 +357,10 @@ d_map <- leaflet(data = death_map) %>%
 
 d_map
 ```
-]
+
+```{r sync_maps, out.height = "80%", out.width = "90%"}
+leafsync::sync(d_map, h_map, ncol = 2, sync = "all")
+```
 
 ---
 
@@ -643,28 +683,26 @@ autoplot(forecast(fit))
 
 # Fixed Effects
 
-```{r make-dummy2}
-#covid_data2 <- covid_data1 %>%
-# select(vaccine_introduced, total_vaccinations, date, first_vaccination, interaction_term, #location, new_cases_per_million, weekly_hosp_admissions_per_million)
+```{r make-dummy2, include=FALSE}
+covid_data2 <- covid_data %>%
+ select(total_vaccinations, date, location, new_cases_per_million, weekly_hosp_admissions_per_million)
+
+covid_data3 <- covid_data %>%
+  select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred, population_density, total_cases_per_million)
+
+covid_data7 <- covid_data3 %>%
+  filter(location == "United States" | location == "United Kingdom" | location == "Canada" | location == "Belgium" | location == "Israel" | location == "Spain")
+
+fixed.dum <-lm(weekly_hosp_admissions_per_million ~ people_fully_vaccinated_per_hundred + factor(location) - 1, data = covid_data7)
+summary(fixed.dum)
 ```
 
-```{r make-dataset2}
-#covid_data3 <- covid_data1 %>%
-#  select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred, population_density, total_cases_per_million)
-```
-
-```{r make-covid-data-10}
-#covid_data7 <- covid_data3 %>%
-#  filter(location == "United States" | location == "United Kingdom" | location == "Canada" | location == "Belgium" | location == "Israel")
-```
+---
 
 ``` {r make-feregression}
-#fixed.dum <-lm(weekly_hosp_admissions_per_million ~ people_fully_vaccinated_per_hundred + factor(location) - 1, data = covid_data7)
-#summary(fixed.dum)
-
-#yhat <- fixed.dum$fitted
-#scatterplot(yhat ~ covid_data7$people_fully_vaccinated_per_hundred | covid_data7$location,  xlab ="people fully vaccinated per hundred", ylab ="covid cases", boxplots = FALSE, smooth = FALSE)
-#abline(lm(covid_data7$weekly_hosp_admissions_per_million~covid_data7$people_fully_vaccinated_per_hundred),lwd=5, col="red")
+yhat <- fixed.dum$fitted
+scatterplot(yhat ~ covid_data7$people_fully_vaccinated_per_hundred | covid_data7$location,  xlab ="people fully vaccinated per hundred", ylab ="covid cases", boxplots = FALSE, smooth = FALSE)
+abline(lm(covid_data7$weekly_hosp_admissions_per_million~covid_data7$people_fully_vaccinated_per_hundred),lwd=5, col="red")
 ```
 
 ---

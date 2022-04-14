@@ -1,0 +1,130 @@
+---
+title: "Covid_leaflet"
+author: "Chrissy & Ricky"
+date: '2022-04-13'
+output: html_document
+---
+
+```{r load-packages, include = FALSE}
+# Add any additional packages you need to this chunk
+library(tidyverse)
+library(tidymodels)
+library(reshape2)
+library(palmerpenguins)
+library(knitr)
+library(tmap)
+library(tmaptools)
+library(sf)
+library(leaflet)
+library(xaringanthemer)
+library(rgdal)
+library(plm)       # Panel data analysis library
+library(car)       # Companion to applied regression 
+library(gplots)    # Various programing tools for plotting data
+library(tseries)   # For timeseries analysis
+library(lmtest)    # For hetoroskedasticity analysis
+library(dygraphs)
+library(xts) # To make the convertion data-frame / xts format
+library(forecast)
+library(rddtools)
+library(magrittr)
+library(leafsync)
+```
+
+```{r setup, include=FALSE}
+# For better figure resolution
+knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618, out.width = "80%")
+```
+
+```{r load-data, include=FALSE}
+# Load your data here
+covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
+covid_data <- covid_data %>%
+  mutate(year = format(date, format="%Y")) %>%
+  mutate(month = format(date, format="%m")) %>%
+  mutate(day = format(date, format="%d")) 
+```
+
+```{r title-page-pic, include=FALSE}
+style_xaringan(
+  title_slide_background_image = "img/covid.jpg"
+)
+```
+
+
+# Leaflet Maps
+
+```{r xx, include = FALSE}
+worldshape <- readOGR( 
+  dsn= ("/cloud/project/data/world_shape_file/"), 
+  layer="TM_WORLD_BORDERS-0.3",
+  verbose=FALSE)
+
+worldshape2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
+```
+
+```{r HDI-map, echo = FALSE, warning = FALSE, message=FALSE, out.height= "80%", out.width= "90%"}
+HDI <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  select(iso_code, location, date, human_development_index) %>%
+  na.omit()
+
+hdi_map <- HDI %>% 
+  left_join(worldshape2, by = c("location" = "NAME")) %>%
+  st_as_sf()
+
+pal2 <- colorNumeric(palette = "RdYlGn", domain = hdi_map$human_development_index)
+labels <- sprintf("<strong>%s</strong><br/>%s ", hdi_map$location, hdi_map$human_development_index) %>%
+  lapply(htmltools::HTML)
+
+h_map <- leaflet(data = hdi_map) %>% 
+  addTiles()  %>% 
+  setView(lat=10, lng=0 , zoom=1.5) %>%
+  addPolygons(fillColor = ~pal2(hdi_map$human_development_index),
+                                 fillOpacity = 1, 
+                                 color = "white",
+                                 opacity = 0.7,
+                                 weight = 1,
+                                 label = labels) %>%
+  leaflet::addLegend("bottomleft", pal = pal2, values = ~hdi_map$human_development_index,
+    title = "Human Development Index",
+    opacity = 1)
+
+```
+
+```{r death-map, echo = FALSE, warning = FALSE, message=FALSE, out.height= "80%", out.width= "90%"}
+death <- covid_data %>%
+  filter(date == "2022-02-18") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(death_rate = total_deaths/total_cases) %>%
+  select(iso_code, location, date, death_rate) %>%
+  na.omit()
+
+death_map <- death %>% 
+  left_join(worldshape2, by = c("location" = "NAME")) %>%
+  st_as_sf()
+
+pal2 <- colorNumeric(palette = "RdYlGn", domain = death_map$death_rate)
+labels <- sprintf("<strong>%s</strong><br/>%s ", death_map$location, death_map$death_rate) %>%
+  lapply(htmltools::HTML)
+
+d_map <- leaflet(data = death_map) %>% 
+  addTiles()  %>% 
+  setView( lat=10, lng=0 , zoom=1) %>%
+  addPolygons(fillColor = ~pal2(death_map$death_rate),
+                                 fillOpacity = 1, 
+                                 color = "white",
+                                 opacity = 1,
+                                 weight = 1,
+                                 label = labels) %>%
+  leaflet::addLegend("bottomleft", pal = pal2, values = ~ death_map$death_rate,
+    title = "Death Rate",
+    opacity = 1)
+
+```
+
+
+```{r sync_maps, out.height = "80%", out.width = "90%"}
+leafsync::sync(d_map, h_map, ncol = 2, sync = "all")
+```

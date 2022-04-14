@@ -1,0 +1,475 @@
+---
+title: "Covid-19, Global Pandemic, and Data Science"
+subtitle:
+author: "Team Chrissy & Ricky <br> Chrissy Aman and Ricky Sun"
+institute: "Bates College"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    lib_dir: libs
+    nature:
+      ratio: "16:9"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+
+#xaringan::inf_mr()
+---
+
+```{r load-packages, include = FALSE}
+# Add any additional packages you need to this chunk
+library(tidyverse)
+library(tidymodels)
+library(reshape2)
+library(palmerpenguins)
+library(knitr)
+library(tmap)
+library(tmaptools)
+library(sf)
+library(leaflet)
+library(xaringanthemer)
+library(rgdal)
+library(plm)       # Panel data analysis library
+library(car)       # Companion to applied regression 
+library(gplots)    # Various programing tools for plotting data
+library(tseries)   # For timeseries analysis
+library(lmtest)    # For hetoroskedasticity analysis
+library(dygraphs)
+library(xts) # To make the convertion data-frame / xts format
+library(forecast)
+library(rddtools)
+library(magrittr)
+```
+
+```{r setup, include=FALSE}
+# For better figure resolution
+knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618, out.width = "80%")
+```
+
+```{r load-data, include=FALSE}
+# Load your data here
+```
+
+```{r title-page-pic, include=FALSE}
+style_xaringan(
+  title_slide_background_image = "img/covid.jpg"
+)
+```
+
+## Outline
+
+- Introduction
+
+- Literature Review
+
+- Our Data  
+
+- Methods & Data Analyses
+
+- Results
+
+- Limitations and Potential Future Studies
+
+---
+
+## A statement of the overall goal / research question
+
+- Our research studies...
+
+- Our goal is to...
+
+---
+
+class: inverse, center, middle
+
+# Introduction
+
+```{r section-title-pic, include=FALSE}
+style_xaringan(
+  title_slide_background_image = "img/covid.jpg"
+)
+```
+
+---
+```{r xx, include=FALSE}
+covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
+
+covid_heat <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(smoker = female_smokers + male_smokers) %>%
+  mutate(death = total_deaths/total_cases) %>%
+  mutate(vaccination = people_fully_vaccinated/population) %>%
+  mutate(boosters = total_boosters/population) %>%
+  select(vaccination, death, boosters, population_density, stringency_index, aged_70_older, gdp_per_capita, hospital_beds_per_thousand, smoker, human_development_index) %>%
+  na.omit()
+  
+cormat <- round(cor(covid_heat),2)
+
+melted_cormat <- melt(cormat)
+
+ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile() +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       midpoint = 0, limit = c(-1,1), space = "Lab",
+                       name="Pearson\nCorrelation") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                   size = 10, hjust = 1))+
+  coord_fixed()
+```
+```
+
+
+
+
+```{r knn1, echo=FALSE, warning=FALSE, message = FALSE}
+knn_sample <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  mutate(death = total_deaths/total_cases) 
+
+
+```
+
+
+```{r}
+
+knn_sample$development <- factor(knn_sample$development, levels = c("M", "L"), labels = c("more developed country", "less developed country"))
+
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x))) }
+
+knn_norm <- as.data.frame(lapply(knn_sample[2:10], normalize))
+
+knn_train <- knn_norm[1:31,]
+knn_test <- knn_norm[32:62,]
+
+knn_train_labels <- knn_sample[1:31, 1]
+knn_test_labels <- knn_sample[32:62, 1] 
+
+knn_train <- as.data.frame(knn_train)
+knn_train_labels <- as.data.frame(knn_train_labels)
+knn_test_labels <- as.data.frame(knn_test_labels)
+knn_test <- as.data.frame(knn_test)
+cl = knn_train_labels[,1]
+test = knn_test_labels[,1]
+
+knn_test_pred <- knn(train = knn_train, test = knn_test, cl, k=7)
+```
+
+
+
+
+.pull-left[
+```{r read_shape, include=FALSE}
+worldshape <- readOGR( 
+  dsn= ("/cloud/project/data/world_shape_file/"), 
+  layer="TM_WORLD_BORDERS-0.3",
+  verbose=FALSE)
+
+worldshape2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
+```
+
+```{r HDI-map, echo = FALSE, warning = FALSE, message=FALSE, out.height= "80%", out.width= "90%"}
+HDI <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  select(iso_code, location, date, human_development_index) %>%
+  na.omit()
+
+hdi_map <- HDI %>% 
+  left_join(worldshape2, by = c("location" = "NAME")) %>%
+  st_as_sf()
+
+pal2 <- colorNumeric(palette = "RdYlGn", domain = hdi_map$human_development_index)
+labels <- sprintf("<strong>%s</strong><br/>%s ", hdi_map$location, hdi_map$human_development_index) %>%
+  lapply(htmltools::HTML)
+
+h_map <- leaflet(data = hdi_map) %>% 
+  addTiles()  %>% 
+  setView(lat=10, lng=0 , zoom=1.5) %>%
+  addPolygons(fillColor = ~pal2(hdi_map$human_development_index),
+                                 fillOpacity = 1, 
+                                 color = "white",
+                                 opacity = 0.7,
+                                 weight = 1,
+                                 label = labels) %>%
+  leaflet::addLegend("topright", pal = pal2, values = ~hdi_map$human_development_index,
+    title = "Human Development Index",
+    opacity = 1)
+
+h_map
+```
+]
+.pull-right[
+```{r death-map, echo = FALSE, warning = FALSE, message=FALSE, out.height= "80%", out.width= "90%"}
+death <- covid_data %>%
+  filter(date == "2022-02-18") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(death_rate = total_deaths/total_cases) %>%
+  select(iso_code, location, date, death_rate) %>%
+  na.omit()
+
+death_map <- death %>% 
+  left_join(worldshape2, by = c("location" = "NAME")) %>%
+  st_as_sf()
+
+pal2 <- colorNumeric(palette = "RdYlGn", domain = death_map$death_rate)
+labels <- sprintf("<strong>%s</strong><br/>%s ", death_map$location, death_map$death_rate) %>%
+  lapply(htmltools::HTML)
+
+d_map <- leaflet(data = death_map) %>% 
+  addTiles()  %>% 
+  setView( lat=10, lng=0 , zoom=1) %>%
+  addPolygons(fillColor = ~pal2(death_map$death_rate),
+                                 fillOpacity = 1, 
+                                 color = "white",
+                                 opacity = 1,
+                                 weight = 1,
+                                 label = labels) %>%
+  leaflet::addLegend("topright", pal = pal2, values = ~ death_map$death_rate,
+    title = "Death Rate",
+    opacity = 1)
+
+d_map
+```
+]
+
+---
+
+```{r death, echo = FALSE,warning=FALSE}
+death <- covid_data %>%
+  filter(date == "2022-02-20") %>%
+  filter(is.na(continent) == FALSE) %>%
+  mutate(death_rate = total_deaths/total_cases) %>%
+  select(location, death_rate) %>%
+  arrange(desc(death_rate)) %>%
+  top_n(10)
+
+death
+```
+
+
+
+```{r}
+covid_data <- readr::read_csv(file = "../data/owid-covid-data.csv")
+covid_data <- covid_data %>%
+  mutate(year = format(date, format="%Y")) %>%
+  mutate(month = format(date, format="%m")) %>%
+  mutate(day = format(date, format="%d")) 
+
+alpha <- covid_data %>%
+  filter(date < "2020-12-02")
+
+delta <- covid_data %>%
+  filter(date < "2021-11-02")
+
+omicron <- covid_data %>%
+  filter(date > "2021-11-01")
+
+vaccine <- covid_data %>%
+  filter(date > "2020-12-13")
+
+booster_vaccine <- covid_data %>%
+  filter(date > "2021-08-13")
+  
+```
+
+
+---
+
+
+
+
+---
+
+# Hello World
+
+- Click the `Knit` button to compile your presentation
+
+- Make sure to commit and push all resulting files to your GitHub repo
+
+---
+
+class: inverse, middle, center
+
+# Literature Review
+
+---
+
+# xaringan
+
+- The presentation is created using the `xaringan` package
+
+- Use `---` to separate slides and `--` for incremental builds
+
+--
+
+- Like this
+
+---
+
+# Layouts
+
+You can use plain text
+
+- or bullet points
+
+.pull-left[
+or text in two columns $^*$
+]
+.pull-right[
+- like
+- this
+]
+
+.footnote[
+[*] And add footnotes
+]
+
+---
+
+# Code
+
+```{r boring-regression}
+# a boring regression
+model <- lm(dist ~ speed, data = cars)
+tidy(model)
+glance(model)
+```
+
+---
+
+# Plots
+
+```{r recode-species, echo = FALSE}
+# In this chunk I'm doing a bunch of analysis that I don't want to present 
+# in my slides. But I need the resulting data frame for a plot I want to present.
+iris_modified <- iris %>%
+  mutate(Species = fct_other(Species, keep = "setosa"))
+```
+
+```{r plot-iris, echo = FALSE}
+# Code hidden with echo = FALSE
+# Uses modified iris dataset from previous chunk
+# Play around with height and width until you're happy with the look
+ggplot(data = iris_modified, mapping = aes(x = Sepal.Width, y = Sepal.Length, color = Species)) +
+  geom_point() + 
+  theme_minimal() # theme options: https://ggplot2.tidyverse.org/reference/ggtheme.html
+```
+
+---
+
+class: inverse, middle, center
+
+# Our Data
+
+---
+
+## Plot and text
+
+.pull-left[
+- Some text
+- goes here
+]
+.pull-right[
+```{r warning=FALSE, out.width="100%", fig.width=4, echo=FALSE}
+# see how I changed out.width and fig.width from defaults
+# to make the figure bigger
+ggplot(penguins, aes(x = bill_length_mm, y = species, color = species)) +
+  geom_boxplot() +
+  theme_minimal()
+```
+]
+
+---
+
+class: inverse, middle, center
+
+# Methods & Data Analyses
+
+---
+
+# Tables
+
+If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
+
+```{r iris-table, echo = FALSE}
+kable(head(iris), format = "html")
+```
+
+---
+
+# Images
+
+.pull-left[
+```{r castle, echo = FALSE, out.width = "100%", fig.align = "center", fig.cap = "Reference: Meltzer DO, et al. JAMA Netw Open"}
+include_graphics("https://www.healio.com/~/media/slack-news/fm_im/misc/infographics/2020/september/pc0920meltzer_graphic_01.jpg?h=630&w=1200&la=en&hash=AA5CE3037B8695511804123FBF351C92")
+```
+]
+.pull-right[
+xxxx
+]
+
+---
+
+class: inverse, middle, center
+
+# Results & Implications
+
+---
+
+sdsd
+
+background-image: url(https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80)
+
+---
+
+# Math Expressions
+
+You can write LaTeX math expressions inside a pair of dollar signs, e.g. &#36;\alpha+\beta$ renders $\alpha+\beta$. You can use the display style with double dollar signs:
+
+```
+$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
+```
+
+$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
+
+Limitations:
+
+1. The source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting `$$` must appear in the very beginning of a line, followed immediately by a non-space character, and the ending `$$` must be at the end of a line, led by a non-space character;
+
+1. There should not be spaces after the opening `$` or before the closing `$`.
+
+1. Math does not work on the title slide (see [#61](https://github.com/yihui/xaringan/issues/61) for a workaround).
+
+---
+
+class: inverse, middle, center
+
+# Limitations and Potential Future Studies
+
+---
+
+# Feeling adventurous?
+
+- Want to find out more about `xaringan`? See https://slides.yihui.name/xaringan/#1.
+
+- You are welcomed to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
+
+- But some of you might want to play around with slide styling. The 
+`xaringanthemer` provides some solutions for this that: https://pkg.garrickadenbuie.com/xaringanthemer.
+
+- And if you want more bells and whistles, there is also `xaringanExtra`: https://pkg.garrickadenbuie.com/xaringanExtra.
+
+---
+
+# References
+
+[1] Want to find out more about `xaringan`? See https://slides.yihui.name/xaringan/#1.
+
+[2] You are welcomed to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
+
+---
