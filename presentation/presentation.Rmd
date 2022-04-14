@@ -94,8 +94,6 @@ style_xaringan(
 
 class: inverse, center, middle
 
-background-image: url("images/cool.png")
-
 # Introduction
 
 ---
@@ -145,7 +143,9 @@ include_graphics("https://www.mdpi.com/pathogens/pathogens-09-00817/article_depl
 ]
 
 
+
 ---
+
 
 # [1b] Vitamin D and covid-19
 .pull-left[
@@ -198,6 +198,8 @@ include_graphics("https://cdn-japantimes.com/wp-content/uploads/2020/03/np_file_
 ---
 
 # [5] Covid-19 and machine learning
+
+
 .pull-left[
 ```{r ML, echo = FALSE, out.width = "100%", fig.align = "center", fig.cap = "Reference: Suchandrima Bhowmik (2021)"}
 include_graphics("https://www.news-medical.net/image.axd?picture=2021%2F12%2Fshutterstock_1722032125.jpg")
@@ -206,6 +208,7 @@ include_graphics("https://www.news-medical.net/image.axd?picture=2021%2F12%2Fshu
 .pull-right[
 - Developing accurate forecasting tools will help fighting against the pandemic. Prediction models that combine several features to estimate the risk of infection aim to assist medical staff worldwide in helping patients, especially in the context of limited healthcare resources
 ]
+
 ---
 
 class: inverse, middle, center
@@ -266,6 +269,7 @@ ggplot(data = covid_data5) +
 geom_sf(aes(fill = total_cases)) +
 scale_fill_viridis_c(option = "plasma", trans = "sqrt")
 ```
+
 ---
 # Early Covid-19 Cases
 ```{r covid_cases_early_2, echo = FALSE, warning = FALSE, message=FALSE, fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
@@ -354,11 +358,9 @@ d_map <- leaflet(data = death_map) %>%
   leaflet::addLegend("bottomleft", pal = pal2, values = ~ death_map$death_rate,
     title = "Death Rate",
     opacity = 1)
-
-d_map
 ```
 
-```{r sync_maps, out.height = "80%", out.width = "90%"}
+```{r sync_maps, echo = FALSE, out.height = "80%", out.width = "90%"}
 leafsync::sync(d_map, h_map, ncol = 2, sync = "all")
 ```
 
@@ -412,9 +414,7 @@ covid_heat <- covid_data %>%
   na.omit()
   
 cormat <- round(cor(covid_heat),2)
-
 melted_cormat <- melt(cormat)
-
 ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
   geom_tile() +
   geom_tile(color = "white") +
@@ -440,7 +440,7 @@ covid_data %>%
   mutate(booster = total_boosters/population) %>%
   ggplot(mapping = aes(x = vaccination_rate, 
                        y = human_development_index)) +
-  geom_point(size = 2, mapping = aes()) +
+  geom_point(size = 1, mapping = aes()) +
   labs(title = "vaccination rate vs. human development index", 
        subtitle = "",
        x = "vaccination rate",
@@ -449,7 +449,6 @@ covid_data %>%
   geom_smooth(color = "blue") 
 ```
 
----
 
 # Vaccination & Death Rate
 ```{r vac-death, echo = FALSE, warning = FALSE, message=FALSE, fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
@@ -463,7 +462,7 @@ covid_data %>%
   ggplot(mapping = aes(x = vaccination_rate, 
                        y = death)) +
   geom_point(size = 1, mapping = aes()) +
-  labs(title = "percentage death of population vs. diabetes prevalence", 
+  labs(title = " vaccination rate vs. death rate", 
        subtitle = "",
        x = "vaccination rate",
        y = "death rate") +
@@ -520,7 +519,6 @@ glance(reg1)$r.squared
 glance(reg1)$adj.r.squared
 ```
 
-
 ---
 
 # Important Dates
@@ -539,7 +537,6 @@ Booster: 13 August, 2021
 
 ---
 
-
 # Linear Model 3 [Delta]
 
 ```{r linear-model-3, echo = FALSE}
@@ -553,6 +550,7 @@ covid_country <- covid_total %>%
   mutate(death = total_deaths/total_cases)
 
 reg3 <- linear_reg() %>%
+
   set_engine("lm") %>%
   fit(death ~ vaccination + stringency_index + gdp_per_capita + human_development_index + cardiovasc_death_rate + population_density, data = covid_country) 
 
@@ -576,6 +574,7 @@ covid_country <- covid_total %>%
   mutate(death = total_cases/total_cases)
   
 reg4 <- linear_reg() %>%
+
   set_engine("lm") %>%
   fit(death ~ stringency_index + gdp_per_capita + human_development_index + cardiovasc_death_rate + population_density, data = covid_country) 
 
@@ -688,12 +687,14 @@ covid_data2 <- covid_data %>%
  select(total_vaccinations, date, location, new_cases_per_million, weekly_hosp_admissions_per_million)
 
 covid_data3 <- covid_data %>%
-  select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred, population_density, total_cases_per_million)
+  select(date, location, new_cases_per_million, weekly_hosp_admissions_per_million, people_fully_vaccinated_per_hundred,  new_deaths_per_million) %>% na.omit(people_fully_vaccinated_per_hundred, population_density, total_cases_per_million, total_cases)
 
-covid_data7 <- covid_data3 %>%
+covid_data4 <- covid_data3 %>%
   filter(location == "United States" | location == "United Kingdom" | location == "Canada" | location == "Belgium" | location == "Israel" | location == "Spain")
+```
 
-fixed.dum <-lm(weekly_hosp_admissions_per_million ~ people_fully_vaccinated_per_hundred + factor(location) - 1, data = covid_data7)
+```{r fixed_effect, echo=FALSE}
+fixed.dum <-lm(weekly_hosp_admissions_per_million ~ people_fully_vaccinated_per_hundred + factor(location) - 1, data = covid_data4)
 summary(fixed.dum)
 ```
 
@@ -701,8 +702,8 @@ summary(fixed.dum)
 
 ``` {r make-feregression}
 yhat <- fixed.dum$fitted
-scatterplot(yhat ~ covid_data7$people_fully_vaccinated_per_hundred | covid_data7$location,  xlab ="people fully vaccinated per hundred", ylab ="covid cases", boxplots = FALSE, smooth = FALSE)
-abline(lm(covid_data7$weekly_hosp_admissions_per_million~covid_data7$people_fully_vaccinated_per_hundred),lwd=5, col="red")
+scatterplot(yhat ~ covid_data4$people_fully_vaccinated_per_hundred | covid_data4$location,  xlab ="people fully vaccinated per hundred", ylab ="covid cases", boxplots = FALSE, smooth = FALSE)
+abline(lm(covid_data4$weekly_hosp_admissions_per_million~covid_data4$people_fully_vaccinated_per_hundred),lwd=5, col="red")
 ```
 
 ---
@@ -723,6 +724,7 @@ rdd_data(y = covid_country$new_deaths_per_million,
          cutpoint = 0.5) %>% 
   rdd_reg_lm(slope = "same") %>% 
   summary()
+
 ```
 
 ---
@@ -747,6 +749,7 @@ covid_country %>%
 # Maching Learning
 
 Machine learning algorithms can minimize forecasting error and do the forecast much faster and with the usage of more data. What's more, machine learning algorithms can analyze many alternative models at the same time, when in traditional econometrics you can analyze just one model at a time
+
 
 ---
 
