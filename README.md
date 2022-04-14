@@ -1,59 +1,47 @@
-Covid-19 & Data Science
+Covid-19 & Making Predictions
 ================
-Chrissy & Ricky
+Chrissy Aman & Ricky Sun
 
 ## Summary
 
-COVID-19, also known as Coronavirus disease 2019 is a contagious disease
-caused by a virus, the severe acute respiratory syndrome coronavirus 2
-(SARS-CoV-2). Up until April 11, there are over 497,057,239 infections
-and 6,179,104 deaths since the beginning of the pandemic. Although no
-one could have predicted a pandemic like Covid-19, with the help of
-data, we might be able to use current data to, for example, evaluate
-risks and predict future trends, so that the virus and mutations can be
-better managed or even contained in earlier stages.
+#### \[Motivation & current literature\]
+
+Up until April 11, there are over 497,057,239 infections and 6,179,104
+deaths since the beginning of the pandemic. Covid-19, or corona virus,
+has been impacting the world for over two years from all dimensions.
+Researchers have also appoached Covid-19 from all angles, and many of
+them seek to use currently available data to predict future trends.
 
 Current research has already explored a wide variety of predictors for
-Covid-19 severity and infections, and evaluated potential impacts of the
-pandemic. Social media, weather data, economic related data, general
-health information are all factors that have been studied in current
+Covid-19 severity, infections, and deaths. Those research also evaluated
+potential impacts of the pandemic (such as economy and job market).
+Social media (such as Google search, Twitter twits), weather data (such
+as temperature, humidity), economic related data (such as GDP, interest
+rate), general health information (such as share of people aged over 70,
+share of smokers) are all factors that have been studied in current
 literature.
 
-In our research, we are trying to use Covid-19 related data, together
-with other relevant data to take a brief look of the global Covid-19
-situation, explore potential predictors and models for Covid-19 cases,
-deaths, and evaluate the effects of vaccines. Factors like population of
-elder people, stringency index (how strict the policy is around the
-Covid-19), population density, and so on, which is, to some degree, a
-summary of previous research, with some new elements.
+#### \[Our research question and data\]
 
-According to the summary statistics, we found that those more developed
-countries, such as Norway, France, United States, have more Covid-19
-infections but lower death rate. This could be due to the following
-reasons: 1. more developed countries have better testing and recording
-methods. Many developing countries have encountered similar surge of
-cases in earlier stages, but they may not be able to reflect that
-through data, because of their testing constraint. 2. People from more
-developed countries embrace more of the “free will”, so many people may
-not be willing to wear masks and implement those protocols recommended
-by CDC or WHO. Ther bette medical resources and technologies also make
-people think of Covid-19 just another “flu” during earlier stages. 3.
-With considerations of economies, developed countries may not be willing
-to lockdown the whole country for an extended period of time.
+In our research, we used data from “Our World in Data” Covid-19 public
+dataset, which includes data ranging from Covid-19 infections, gdp per
+capital, to vaccinations. Our project focus mainly on vaccintaions and
+death rate of Covid-19, but we also included many other variables and
+explored using multiple statistical tools.
 
-Of course, more developed countries also have much higher rate of
-vaccination rate, which is the potential reason for lower death rate.
+#### \[Methods\]
 
-We also included multiple maps to better visualize the global
-discrepancies in Covid-19 cases, death, HDI, and so on.
+We first did some preliminary analyses, such as maps, heat maps of
+correlations, scatter plots using death rate of Covid-19, vaccination
+rate and some other variables of our interest, such as Human Development
+Index (HDI), share of smokers, and so on.
 
-According to the heat map, it is interesting to see that, smoking is
-correlated with Covid-19 deaths, but it is a little bit
-counter-intuitive that population density is negatively correlated with
-Covid-19 cases.
-
-The simple linear regressions also show that the the vaccination rate
-can negatively predict the Covid-19 deaths.
+We then move on to some regression analyses, starting from linear
+models. We first only include vaccination rate as x and death rate as y,
+and used data at more recent date at “2022-2-20”, which was the time
+that Omicron is the major variant virus in the world. Then, we include
+more variables in our model. We also included the same model but using a
+date during which Delta was the dominant variant (“2021-09-30”).
 
 Because of the nature of panel data, the simple linear regressions
 selecting a specific day, the models may not be sufficient in making
@@ -64,37 +52,51 @@ doses. The simple linear regression may not be able to compromise those
 factors. Thus, we continued our analyses with more advanced
 manipulations.
 
-The fixed effect regression model uses a fixed effect to control for
-differences in-country to isolate the effect of vaccination rate on
-covid hospitalizations. The beta1 coefficient, the coefficient for
-vaccination rate was -0.39604 meaning a one-unit change in the number of
-fully vaccinated people per hundred would result in .26733 fewer
-hospitalizations per week per million. The t statistic is statistically
-significant at -5.138. The graph below and the regression were performed
-on a limited data set of countries that used similar vaccines and
-limited for purposes of r-studio not crashing every time the regression
-runs. This visualization shows the effect of vaccination on
-hospitalization when controlled for differences between countries. The
-red line signifies the average. There is a clear negative correlation
-between vaccination rate and hospitalizations which makes sense.
+Thus, We included regression discontinuity design and fixed effect model
+to further study the relationship between vaccination rate and death
+rate of Covid-19. We included ARiMA model and KNN machine learning model
+to predict total cases and death rates.
 
-The two maps show covid cases by country early in the pandemic. The
-first graph shows cases on a day in March when the pandemic was just
-beginning and then two months later in May when the pandemic was
-spreading more. A country that sticks out is the United States which
-took a more reserved approach to the lockdowns compared to other
-countries, especially when compared to China which started out as a
-country with a lot of cases relatively but in the two months, time was
-able to lower their cases significantly especially compared to the which
-started out with fewer cases than china but went up significantly in the
-two months.
+#### \[Results\]
 
-Beyond those models mentioned above, time series analyses and machine
-learning models could also be useful. If time permits, we will also
-include those analyses in our project.
+According to our models, we found that: 1. Linear model: vaccination can
+negatively predict Covid-19 death 2. Linear model: stringency index (how
+strict a country’s policy is on Covid-19) can negatively predict
+Covid-19 death rate at a before Omicron date, but is positively
+predicting Covid-19 death rate at a Omicron date 3. Fixed effect: there
+is a clear negative correlation between vaccination rate and
+hospitalizations 4. RDD: the slope for regression of vaccination rate
+and Covid-19 death rate is positive until reaching the threshold of 50%
+and the slope turns negative after the 50% threshold 5. ARiMA: our ARiMA
+model gives a good forecast of future new cases 6. KNN: our KNN machine
+learning model categorize country into good and bad of coping with
+Covid-19 death rate with around 71% accuracy
 
-Finally, the limitations of our project and potential future studies
-will be discussed in the presentation.
+There are many smaller findings, which are included in the presentation
+and rmd file.
+
+#### \[Limitations\]
+
+1.  Since we are using the global level by country data, the predictions
+    and model accuracy may not be high if we want to predict local level
+    Covid-19 cases or deaths
+2.  We did not take policies into considerations, which is an important
+    factor
+3.  We have touched on Covid-19 variants, but our data does not actually
+    distinguish between different infections
+4.  Some of the data might need to be normalized or taken natural log to
+    better deal with the screwness of the data
+
+#### \[Potential future studies\]
+
+1.  Use of county level data or more detailed datasets of certain
+    country or region
+2.  Compare effectiveness of different vaccines (Pfizer, Moderna,
+    Sinovax, and so on)
+3.  US and China can be a good natural experiment pair to compare with
+    in terms of policies and Covid-19 data
+4.  Use of social media data through machine learning models to make
+    predictions
 
 ## Presentation
 

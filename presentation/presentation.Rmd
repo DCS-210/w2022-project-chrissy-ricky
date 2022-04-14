@@ -254,7 +254,7 @@ class: inverse, middle, center
 ---
 # Early Covid-19 Cases
 
-```{r covid_cases_early_1, echo = FALSE, warning = FALSE, message=FALSE, fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
+```{r covid_cases_early_1, echo = FALSE, warning = FALSE, message=FALSE, fig.alt = "The map shows the Covid-19 cases around the global in early stage of the virus (2020-03-23). The data is counted by country. The lighter the color, the more cases. China, US, Iran, Italy are countries that have the most cases during this time. The graph is included to give an overview of Covid-19 infections during earlier time of the pandemic (WHO annouced global pandemic in January 22)."}
 world <- ne_countries(scale = "medium", returnclass = "sf")
 #world <- st_drop_geometry(world)
 
@@ -272,7 +272,7 @@ scale_fill_viridis_c(option = "plasma", trans = "sqrt")
 
 ---
 # Early Covid-19 Cases
-```{r covid_cases_early_2, echo = FALSE, warning = FALSE, message=FALSE, fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
+```{r covid_cases_early_2, echo = FALSE, warning = FALSE, message=FALSE, fig.alt = "The map shows the Covid-19 cases around the global in early stage of the virus (2020-05-23). The data is counted by country. The lighter the color, the more cases. Russia, US, Brail are countries that have the most cases during this time. The graph is included to give an overview of Covid-19 infections during earlier time of the pandemic (WHO annouced global pandemic in January 22)."}
 world <- ne_countries(scale = "medium", returnclass = "sf")
 
 
@@ -301,7 +301,7 @@ worldshape <- readOGR(
 worldshape2 <- st_read("/cloud/project/data/world_shape_file/TM_WORLD_BORDERS-0.3.shp")
 ```
 
-```{r HDI-map, echo = FALSE, warning = FALSE, message=FALSE, include=FALSE, out.height= "80%", out.width= "90%"}
+```{r HDI-map, echo = FALSE, warning = FALSE, message=FALSE, include=FALSE, out.height= "80%", out.width= "90%", fig.alt = "The map shows the Human Development Index (HDI) of countries around the globe. HDI is a measurement of how developed a country is. The greener the color, the higher HDI. The graph is included to suggest a potential link between HDI and Covid-19 related data."}
 HDI <- covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
@@ -330,7 +330,7 @@ h_map <- leaflet(data = hdi_map) %>%
     opacity = 1)
 ```
 
-```{r death-map, echo = FALSE, warning = FALSE, message=FALSE, include=FALSE, out.height= "80%", out.width= "90%"}
+```{r death-map, echo = FALSE, warning = FALSE, message=FALSE, include=FALSE, out.height= "80%", out.width= "90%", fig.alt = "The map shows the Death Rate of Covid-19(total deaths/total cases) of countries around the globe. The greener the color, the higher death rate The graph is included to suggest a potential link between Covid-19 death rate and other variables."}
 death <- covid_data %>%
   filter(date == "2022-02-18") %>%
   filter(is.na(continent) == FALSE) %>%
@@ -361,7 +361,7 @@ d_map <- leaflet(data = death_map) %>%
 ```
 
 ```{r sync_maps, echo = FALSE, out.height = "80%", out.width = "90%"}
-leafsync::sync(d_map, h_map, ncol = 2, sync = "all")
+leafsync::sync(h_map, d_map, ncol = 2, sync = "all")
 ```
 
 ---
@@ -402,7 +402,7 @@ death
 
 # Correlations Heat Map
 
-```{r correlation_heatmap, echo = FALSE, fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
+```{r correlation_heatmap, echo = FALSE, fig.alt = "The correlation heat map shows the correlations between each pair of variables of our interest. A cooler color indicates a negative correlation, while the warmer color suggests a positive correlation. vaccination and booster rates seem to have negative correlation with covid death rate, but the cardiovascular death rate is positively correlated with covid death rate. THe graph is included to have a preliminary idea of relationships among variables of our interest."}
 covid_heat <- covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
@@ -431,7 +431,7 @@ ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
 
 # HDI & Vaccination
 
-```{r vaccination-HDI, echo = FALSE, warning = FALSE, message=FALSE, fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
+```{r vaccination-HDI, echo = FALSE, warning = FALSE, message=FALSE, fig.alt = "scatterplot of vaccination rate by HDI, where we can see higher HDIs with higher vaccination rates."}
 covid_data %>%
   filter(date == "2022-02-20") %>%
   filter(is.na(continent) == FALSE) %>%
@@ -451,7 +451,7 @@ covid_data %>%
 
 
 # Vaccination & Death Rate
-```{r vac-death, echo = FALSE, warning = FALSE, message=FALSE, fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
+```{r vac-death, echo = FALSE, warning = FALSE, message=FALSE, fig.alt = "scatterplot of vaccination rate by death rate, where we can see higher death rates with lower vaccination rates."}
 covid_data %>%
   filter(date == "2021-12-20") %>%
   filter(is.na(continent) == FALSE) %>%
@@ -561,32 +561,8 @@ glance(reg1)$adj.r.squared
 ```
 
 ---
-
-# Linear Model 4 [Alpha]
-```{r linear-model-4, echo = FALSE}
-covid_total <- covid_data %>%
-  filter(date == "2020-10-30")
-
-covid_country <- covid_total %>%
-  filter(is.na(continent) == FALSE) %>%
-  mutate(vaccination = people_fully_vaccinated/population) %>%
-  mutate(booster = total_boosters/population) %>%
-  mutate(death = total_cases/total_cases)
-  
-reg4 <- linear_reg() %>%
-
-  set_engine("lm") %>%
-  fit(death ~ stringency_index + gdp_per_capita + human_development_index + cardiovasc_death_rate + population_density, data = covid_country) 
-
-reg4 %>%
-  tidy()
-glance(reg1)$r.squared
-glance(reg1)$adj.r.squared
-```
-
----
 # Total cases by major economies
-```{r time-table1, echo = FALSE, warning=FALSE, out.width="100%", out.height="80%", fig.alt = "scatterplot of flipper length by bill length of 3 penguin species, where we show penguins with bigger flippers have bigger bills"}
+```{r time-table1, echo = FALSE, warning=FALSE, out.width="100%", out.height="80%", fig.alt = "line-graph total cases since the start of the pandemic by major economies in the world in different colors. US, Brazil, and India are taking the lead in terms of total infections."}
 covid_time <- covid_data %>%
   select(location, date, total_cases) %>%
   filter(location == c("India", "Brazil", "France", "Germany", "Italy", "Mexico", "Russia", "United Kingdom", "United States", "China"))
@@ -700,7 +676,7 @@ summary(fixed.dum)
 
 ---
 
-``` {r make-feregression}
+``` {r make-feregression, fig.alt = "The fixed effect regression model uses a fixed effect to control for differences in-country to isolate the effect of vaccination rate on covid hospitalizations. The beta1 coefficient, the coefficient for vaccination rate was -0.39604 meaning a one-unit change in the number of fully vaccinated people per hundred would result in .26733 fewer hospitalizations per week per million. The t statistic is statistically significant at -5.138. The visualization shows the effect of vaccination on hospitalization when controlled for differences between countries. The red line signifies the average. There is a clear negative correlation between vaccination rate and hospitalizations."}
 yhat <- fixed.dum$fitted
 scatterplot(yhat ~ covid_data4$people_fully_vaccinated_per_hundred | covid_data4$location,  xlab ="people fully vaccinated per hundred", ylab ="covid cases", boxplots = FALSE, smooth = FALSE)
 abline(lm(covid_data4$weekly_hosp_admissions_per_million~covid_data4$people_fully_vaccinated_per_hundred),lwd=5, col="red")
@@ -728,7 +704,7 @@ rdd_data(y = covid_country$new_deaths_per_million,
 ```
 
 ---
-```{r rdd_plot1, echo=FALSE, warning=FALSE, message=FALSE}
+```{r rdd_plot1, echo=FALSE, warning=FALSE, message=FALSE, fig.alt = "The regression discontinuity design uses a threshold of 50% for vaccination rate, and conduct regressions on each side of the threshold. The y is Covid-19 death rate. From the graph, we can see that the slope for regression of vaccination rate and covid death rate is positive until reaching the threshold and the slope turns negative after the 50% threshold."}
 covid_country %>%
   select(vaccination, new_deaths_per_million) %>%
   mutate(threshold = as.factor(ifelse(vaccination >= 0.5, 1, 0))) %>%
@@ -746,14 +722,14 @@ covid_country %>%
 
 ---
 
-# Maching Learning
+# Machine Learning
 
 Machine learning algorithms can minimize forecasting error and do the forecast much faster and with the usage of more data. What's more, machine learning algorithms can analyze many alternative models at the same time, when in traditional econometrics you can analyze just one model at a time
 
 
 ---
 
-# Maching Learning
+# Machine Learning
 
 1. logistic regression
 
@@ -767,7 +743,7 @@ Machine learning algorithms can minimize forecasting error and do the forecast m
 
 ---
 
-# Maching Learning (KNN)
+# Machine Learning (KNN)
 
 What is KNN?
 
